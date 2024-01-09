@@ -20,6 +20,7 @@ public:
     float       Rotation;
     bool        IsSolid; //Definisce se l'hitbox è solida
     bool        Destroyed; //Indica se l'oggetto è distrutto (può essere anche esteso al giocatore)
+    
     // render state
     Texture2D   Sprite;
     // constructor(s)

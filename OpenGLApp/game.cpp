@@ -26,6 +26,7 @@ Game::~Game()
 
 void Game::Init()
 {
+
     // load shaders
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     // configure shaders
@@ -36,7 +37,14 @@ void Game::Init()
     // set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
-    ResourceManager::LoadTexture("textures/stalin.png", true, "face");
+    ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
+    ResourceManager::LoadTexture("textures/back2.png", true, "background");
+    // load levels
+    GameLevel test;
+    Bullet b = Bullet::Bullet(0.0f, 0.0f, 0.0f, ResourceManager::GetTexture("stalin"), glm::vec2(300.0f, 100.0f), glm::vec2(5.0f,5.0f), glm::vec3(1.0f), glm::vec2(1.0f));
+    test.AddBullet(b);
+    this->Levels.push_back(test);
+    this->Level = 0;
 }
 
 void Game::Update(float dt)
@@ -46,10 +54,21 @@ void Game::Update(float dt)
 
 void Game::ProcessInput(float dt)
 {
+    if (Game::State == GAME_ACTIVE) {
 
+
+    }
 }
 
 void Game::Render()
 {
-    Renderer->DrawSprite(ResourceManager::GetTexture("face"), glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    if (Game::State == GAME_ACTIVE) {
+        // draw background
+        Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
+        // draw level with a bullet in
+        this->Levels[this->Level].Draw(*Renderer);
+        // draw object
+        //GameObject o(glm::vec2(300.0f, 100.0f), glm::vec2(5.0f, 5.0f), ResourceManager::GetTexture("stalin"), glm::vec3(1.0f), glm::vec2(1.0f));
+        //o.Draw(*Renderer);
+    }
 }

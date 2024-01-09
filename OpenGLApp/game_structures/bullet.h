@@ -2,9 +2,13 @@
 #define GAMEBULLET_H
 #include "../game_structures/game_object.h"
 
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include "../resource_manager/resource_manager.h"
+
 // Class that defines a bullet in the game.
 // Every bullet is considered to deal damage every time it hits something
-class Bullet : private GameObject {
+class Bullet : public GameObject {
 
 	// bullet characteristics
 public:
@@ -15,9 +19,10 @@ public:
 
 	// constructors
 	Bullet();
-	Bullet(float pow, float partNum, float hitb);
+	Bullet(float pow, float partNum, float hitb, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity);
 
 	// methods
+	void move(float dt);
 	void destroy();
 	void dealDamage();
 };
