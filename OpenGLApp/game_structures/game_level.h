@@ -13,12 +13,15 @@ class GameLevel {
 	
 public:
 	std::vector<Bullet> bullets;
+	std::vector<Bullet> bulletTypes;
 
 	GameLevel();
 
-	void AddBullet(Bullet bullet);
+	void AddBullet(Bullet& bullet);
 
 	void Draw(SpriteRenderer& renderer);
+
+	void MoveBullet(glm::vec2 move, int identificator);
 
 };
 
