@@ -36,6 +36,11 @@ public:
     void ProcessInput(float dt);
     void Update(float dt);
     void Render();
+    // effettua la logica di controllo delle collisioni su tutti
+    // gli oggetti istanziati nella scena
+    void DoCollisions();
+    // verifica una generica collisione tra due gameObject
+    void VerifyCollision(GameObject& one, GameObject& two);
 };
 
 #endif

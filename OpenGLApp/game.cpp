@@ -44,17 +44,18 @@ void Game::Init()
     // load textures
     ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
     ResourceManager::LoadTexture("textures/back2.png", true, "background");
+    ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
+    ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
     // load levels
     GameLevel test;
-    Bullet b = Bullet::Bullet(0.0f, 0.0f, 0.0f, ResourceManager::GetTexture("stalin"), glm::vec2(300.0f, 100.0f), glm::vec2(100.0f,120.0f), glm::vec3(1.0f), glm::vec2(1.0f));
-    test.AddBullet(b);
+    test.LoadLevel();
     this->Levels.push_back(test);
     this->Level = 0;
 }
 
 void Game::Update(float dt)
 {
-
+    this->Levels[this->Level].PlayLevel();
 }
 
 void Game::ProcessInput(float dt)
