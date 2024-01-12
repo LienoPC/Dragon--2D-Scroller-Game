@@ -1,8 +1,8 @@
 #ifndef GAMELEVEL_H
 #define GAMELEVEL_H
 #include <vector>
-#include <glad/glad.h>
-#include <glm/glm.hpp>
+#include "../glad/include/glad/glad.h"
+#include "../glm-master/glm/glm.hpp"
 
 #include "game_object.h"
 #include "bullet.h"

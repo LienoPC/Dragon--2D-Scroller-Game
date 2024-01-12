@@ -1,8 +1,8 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <glad/glad.h>
-#include <glm/glm.hpp>
+#include "../glad/include/glad/glad.h"
+#include "../glm-master/glm/glm.hpp"
 
 #include "../shaders_textures/texture.h"
 #include "../sprite_renderer/sprite_renderer.h"

@@ -4,6 +4,7 @@
 
 #include "glad/include/glad/glad.h"
 #include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
+#include "game_structures/game_level.h"
 
 // Represents the current state of the game
 enum GameState {

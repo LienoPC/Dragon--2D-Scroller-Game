@@ -2,8 +2,8 @@
 #define GAMEBULLET_H
 #include "../game_structures/game_object.h"
 
-#include <glad/glad.h>
-#include <glm/glm.hpp>
+#include "../glad/include/glad/glad.h"
+#include "../glm-master/glm/glm.hpp"
 #include "../resource_manager/resource_manager.h"
 
 // Class that defines a bullet in the game.
