@@ -13,7 +13,6 @@
 #include "game.h"
 #include "resource_manager/resource_manager.h"
 
-#include <iostream>
 
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
