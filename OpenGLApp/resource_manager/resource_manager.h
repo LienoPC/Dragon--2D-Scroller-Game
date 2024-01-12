@@ -13,7 +13,7 @@
 #include <map>
 #include <string>
 
-#include <glad/glad.h>
+#include "../glad/include/glad/glad.h"
 
 #include "../shaders_textures/shader.h"
 #include "../shaders_textures/texture.h"

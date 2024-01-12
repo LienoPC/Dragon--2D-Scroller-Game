@@ -9,8 +9,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "glad/include/glad/glad.h"
+#include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 
 // Represents the current state of the game
 enum GameState {

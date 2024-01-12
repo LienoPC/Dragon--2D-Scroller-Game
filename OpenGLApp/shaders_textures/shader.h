@@ -11,10 +11,9 @@
 
 #include <string>
 
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include "../glad/include/glad/glad.h"
+#include "../glm-master/glm/glm.hpp"
+#include "../glm-master/glm/gtc/type_ptr.hpp"
 
 // General purpose shader object. Compiles from file, generates
 // compile/link-time error messages and hosts several utility 

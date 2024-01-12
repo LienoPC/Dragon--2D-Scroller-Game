@@ -6,8 +6,8 @@
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
 ******************************************************************/
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "glad/include/glad/glad.h"
+#include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 #include <iostream>
 
 #include "game.h"
