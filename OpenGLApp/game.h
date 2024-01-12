@@ -1,11 +1,4 @@
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
+
 #ifndef GAME_H
 #define GAME_H
 
@@ -29,6 +22,8 @@ public:
     GameState               State;	
     bool                    Keys[1024];
     unsigned int            Width, Height;
+    std::vector<GameLevel>  Levels;
+    unsigned int            Level;
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
     ~Game();
@@ -38,6 +33,11 @@ public:
     void ProcessInput(float dt);
     void Update(float dt);
     void Render();
+    // effettua la logica di controllo delle collisioni su tutti
+    // gli oggetti istanziati nella scena
+    void DoCollisions();
+    // verifica una generica collisione tra due gameObject
+    void VerifyCollision(GameObject& one, GameObject& two);
 };
 
 #endif

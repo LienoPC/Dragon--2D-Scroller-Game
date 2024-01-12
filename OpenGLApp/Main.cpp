@@ -13,7 +13,7 @@
 #include "game.h"
 #include "resource_manager/resource_manager.h"
 
-
+#include <iostream>
 
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -24,7 +24,7 @@ const unsigned int SCREEN_WIDTH = 800;
 // The height of the screen
 const unsigned int SCREEN_HEIGHT = 600;
 
-Game Dragon(SCREEN_WIDTH, SCREEN_HEIGHT);
+Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char* argv[])
 {
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 #endif
     glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dragon", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
     // initialize game
     // ---------------
-    Dragon.Init();
+    Breakout.Init();
 
     // deltaTime variables
     // -------------------
@@ -77,17 +77,17 @@ int main(int argc, char* argv[])
 
         // manage user input
         // -----------------
-        Dragon.ProcessInput(deltaTime);
+        Breakout.ProcessInput(deltaTime);
 
         // update game state
         // -----------------
-        Dragon.Update(deltaTime);
+        Breakout.Update(deltaTime);
 
         // render
         // ------
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        Dragon.Render();
+        Breakout.Render();
 
         glfwSwapBuffers(window);
     }
@@ -108,9 +108,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            Dragon.Keys[key] = true;
+            Breakout.Keys[key] = true;
         else if (action == GLFW_RELEASE)
-            Dragon.Keys[key] = false;
+            Breakout.Keys[key] = false;
     }
 }
 
