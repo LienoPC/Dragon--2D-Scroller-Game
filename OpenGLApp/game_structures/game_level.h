@@ -6,6 +6,7 @@
 
 #include "game_object.h"
 #include "bullet.h"
+#include "dragon.h"
 #include "../sprite_renderer/sprite_renderer.h"
 #include "../resource_manager/resource_manager.h"
 
@@ -16,24 +17,22 @@ public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
 	std::map<int,Bullet> bulletTypes;
-
+	Dragon player;
 
 	GameLevel();
 
+	void setPlayer(Dragon dragon);
+	void movePlayer(glm::vec2 move);
+
 	void AddBullet(int bullet);
-
 	void AddBulletType(Bullet& bullet);
-
-	void instanceBullet(int bullet);
-
-	void Draw(SpriteRenderer& renderer);
-
-	// sposta la posizione di un bullet dalla lista di quelli istanziati
+	void instanceBullet(int bullet);	
+	// sposta la posizione di un bullet preso dalla lista di quelli istanziati
 	void MoveBullet(glm::vec2 move, int identificator);
 
 	void PlayLevel();
-
 	void LoadLevel();
+	void Draw(SpriteRenderer& renderer);
 
 };
 

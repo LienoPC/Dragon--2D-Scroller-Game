@@ -13,12 +13,6 @@
 // Game-related State data
 SpriteRenderer* Renderer;
 
-// gandezza del modello del player
-const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
-
-// velocità di spostamento del giocatore
-const float PLAYER_VELOCITY(500.0f);
-
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
 {
@@ -44,9 +38,10 @@ void Game::Init()
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
     ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
-    ResourceManager::LoadTexture("textures/back2.png", true, "background");
+    //ResourceManager::LoadTexture("textures/back2.png", true, "background");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
+    ResourceManager::LoadTexture("textures/dragon.png", true, "dragon");
     // load levels
     GameLevel test;
     test.LoadLevel();
@@ -62,23 +57,24 @@ void Game::Update(float dt)
 void Game::ProcessInput(float dt)
 {
     if (Game::State == GAME_ACTIVE) {
-        float velocity = dt * PLAYER_VELOCITY;
+        float velocity = dt * this->Levels[this->Level].player.movementSpeed;
         glm::vec2 move;
+
         if (this->Keys[GLFW_KEY_A]) {
             move = glm::vec2(-velocity, 0.0f);
-            this->Levels[this->Level].MoveBullet(move, 0);
+            this->Levels[this->Level].movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
-            this->Levels[this->Level].MoveBullet(move, 0);
+            this->Levels[this->Level].movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_W]) {
             move = glm::vec2(0.0f, -velocity);
-            this->Levels[this->Level].MoveBullet(move, 0);
+            this->Levels[this->Level].movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_S]) {
             move = glm::vec2(0.0f, velocity);
-            this->Levels[this->Level].MoveBullet(move, 0);
+            this->Levels[this->Level].movePlayer(move);
         }
 
 
@@ -89,7 +85,7 @@ void Game::Render()
 {
     if (Game::State == GAME_ACTIVE) {
         // draw background
-        Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
+            // Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer);
      
