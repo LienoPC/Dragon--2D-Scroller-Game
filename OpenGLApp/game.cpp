@@ -59,8 +59,7 @@ void Game::Init()
 
 void Game::Update(float dt)
 {
-    
-    this->Levels[this->Level].PlayLevel(Timer::getElapsedSeconds());
+    //this->Levels[this->Level].PlayLevel(Timer::getElapsedSeconds());
 }
 
 void Game::ProcessInput(float dt)

@@ -44,6 +44,10 @@ public:
 
 	void LoadLevel();
 
+	// metodi per caricare i BulletTypes da un file
+	static std::vector<Bullet> loadBulletTypesFromFile(const char* file);
+	static void writeBulletTypesOnFile(const char* file, std::vector<Bullet> list);
+
 };
 
 #endif

@@ -1,5 +1,13 @@
 #ifndef GAMEBULLET_H
 #define GAMEBULLET_H
+
+
+
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 #include "../game_structures/game_object.h"
 
 #include "../glad/include/glad/glad.h"
@@ -20,7 +28,7 @@ public:
 	int		Type;
 	// constructors
 	Bullet();
-	Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, hitboxType hitbox, int type);
+	Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, hitboxType hitbox, int type, std::string textureFile);
 
 	// methods
 	void copyBullet(Bullet b);
@@ -28,6 +36,8 @@ public:
 	void destroy();
 	void dealDamage();
 	void isOutside();
+
+	
 };
 
 #endif

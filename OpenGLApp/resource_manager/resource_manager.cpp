@@ -18,6 +18,7 @@
 // Instantiate static variables
 std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Shader>       ResourceManager::Shaders;
+std::map<std::string, std::vector<int>> ResourceManager::Levels;
 
 
 Shader ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name)
@@ -41,6 +42,29 @@ Texture2D ResourceManager::GetTexture(std::string name)
 {
     return Textures[name];
 }
+
+std::vector<int> ResourceManager::LoadBulletList(const char* file, std::string name) {
+    Levels[name] = loadBulletListFromFile(file);
+    return Levels[name];
+}
+
+std::vector<int> ResourceManager::GetBulletList(std::string name) {
+    return Levels[name];
+}
+
+void ResourceManager::writeBulletListOnFile(const char* file, std::vector<int> list) {
+    std::ofstream out(file, std::ios::out | std::ios::binary);
+    if (!out) {
+        std::cout << "Impossibile aprire il file" << std::endl;
+    }
+    for (int i = 0; i < list.size(); i++) {
+        out.write((char*)&list[i], sizeof(int));
+    }
+    out.close();
+
+}
+
+
 
 void ResourceManager::Clear()
 {
@@ -113,4 +137,20 @@ Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
     // and finally free image data
     stbi_image_free(data);
     return texture;
+}
+
+
+
+std::vector<int> ResourceManager::loadBulletListFromFile(const char* file) {
+    std::ifstream input(file, std::ios::binary);
+    std::vector<int> returned;
+
+    int oracolo;
+    while (!input.eof()) {
+        input.read((char*)&oracolo, sizeof(int));
+        returned.push_back(oracolo);
+    }
+    input.close();
+    return returned;
+
 }
