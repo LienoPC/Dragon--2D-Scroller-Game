@@ -9,6 +9,10 @@
 #include "../sprite_renderer/sprite_renderer.h"
 #include "../resource_manager/resource_manager.h"
 
+#define PHASES 3
+#define SECONDS1 20
+#define SECONDS2 50
+#define SECONDS3 90
 
 class GameLevel {
 	
@@ -16,6 +20,11 @@ public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
 	std::map<int,Bullet> bulletTypes;
+
+	int phase;
+
+	// dovremmo avere due file, uno che contiene il livello (con la lista di bullet da lanciare e le posizioni relative)
+	// un altro file che modellizza i bullet con tutti i parametri e ne definisce l'identificatore
 
 
 	GameLevel();
@@ -31,7 +40,7 @@ public:
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	void MoveBullet(glm::vec2 move, int identificator);
 
-	void PlayLevel();
+	void PlayLevel(double seconds);
 
 	void LoadLevel();
 

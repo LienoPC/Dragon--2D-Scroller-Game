@@ -44,7 +44,7 @@ void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
 }
 
 
-void GameLevel::PlayLevel() {
+void GameLevel::PlayLevel(double seconds) {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
     while(this->bulletList.size() > 0){

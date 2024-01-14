@@ -6,9 +6,12 @@
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
 ******************************************************************/
+
+
 #include "game.h"
 #include "resource_manager/resource_manager.h"
 #include "sprite_renderer/sprite_renderer.h"
+#include "timerMy.h"
 
 // Game-related State data
 SpriteRenderer* Renderer;
@@ -56,7 +59,8 @@ void Game::Init()
 
 void Game::Update(float dt)
 {
-    this->Levels[this->Level].PlayLevel();
+    
+    this->Levels[this->Level].PlayLevel(Timer::getElapsedSeconds());
 }
 
 void Game::ProcessInput(float dt)
