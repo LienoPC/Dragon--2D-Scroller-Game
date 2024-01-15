@@ -7,6 +7,14 @@
 GameLevel::GameLevel()
     : bulletList(NULL), instancedBullets(NULL){}
 
+void GameLevel::setPlayer(Dragon player) {
+    this->player = player;
+}
+
+void GameLevel::movePlayer(glm::vec2 move) {
+    this->player.move(move);
+}
+
 void GameLevel::AddBullet(int bullet) {
 	 this->bulletList.push_back(bullet);
 }
@@ -34,7 +42,6 @@ void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
     this->instancedBullets[identificator].move(move);
     
 }
-
 
 void GameLevel::PlayLevel() {
 
@@ -73,44 +80,15 @@ void GameLevel::LoadLevel() {
 }
 
 
-/*
-
-DEPRECATED
-
-std::vector<Bullet> GameLevel::loadBulletTypesFromFile(const char* file) {
-    std::vector<Bullet> returned;
-    std::ifstream input(file, std::ios::binary);
-
-    while (!input.eof()) {
-
-
-    }
-
-    return returned;
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(300.0f, 400.0f), glm::vec2(200.0f, 200.0f), glm::vec3(1.0f), glm::vec2(1.0f), 300.0f, hitboxType(AABB));
+    this->setPlayer(player);
 }
 
-void GameLevel::writeBulletTypesOnFile(const char* file, std::vector<Bullet> list) {
-    std::ofstream out(file, std::ios::out | std::ios::binary);
-    if (!out) {
-        std::cout << "Impossibile aprire il file" << std::endl;
-    }
-    for (int i = 0; i < list.size(); i++) {
-        out.write((char*)&list[i].Position, sizeof(glm::vec2));
-        out.write((char*)&list[i].Size, sizeof(glm::vec2));
-        out.write((char*)&list[i].Velocity, sizeof(glm::vec2));
-        out.write((char*)&list[i].Color, sizeof(glm::vec3));
-        out.write((char*)&list[i].Hitbox, sizeof(hitboxType));
-        out.write((char*)&list[i].Rotation, sizeof(float));
-        out.write((char*)&list[i].IsSolid, sizeof(bool));
-        out.write((char*)&list[i].Destroyed, sizeof(bool));
-        out.write((char*)&list[i].Power, sizeof(float));
-        out.write((char*)&list[i].ParticlesNumber, sizeof(float));
-        out.write((char*)&list[i].VelocityMultipler, sizeof(float));
-        out.write((char*)&list[i].Type, sizeof(int));
+void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
+    player.Draw(renderer, dt);
 
+    for (Bullet b : this->instancedBullets) {
+        if (!b.Destroyed)
+            b.Draw(renderer);
     }
-    out.close();
-
 }
-*/
-

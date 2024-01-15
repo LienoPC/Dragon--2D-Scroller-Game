@@ -1,0 +1,37 @@
+#ifndef GAMEDRAGON_H
+#define GAMEDRAGON_H
+
+#include "../game_structures/game_object.h"
+
+#include "../glad/include/glad/glad.h"
+#include "../glm-master/glm/glm.hpp"
+#include "../resource_manager/resource_manager.h"
+
+#include <vector>
+
+// Class that defines the dragon in the game.
+// The dragon is the main character controlled by the player.
+class Dragon : public GameObject {	
+
+public:
+	//dragon hitboxes vector
+	//std::vector<Hitbox> hitboxes;
+
+	// dragon characteristics
+	float velocityModifier;
+	// dragon animation frames
+	std::vector<Texture2D> animationFrames;
+
+	// constructors
+	Dragon();
+	Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, hitboxType hitbox);
+
+	// methods
+	void move(glm::vec2 move);
+	void destroy();
+	void dealDamage();
+	void isOutside();
+	void Draw(SpriteRenderer& renderer, float dt); //used instead of default GameObject::Draw method
+};
+
+#endif

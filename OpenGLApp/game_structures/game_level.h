@@ -6,6 +6,7 @@
 
 #include "game_object.h"
 #include "bullet.h"
+#include "dragon.h"
 #include "../sprite_renderer/sprite_renderer.h"
 #include "../resource_manager/resource_manager.h"
 
@@ -25,11 +26,13 @@ public:
 
 	// dovremmo avere due file, uno che contiene il livello (con la lista di bullet da lanciare e le posizioni relative)
 	// un altro file che modellizza i bullet con tutti i parametri e ne definisce l'identificatore
-
+	std::map<int,Bullet> bulletTypes;
+	Dragon player;
 
 	GameLevel();
 
-	void AddBullet(int bullet);
+	void setPlayer(Dragon dragon);
+	void movePlayer(glm::vec2 move);
 
 
 	void instanceBullet(int bullet, glm::vec2 pos);
@@ -41,8 +44,8 @@ public:
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
 	void PlayLevel();
-
 	void LoadLevel();
+	void Draw(SpriteRenderer& renderer, float dt);
 
 
 
