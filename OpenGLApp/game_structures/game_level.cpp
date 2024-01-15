@@ -25,18 +25,6 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos) {
     this->instancedBullets.push_back(b);
 }
 
-
-void GameLevel::Draw(SpriteRenderer& renderer){
-    for (Bullet b : this->instancedBullets) {
-        if (!b.Destroyed)
-            b.Draw(renderer);
-    }
-        
-}
-
-
-
-
 void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
 
     this->instancedBullets[identificator].move(move);

@@ -36,8 +36,6 @@ public:
 
 	void instanceBullet(int bullet, glm::vec2 pos);
 
-	void Draw(SpriteRenderer& renderer);
-
 	void AddBullet(int bullet);
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	void MoveBullet(glm::vec2 move, int identificator);
@@ -46,9 +44,6 @@ public:
 	void PlayLevel();
 	void LoadLevel();
 	void Draw(SpriteRenderer& renderer, float dt);
-
-
-
 };
 
 #endif
