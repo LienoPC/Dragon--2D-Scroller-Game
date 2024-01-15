@@ -149,6 +149,7 @@
     <ClCompile Include="shaders_textures\shader.cpp" />
     <ClCompile Include="shaders_textures\texture.cpp" />
     <ClCompile Include="sprite_renderer\sprite_renderer.cpp" />
+    <ClCompile Include="timer\timerMy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="sprite_renderer\sprite_renderer.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="timer\timerMy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\sprite.fs" />
