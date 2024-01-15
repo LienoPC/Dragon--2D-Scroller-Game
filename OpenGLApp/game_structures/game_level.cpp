@@ -1,4 +1,5 @@
 #include "game_level.h"
+#include "../game.h"
 #include "../timer/timerMy.h"
 #include <fstream>
 #include <sstream>
@@ -10,18 +11,10 @@ void GameLevel::AddBullet(int bullet) {
 	 this->bulletList.push_back(bullet);
 }
 
-void GameLevel::AddBulletType(Bullet& bullet) {
-   
-    this->bulletTypes.insert({ bullet.Type , bullet });
-}
 
-void GameLevel::instanceBullet(int bullet) {
-    std::map<int, Bullet>::iterator itr;
-    itr = this->bulletTypes.find(bullet);
-    if (itr != this->bulletTypes.end()) {
-        Bullet b(itr->second);
-        this->instancedBullets.push_back(b);
-    }  
+void GameLevel::instanceBullet(int bullet, glm::vec2 pos) {
+    Bullet b(Game::GetBullet(bullet));
+    this->instancedBullets.push_back(b);
 }
 
 
@@ -29,7 +22,6 @@ void GameLevel::Draw(SpriteRenderer& renderer){
     for (Bullet b : this->instancedBullets) {
         if (!b.Destroyed)
             b.Draw(renderer);
-
     }
         
 }
@@ -47,10 +39,17 @@ void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
 void GameLevel::PlayLevel() {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
-    Timer::getElapsedSeconds();
     
-    
-   
+    // istanzio i proiettili che mi servono e verifico che quelli istanziati siano ancora validi
+    for (int i = 0; i < this->bulletList.size(); i++) {
+        instanceBullet(this->bulletList[i], glm::vec2(i * 5, 0.0f));
+    }
+
+    // muove tutti i proiettili istanziati nella scena
+    for (int i = 0; i < this->instancedBullets.size(); i++) {
+        this->instancedBullets[i].move(glm::vec2(0.3 + (i/10), 0.4 + (i/5)));
+    }
+
 
 }
 
@@ -68,9 +67,15 @@ void GameLevel::LoadLevel() {
     this->AddBullet(0);
     */
 
+    // Load the list of bullets for that level
     ResourceManager::LoadBulletList("levels/lev.txt", "LevelP");
     this->bulletList = ResourceManager::GetBulletList("LevelP");
 }
+
+
+/*
+
+DEPRECATED
 
 std::vector<Bullet> GameLevel::loadBulletTypesFromFile(const char* file) {
     std::vector<Bullet> returned;
@@ -98,7 +103,6 @@ void GameLevel::writeBulletTypesOnFile(const char* file, std::vector<Bullet> lis
         out.write((char*)&list[i].Rotation, sizeof(float));
         out.write((char*)&list[i].IsSolid, sizeof(bool));
         out.write((char*)&list[i].Destroyed, sizeof(bool));
-        out.write((char*)&list[i].TextureFile, sizeof(glm::vec2));
         out.write((char*)&list[i].Power, sizeof(float));
         out.write((char*)&list[i].ParticlesNumber, sizeof(float));
         out.write((char*)&list[i].VelocityMultipler, sizeof(float));
@@ -108,3 +112,5 @@ void GameLevel::writeBulletTypesOnFile(const char* file, std::vector<Bullet> lis
     out.close();
 
 }
+*/
+

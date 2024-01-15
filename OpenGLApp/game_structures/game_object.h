@@ -16,7 +16,8 @@ class GameObject
 {
 public:
     // object state
-    glm::vec2   Position, Size, Velocity;
+    glm::vec2   Position, Size, Velocity; // velocità effettiva da moltiplicare alla "direzione di lancio" caricata dal livello (o gestita dalla IA)
+								            // e che ha un valore sempre tra 0.0f e 1.0f (sia x che y)
     glm::vec3   Color;
     hitboxType  Hitbox;
     float       Rotation;
@@ -26,10 +27,10 @@ public:
     // render state
     Texture2D   Sprite;
 
-    std::string TextureFile;
+   
     // constructor(s)
     GameObject();
-    GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, std::string textureFile, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f), hitboxType Hitbox = hitboxType(AABB));
+    GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f), hitboxType Hitbox = hitboxType(AABB));
     // draw sprite
     virtual void Draw(SpriteRenderer& renderer);
    

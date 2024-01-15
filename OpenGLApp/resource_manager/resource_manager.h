@@ -1,17 +1,13 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
 
-
+#include "../game_structures/bullet.h"
+#include "../glad/include/glad/glad.h"
+#include "../shaders_textures/shader.h"
+#include "../shaders_textures/texture.h"
 #include <map>
 #include <string>
 #include <vector>
-
-#include "../glad/include/glad/glad.h"
-#include "../game_structures/bullet.h"
-
-#include "../shaders_textures/shader.h"
-#include "../shaders_textures/texture.h"
-
 
 
 
@@ -24,9 +20,12 @@ class ResourceManager
 {
 public:
     // resource storage
+    
     static std::map<std::string, Shader>    Shaders;
     static std::map<std::string, Texture2D> Textures;
     static std::map<std::string, std::vector<int>> Levels;
+    
+
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
     static Shader    LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name);
     // retrieves a stored sader
@@ -40,6 +39,8 @@ public:
 
     // retrieves the list of bullets of a level
     static std::vector<int> GetBulletList(std::string name);
+
+  
     // properly de-allocates all loaded resources
     static void      Clear();
 

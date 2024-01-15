@@ -15,6 +15,7 @@
 
 // Game-related State data
 SpriteRenderer* Renderer;
+std::map<int, Bullet>  Game::bulletTypes;
 
 // gandezza del modello del player
 const glm::vec2 PLAYER_SIZE(100.0f, 20.0f);
@@ -50,6 +51,14 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/back2.png", true, "background");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
+
+    // create bulletTypes
+
+    Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.5f), hitboxType(AABB), (int)'a');
+    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.3f), hitboxType(AABB), (int)'b');
+    bulletTypes[b1.Type] = b1;
+    bulletTypes[b2.Type] = b2;
+
     // load levels
     GameLevel test;
     test.LoadLevel();
@@ -59,7 +68,7 @@ void Game::Init()
 
 void Game::Update(float dt)
 {
-    //this->Levels[this->Level].PlayLevel(Timer::getElapsedSeconds());
+    this->Levels[this->Level].PlayLevel();
 }
 
 void Game::ProcessInput(float dt)
@@ -97,4 +106,10 @@ void Game::Render()
         this->Levels[this->Level].Draw(*Renderer);
      
     }
+}
+
+
+
+Bullet Game::GetBullet(int type) {
+    return bulletTypes[type];
 }

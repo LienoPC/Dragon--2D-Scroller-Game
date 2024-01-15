@@ -25,6 +25,10 @@ public:
     unsigned int            Width, Height;
     std::vector<GameLevel>  Levels;
     unsigned int            Level;
+
+    // bulletTypes
+    static std::map<int, Bullet>            bulletTypes;
+
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
     ~Game();
@@ -39,6 +43,9 @@ public:
     void DoCollisions();
     // verifica una generica collisione tra due gameObject
     void VerifyCollision(GameObject& one, GameObject& two);
+
+    // prende un bulletType dalla lista di definiti
+    static Bullet GetBullet(int type);
 };
 
 #endif

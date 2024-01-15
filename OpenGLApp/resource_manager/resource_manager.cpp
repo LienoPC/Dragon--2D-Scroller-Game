@@ -21,6 +21,7 @@ std::map<std::string, Shader>       ResourceManager::Shaders;
 std::map<std::string, std::vector<int>> ResourceManager::Levels;
 
 
+
 Shader ResourceManager::LoadShader(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile, std::string name)
 {
     Shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
@@ -52,6 +53,12 @@ std::vector<int> ResourceManager::GetBulletList(std::string name) {
     return Levels[name];
 }
 
+
+
+
+/*
+* 
+* DEPRECATED
 void ResourceManager::writeBulletListOnFile(const char* file, std::vector<int> list) {
     std::ofstream out(file, std::ios::out | std::ios::binary);
     if (!out) {
@@ -63,6 +70,9 @@ void ResourceManager::writeBulletListOnFile(const char* file, std::vector<int> l
     out.close();
 
 }
+
+
+*/
 
 
 

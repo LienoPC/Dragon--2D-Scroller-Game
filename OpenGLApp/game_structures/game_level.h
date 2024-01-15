@@ -19,7 +19,7 @@ class GameLevel {
 public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
-	std::map<int,Bullet> bulletTypes; // ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
+	 // ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
 
 	int phase;
 
@@ -31,9 +31,8 @@ public:
 
 	void AddBullet(int bullet);
 
-	void AddBulletType(Bullet& bullet);
 
-	void instanceBullet(int bullet);
+	void instanceBullet(int bullet, glm::vec2 pos);
 
 	void Draw(SpriteRenderer& renderer);
 
@@ -45,9 +44,7 @@ public:
 
 	void LoadLevel();
 
-	// metodi per caricare i BulletTypes da un file
-	static std::vector<Bullet> loadBulletTypesFromFile(const char* file);
-	static void writeBulletTypesOnFile(const char* file, std::vector<Bullet> list);
+
 
 };
 
