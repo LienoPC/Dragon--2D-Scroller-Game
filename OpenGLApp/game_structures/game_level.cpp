@@ -77,7 +77,6 @@ void GameLevel::LoadLevel() {
     // Load the list of bullets for that level
     ResourceManager::LoadBulletList("levels/lev.txt", "LevelP");
     this->bulletList = ResourceManager::GetBulletList("LevelP");
-}
 
 
     Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(300.0f, 400.0f), glm::vec2(200.0f, 200.0f), glm::vec3(1.0f), glm::vec2(1.0f), 300.0f, hitboxType(AABB));

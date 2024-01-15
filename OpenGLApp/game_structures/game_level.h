@@ -26,7 +26,6 @@ public:
 
 	// dovremmo avere due file, uno che contiene il livello (con la lista di bullet da lanciare e le posizioni relative)
 	// un altro file che modellizza i bullet con tutti i parametri e ne definisce l'identificatore
-	std::map<int,Bullet> bulletTypes;
 	Dragon player;
 
 	GameLevel();
@@ -39,6 +38,7 @@ public:
 
 	void Draw(SpriteRenderer& renderer);
 
+	void AddBullet(int bullet);
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	void MoveBullet(glm::vec2 move, int identificator);
 
