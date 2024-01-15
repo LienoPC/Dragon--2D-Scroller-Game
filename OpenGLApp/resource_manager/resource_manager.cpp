@@ -140,7 +140,7 @@ Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
 }
 
 
-
+/*
 std::vector<int> ResourceManager::loadBulletListFromFile(const char* file) {
     std::ifstream input(file, std::ios::binary);
     std::vector<int> returned;
@@ -149,6 +149,23 @@ std::vector<int> ResourceManager::loadBulletListFromFile(const char* file) {
     while (!input.eof()) {
         input.read((char*)&oracolo, sizeof(int));
         returned.push_back(oracolo);
+    }
+    input.close();
+    return returned;
+
+}
+
+*/
+
+
+std::vector<int> ResourceManager::loadBulletListFromFile(const char* file) {
+    std::ifstream input(file, std::ios::binary);
+    std::vector<int> returned;
+
+    char oracolo;
+    while (!input.eof()) {
+        input.read((char*)&oracolo, sizeof(char));
+        returned.push_back((int)oracolo);
     }
     input.close();
     return returned;

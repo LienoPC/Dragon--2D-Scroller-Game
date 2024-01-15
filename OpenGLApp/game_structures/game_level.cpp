@@ -1,5 +1,5 @@
 #include "game_level.h"
-
+#include "../timerMy.h"
 #include <fstream>
 #include <sstream>
 
@@ -44,10 +44,10 @@ void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
 }
 
 
-void GameLevel::PlayLevel(double seconds) {
+void GameLevel::PlayLevel() {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
-   
+    Timer::getElapsedSeconds();
     
     
    
@@ -67,14 +67,8 @@ void GameLevel::LoadLevel() {
     this->AddBullet(1);
     this->AddBullet(0);
     */
-    std::vector<int> chitemmuertu;
-    chitemmuertu.push_back(2);
-    chitemmuertu.push_back(3);
-    chitemmuertu.push_back(3);
-    chitemmuertu.push_back(5);
 
-    ResourceManager::writeBulletListOnFile("levels/mannaggiaMammata.b", chitemmuertu);
-    ResourceManager::LoadBulletList("levels/mannaggiaMammata.b", "LevelP");
+    ResourceManager::LoadBulletList("levels/lev.txt", "LevelP");
     this->bulletList = ResourceManager::GetBulletList("LevelP");
 }
 

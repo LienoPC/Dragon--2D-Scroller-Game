@@ -19,7 +19,7 @@ class GameLevel {
 public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
-	std::map<int,Bullet> bulletTypes;
+	std::map<int,Bullet> bulletTypes; // ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
 
 	int phase;
 
@@ -40,7 +40,8 @@ public:
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	void MoveBullet(glm::vec2 move, int identificator);
 
-	void PlayLevel(double seconds);
+	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
+	void PlayLevel();
 
 	void LoadLevel();
 
