@@ -18,7 +18,9 @@ public:
 	//std::vector<Hitbox> hitboxes;
 
 	// dragon characteristics
-	float movementSpeed;
+	float velocityModifier;
+	// dragon animation frames
+	std::vector<Texture2D> animationFrames;
 
 	// constructors
 	Dragon();
@@ -29,6 +31,7 @@ public:
 	void destroy();
 	void dealDamage();
 	void isOutside();
+	void Draw(SpriteRenderer& renderer, float dt); //used instead of default GameObject::Draw method
 };
 
 #endif

@@ -32,7 +32,7 @@ public:
 
 	void PlayLevel();
 	void LoadLevel();
-	void Draw(SpriteRenderer& renderer);
+	void Draw(SpriteRenderer& renderer, float dt);
 
 };
 

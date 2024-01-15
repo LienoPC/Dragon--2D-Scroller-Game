@@ -33,7 +33,7 @@ public:
     // game loop
     void ProcessInput(float dt);
     void Update(float dt);
-    void Render();
+    void Render(float dt);
     // effettua la logica di controllo delle collisioni su tutti
     // gli oggetti istanziati nella scena
     void DoCollisions();

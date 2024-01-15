@@ -67,8 +67,8 @@ void GameLevel::LoadLevel() {
     this->setPlayer(player);
 }
 
-void GameLevel::Draw(SpriteRenderer& renderer) {
-    player.Draw(renderer);
+void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
+    player.Draw(renderer, dt);
 
     for (Bullet b : this->instancedBullets) {
         if (!b.Destroyed)

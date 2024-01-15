@@ -41,7 +41,15 @@ void Game::Init()
     //ResourceManager::LoadTexture("textures/back2.png", true, "background");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
-    ResourceManager::LoadTexture("textures/dragon.png", true, "dragon");
+    // load dragon animation frames
+    ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
+    ResourceManager::LoadTexture("textures/dragon_frame1.png", true, "dragon_f1");
+    ResourceManager::LoadTexture("textures/dragon_frame2.png", true, "dragon_f2");
+    ResourceManager::LoadTexture("textures/dragon_frame3.png", true, "dragon_f3");
+    ResourceManager::LoadTexture("textures/dragon_frame4.png", true, "dragon_f4");
+    ResourceManager::LoadTexture("textures/dragon_frame5.png", true, "dragon_f5");
+    ResourceManager::LoadTexture("textures/dragon_frame6.png", true, "dragon_f6");
+    ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
     // load levels
     GameLevel test;
     test.LoadLevel();
@@ -57,7 +65,7 @@ void Game::Update(float dt)
 void Game::ProcessInput(float dt)
 {
     if (Game::State == GAME_ACTIVE) {
-        float velocity = dt * this->Levels[this->Level].player.movementSpeed;
+        float velocity = dt * this->Levels[this->Level].player.velocityModifier;
         glm::vec2 move;
 
         if (this->Keys[GLFW_KEY_A]) {
@@ -81,13 +89,13 @@ void Game::ProcessInput(float dt)
     }
 }
 
-void Game::Render()
+void Game::Render(float dt)
 {
     if (Game::State == GAME_ACTIVE) {
         // draw background
             // Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
         // draw level with a bullet in
-        this->Levels[this->Level].Draw(*Renderer);
+        this->Levels[this->Level].Draw(*Renderer, dt);
      
     }
 }
