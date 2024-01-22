@@ -1,7 +1,9 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
 
+
 #include "../game_structures/bullet.h"
+#include "../game_structures/game_level.h"
 #include "../glad/include/glad/glad.h"
 #include "../shaders_textures/shader.h"
 #include "../shaders_textures/texture.h"
@@ -23,7 +25,9 @@ public:
     
     static std::map<std::string, Shader>    Shaders;
     static std::map<std::string, Texture2D> Textures;
-    static std::map<std::string, std::vector<int>> Levels;
+    static std::map<std::string, GameLevel> Levels;
+    static std::map<int, Bullet>            BulletTypes;
+    //std::map<int, Window> Window::windowTypes;
     
 
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
@@ -35,15 +39,19 @@ public:
     // retrieves a stored texture
     static Texture2D GetTexture(std::string name);
     
-    static std::vector<int> LoadBulletList(const char* file, std::string name);
+    static GameLevel LoadLevelF(const char* file, std::string name);
 
     // retrieves the list of bullets of a level
-    static std::vector<int> GetBulletList(std::string name);
+    static GameLevel GetLevel(std::string name);
 
   
     // properly de-allocates all loaded resources
     static void      Clear();
 
+    // prende un bulletType dalla lista di definiti
+    static Bullet GetBullet(int type);
+
+    static void SetBullet(Bullet b);
    
 
     static void writeBulletListOnFile(const char* file, std::vector<int> list);
@@ -55,11 +63,11 @@ private:
     // loads a single texture from file
     static Texture2D loadTextureFromFile(const char *file, bool alpha);
     
+    static GameLevel loadLevelFile(const char* file);
+   
+    //static std::vector<int> loadBulletListFromFile(const char* file);
     
    
-    static std::vector<int> loadBulletListFromFile(const char* file);
-    
-
     
     
     

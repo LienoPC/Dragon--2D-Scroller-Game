@@ -1,18 +1,10 @@
 #ifndef GAMEBULLET_H
 #define GAMEBULLET_H
 
-
-
-
-#include <iostream>
-#include <sstream>
-#include <fstream>
-
 #include "../game_structures/game_object.h"
 
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
-#include "../resource_manager/resource_manager.h"
 
 // Class that defines a bullet in the game.
 // Every bullet is considered to deal damage every time it hits something

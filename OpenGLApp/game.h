@@ -2,6 +2,9 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <vector>
+#include <map>
+
 #include "glad/include/glad/glad.h"
 #include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 #include "game_structures/game_level.h"
@@ -26,8 +29,7 @@ public:
     std::vector<GameLevel>  Levels;
     unsigned int            Level;
 
-    // bulletTypes
-    static std::map<int, Bullet>            bulletTypes;
+    
 
     // constructor/destructor
     Game(unsigned int width, unsigned int height);
@@ -44,8 +46,7 @@ public:
     // verifica una generica collisione tra due gameObject
     void VerifyCollision(GameObject& one, GameObject& two);
 
-    // prende un bulletType dalla lista di definiti
-    static Bullet GetBullet(int type);
+   
 };
 
 #endif

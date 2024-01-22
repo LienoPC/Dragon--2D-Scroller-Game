@@ -1,6 +1,8 @@
 #ifndef GAMELEVEL_H
 #define GAMELEVEL_H
-#include <vector>
+
+
+
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
 
@@ -8,12 +10,15 @@
 #include "bullet.h"
 #include "dragon.h"
 #include "../sprite_renderer/sprite_renderer.h"
-#include "../resource_manager/resource_manager.h"
 
+#include <vector>
+
+/*
 #define PHASES 3
 #define SECONDS1 20
 #define SECONDS2 50
 #define SECONDS3 90
+*/
 
 class GameLevel {
 	
@@ -23,6 +28,12 @@ public:
 	 // ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
 
 	int phase;
+
+	// attributi del livello
+	//std::vector<ThrowWindow> actualWindows;
+	int maxInstancedBullet;
+	double minVel;
+	double maxVel;
 
 	// dovremmo avere due file, uno che contiene il livello (con la lista di bullet da lanciare e le posizioni relative)
 	// un altro file che modellizza i bullet con tutti i parametri e ne definisce l'identificatore
@@ -38,7 +49,7 @@ public:
 
 	void AddBullet(int bullet);
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
-	void MoveBullet(glm::vec2 move, int identificator);
+	//void MoveBullet(glm::vec2 move, int identificator);
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
 	void PlayLevel();

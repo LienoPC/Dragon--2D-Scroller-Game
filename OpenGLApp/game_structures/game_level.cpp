@@ -1,11 +1,15 @@
+//#include "../resource_manager/resource_manager.h"
 #include "game_level.h"
-#include "../game.h"
+#include "../resource_manager/resource_manager.h"
 #include "../timer/timerMy.h"
 #include <fstream>
 #include <sstream>
 
+
 GameLevel::GameLevel()
     : bulletList(NULL), instancedBullets(NULL){}
+
+
 
 void GameLevel::setPlayer(Dragon player) {
     this->player = player;
@@ -15,21 +19,22 @@ void GameLevel::movePlayer(glm::vec2 move) {
     this->player.move(move);
 }
 
+
+
+
 void GameLevel::AddBullet(int bullet) {
 	 this->bulletList.push_back(bullet);
 }
 
 
 void GameLevel::instanceBullet(int bullet, glm::vec2 pos) {
-    Bullet b(Game::GetBullet(bullet));
+    Bullet b(ResourceManager::GetBullet(bullet));
     this->instancedBullets.push_back(b);
 }
 
-void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
 
-    this->instancedBullets[identificator].move(move);
-    
-}
+
+
 
 void GameLevel::PlayLevel() {
 
@@ -62,14 +67,24 @@ void GameLevel::LoadLevel() {
     this->AddBullet(0);
     */
 
-    // Load the list of bullets for that level
-    ResourceManager::LoadBulletList("levels/lev.txt", "LevelP");
-    this->bulletList = ResourceManager::GetBulletList("LevelP");
+ 
+    // Set all Level attributes and constraints
+    ResourceManager::LoadLevelF("levels/lev.txt", "LevelP");
+    this->maxInstancedBullet = ResourceManager::GetLevel("LevelP").maxInstancedBullet;
+    this->minVel = ResourceManager::GetLevel("LevelP").minVel;
+    this->maxVel = ResourceManager::GetLevel("LevelP").maxVel;
+    this->bulletList = ResourceManager::GetLevel("LevelP").bulletList;
+    
+   
 
+    // Set initial time for the level
+    //Timer::setChrono();
 
     Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(300.0f, 400.0f), glm::vec2(200.0f, 200.0f), glm::vec3(1.0f), glm::vec2(1.0f), 300.0f, hitboxType(AABB));
     this->setPlayer(player);
 }
+
+
 
 void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     player.Draw(renderer, dt);
@@ -79,3 +94,17 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
             b.Draw(renderer);
     }
 }
+
+
+
+
+
+/*
+ DEPRECATED
+void GameLevel::MoveBullet(glm::vec2 move, int identificator) {
+
+    this->instancedBullets[identificator].move(move);
+
+}
+
+*/

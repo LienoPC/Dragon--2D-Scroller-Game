@@ -1,3 +1,4 @@
+#pragma once
 /*******************************************************************
 ** This code is part of Breakout.
 **
@@ -6,31 +7,31 @@
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
 ******************************************************************/
-#ifndef SPRITE_RENDERER_H
-#define SPRITE_RENDERER_H
+#ifndef BACKGROUND_RENDERER_H
+#define BACKGROUND_RENDERER_H
 
-#include "../glad/include/glad/glad.h"
-#include "../glm-master/glm/glm.hpp"
-#include "../glm-master/glm/gtc/matrix_transform.hpp"
+#include "glad/include/glad/glad.h"
+#include "glm-master/glm/glm.hpp"
+#include "glm-master/glm/gtc/matrix_transform.hpp"
 
-#include "../shaders_textures/texture.h"
-#include "../shaders_textures/shader.h"
+#include "shaders_textures/texture.h"
+#include "shaders_textures/shader.h"
 
 
-class SpriteRenderer
+class BackgroundRenderer
 {
 public:
     // Constructor (inits shaders/shapes)
-    SpriteRenderer(Shader shader);
+    BackgroundRenderer(Shader shader);
     // Destructor
-    ~SpriteRenderer();
+    ~BackgroundRenderer();
     // Renders a defined quad textured with given sprite
     void DrawSprite(Texture2D texture, glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     // Renders the scrolling background
-    void DrawScrollingBackground(Texture2D texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color, float dt);
+    void DrawScrollingBackground(Texture2D texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color);
 private:
     // Render state
-    Shader       shader; 
+    Shader       shader;
     unsigned int quadVAO;
     // Initializes and configures the quad's buffer and vertex attributes
     void initRenderData();

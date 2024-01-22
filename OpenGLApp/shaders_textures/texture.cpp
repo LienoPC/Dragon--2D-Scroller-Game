@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "texture.h"
+#include "../glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 
 
 Texture2D::Texture2D()
@@ -31,6 +32,17 @@ void Texture2D::Generate(unsigned int width, unsigned int height, unsigned char*
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->Filter_Max);
     // unbind texture
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture2D::Scroll() {
+    float offset = 1.0f;
+    this->Bind();
+    
+    
+
+    // unbind texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 
 void Texture2D::Bind() const
