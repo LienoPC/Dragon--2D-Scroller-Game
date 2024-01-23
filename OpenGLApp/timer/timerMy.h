@@ -1,30 +1,26 @@
 #ifndef TIMER_H
 #define GAME_H
 
-#include <__msvc_chrono.hpp>
+#include "../glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 
 class Timer {
 
 	public:
-		static std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> start_time;
+		static double start_time;
 		static int FPS;
-		static std::chrono::time_point<std::chrono::system_clock> actual_time;
+		static double actual_time;
 
 
 
 		Timer();
 
 
-		static double getElapsedSeconds() {
-			std::chrono::duration<double> elapsed(0);
-			elapsed = actual_time - start_time;
-			return elapsed.count();
-
-		} // ritorna il tempo passato in secondi dallo start_time al frame attuale
+		static double getElapsedSeconds();
+		// ritorna il tempo passato in secondi dallo start_time al frame attuale
 		static int getElapsedMilliS();
 
 		static void setChrono(){
-			start_time = std::chrono::system_clock::now();
+			start_time = glfwGetTime();
 		}
 		static void resetChrono();
 };

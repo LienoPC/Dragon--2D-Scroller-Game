@@ -9,13 +9,15 @@
 
 
 #include "game.h"
+#include "game_structures/bullet.h"
 #include "resource_manager/resource_manager.h"
 #include "sprite_renderer/sprite_renderer.h"
 
 
 // Game-related State data
 SpriteRenderer* Renderer;
-std::map<int, Bullet>  Game::bulletTypes;
+// bulletTypes
+static std::map<int, Bullet>            bulletTypes;
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -42,7 +44,7 @@ void Game::Init()
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
     ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
-    //ResourceManager::LoadTexture("textures/back2.png", true, "background");
+    ResourceManager::LoadTexture("textures/back2.png", true, "background");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
     // load dragon animation frames
@@ -76,7 +78,9 @@ void Game::Update(float dt)
 
 void Game::ProcessInput(float dt)
 {
-    if (Game::State == GAME_ACTIVE) {
+
+   
+     if (Game::State == GAME_ACTIVE) {
         float velocity = dt * this->Levels[this->Level].player.velocityModifier;
         glm::vec2 move;
 
@@ -99,21 +103,22 @@ void Game::ProcessInput(float dt)
 
 
     }
+ 
+   
 }
 
 void Game::Render(float dt)
 {
+
+
     if (Game::State == GAME_ACTIVE) {
         // draw background
-            // Renderer->DrawSprite(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f);
+        Renderer->DrawScrollingBackground(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
      
     }
-}
+    
 
-
-
-Bullet Game::GetBullet(int type) {
-    return bulletTypes[type];
+    
 }

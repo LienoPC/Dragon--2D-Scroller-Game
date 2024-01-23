@@ -6,19 +6,22 @@
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
 ******************************************************************/
-#include "resource_manager.h"
 
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include "resource_manager.h"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "../stb_image.h"
+
 
 
 // Instantiate static variables
 std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Shader>       ResourceManager::Shaders;
-std::map<std::string, std::vector<int>> ResourceManager::Levels;
+std::map<std::string, GameLevel>    ResourceManager::Levels;
+std::map<int, Bullet>       ResourceManager::BulletTypes;
 
 
 
@@ -44,15 +47,23 @@ Texture2D ResourceManager::GetTexture(std::string name)
     return Textures[name];
 }
 
-std::vector<int> ResourceManager::LoadBulletList(const char* file, std::string name) {
-    Levels[name] = loadBulletListFromFile(file);
+GameLevel ResourceManager::LoadLevelF(const char* file, std::string name) {
+    Levels[name] = loadLevelFile(file);
+
     return Levels[name];
 }
 
-std::vector<int> ResourceManager::GetBulletList(std::string name) {
+GameLevel ResourceManager::GetLevel(std::string name) {
     return Levels[name];
 }
 
+Bullet ResourceManager::GetBullet(int type) {
+    return BulletTypes[type];
+}
+
+void ResourceManager::SetBullet(Bullet b) {
+
+}
 
 
 
@@ -150,34 +161,30 @@ Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
 }
 
 
-/*
-std::vector<int> ResourceManager::loadBulletListFromFile(const char* file) {
+
+GameLevel ResourceManager::loadLevelFile(const char* file) {
     std::ifstream input(file, std::ios::binary);
-    std::vector<int> returned;
+    std::vector<int> bulletList;
+    GameLevel newL;
 
-    int oracolo;
-    while (!input.eof()) {
-        input.read((char*)&oracolo, sizeof(int));
-        returned.push_back(oracolo);
-    }
-    input.close();
-    return returned;
+    std::string in;
 
-}
+    // input del numero massimo di bullet istanziabili
+    std::getline(input, in, ',');
+    newL.maxInstancedBullet = std::stoi(in);
 
-*/
-
-
-std::vector<int> ResourceManager::loadBulletListFromFile(const char* file) {
-    std::ifstream input(file, std::ios::binary);
-    std::vector<int> returned;
-
+    // input dell'intervallo di velocità
+    std::getline(input, in, '-');
+    newL.minVel = std::stod(in);
+    std::getline(input, in, ',');
+    newL.maxVel = std::stod(in);
     char oracolo;
     while (!input.eof()) {
         input.read((char*)&oracolo, sizeof(char));
-        returned.push_back((int)oracolo);
+        bulletList.push_back((int)oracolo);
     }
-    input.close();
-    return returned;
 
+    newL.bulletList = bulletList;
+
+    return newL;
 }
