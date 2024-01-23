@@ -1,7 +1,6 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
 
-#include "../game_structures/game_level.h"
 #include "../game_structures/bullet.h"
 #include "../glad/include/glad/glad.h"
 #include "../shaders_textures/shader.h"
@@ -25,8 +24,6 @@ public:
     static std::map<std::string, Shader>    Shaders;
     static std::map<std::string, Texture2D> Textures;
     static std::map<std::string, std::vector<int>> Levels;
-    static Bullet Prova;
-
     
 
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader

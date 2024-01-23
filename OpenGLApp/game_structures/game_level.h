@@ -3,8 +3,10 @@
 #include <vector>
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
-#include "dragon.h"
+
+#include "game_object.h"
 #include "bullet.h"
+#include "dragon.h"
 #include "../sprite_renderer/sprite_renderer.h"
 #include "../resource_manager/resource_manager.h"
 

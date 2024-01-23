@@ -5,6 +5,7 @@
 
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
+#include "../resource_manager/resource_manager.h"
 
 #include <vector>
 
