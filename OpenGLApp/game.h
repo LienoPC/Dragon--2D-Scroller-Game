@@ -8,6 +8,7 @@
 #include "glad/include/glad/glad.h"
 #include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 #include "game_structures/game_level.h"
+#include "game_structures/hitbox.h"
 
 // Represents the current state of the game
 enum GameState {
@@ -48,6 +49,12 @@ public:
 
     // prende un bulletType dalla lista di definiti
     static Bullet GetBullet(int type);
+
+    //funzioni controllo collisioni
+    float dotProduct(coord a, coord b);
+    bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2); //virtual per funzione del padre che può essere chiamata dal figlio
+    bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC);
+    bool checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2);
 };
 
 #endif

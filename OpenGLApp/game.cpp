@@ -122,3 +122,81 @@ void Game::Render(float dt)
 
     
 }
+
+//FUNZIONI HITBOX -------------------------------------------------------------------------------------------
+float dotProduct(coord a, coord b) {
+    return a.X * b.X + a.Y * b.Y;
+}
+
+bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
+    for (int i = 0; i < 4; ++i) {
+        // Calcola l'asse per la proiezione
+        coord axis = { hitbox1.left_up.Y - hitbox1.left_down.Y,
+                       hitbox1.left_down.X - hitbox1.left_up.X };
+
+        float minhitbox1 = dotProduct(axis, hitbox1.left_up);
+        float maxhitbox1 = minhitbox1;
+
+        float minhitbox2 = dotProduct(axis, hitbox2.left_up);
+        float maxhitbox2 = minhitbox2;
+
+        // Calcola la proiezione su ogni asse
+        for (int j = 1; j < 4; ++j) {
+            float projectionhitbox1, projectionhitbox2;
+
+            if (j == 1) {
+                projectionhitbox1 = dotProduct(axis, hitbox1.left_down);
+                projectionhitbox2 = dotProduct(axis, hitbox2.left_down);
+            }
+            else if (j == 2) {
+                projectionhitbox1 = dotProduct(axis, hitbox1.right_up);
+                projectionhitbox2 = dotProduct(axis, hitbox2.right_up);
+            }
+            else {
+                projectionhitbox1 = dotProduct(axis, hitbox1.right_down);
+                projectionhitbox2 = dotProduct(axis, hitbox2.right_down);
+            }
+
+            minhitbox1 = std::min(minhitbox1, projectionhitbox1);
+            maxhitbox1 = std::max(maxhitbox1, projectionhitbox1);
+
+            minhitbox2 = std::min(minhitbox2, projectionhitbox2);
+            maxhitbox2 = std::max(maxhitbox2, projectionhitbox2);
+        }
+
+        // Se non c'è sovrapposizione su questo asse, i rettangoli non si intersecano
+        if (maxhitbox1 < minhitbox2 || maxhitbox2 < minhitbox1) {
+            return false;
+        }
+    }
+
+    // Sovrapposizione su tutti gli assi, i rettangoli si intersecano
+    return true;
+}
+
+bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet
+    float closestX = std::max(hitboxS.left_up.X, std::min(hitboxC.center.X, hitboxS.right_down.X));
+    float closestY = std::max(hitboxS.left_up.Y, std::min(hitboxC.center.Y, hitboxS.right_down.Y));
+
+    // Calcola la distanza tra il punto più vicino e il centro del cerchio
+    float distanceX = hitboxC.center.X - closestX;
+    float distanceY = hitboxC.center.Y - closestY;
+
+    // Se la distanza è inferiore al raggio, c'è intersezione
+    if ((distanceX * distanceX + distanceY * distanceY) < (hitboxC.radius * hitboxC.radius)) {
+        return true;
+    }
+    return false;
+}
+
+bool checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
+    // Calcola la distanza tra i centri dei due cerchi
+    float distance = std::sqrt(std::pow(hitbox2.center.X - hitbox1.center.X, 2) +   //pow usato per calcolare il quadrato
+                                std::pow(hitbox2.center.Y - hitbox1.center.Y, 2));
+
+    if (distance <= (hitbox1.radius + hitbox2.radius)) {
+        return true;  
+    }
+    return false;
+}
+//-------------------------------------------------------------------------------------------------------------------
