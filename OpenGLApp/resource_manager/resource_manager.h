@@ -8,6 +8,7 @@
 #include "../glad/include/glad/glad.h"
 #include "../shaders_textures/shader.h"
 #include "../shaders_textures/texture.h"
+#include "../game_structures/window.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -28,7 +29,7 @@ public:
     static std::map<std::string, Texture2D> Textures;
     static std::map<std::string, GameLevel> Levels;
     static std::map<int, Bullet>            BulletTypes;
-    //std::map<int, Window> Window::windowTypes;
+    std::map<int, Window>           Window::windowTypes;
     
 
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader

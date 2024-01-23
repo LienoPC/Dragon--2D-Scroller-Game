@@ -19,9 +19,7 @@ class Timer {
 		// ritorna il tempo passato in secondi dallo start_time al frame attuale
 		static int getElapsedMilliS();
 
-		static void setChrono(){
-			start_time = glfwGetTime();
-		}
+		static void setChrono();
 		static void resetChrono();
 };
 

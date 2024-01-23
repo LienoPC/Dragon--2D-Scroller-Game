@@ -16,8 +16,7 @@
 
 // Game-related State data
 SpriteRenderer* Renderer;
-// bulletTypes
-static std::map<int, Bullet>            bulletTypes;
+
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -61,8 +60,8 @@ void Game::Init()
 
     Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.5f), hitboxType(AABB), (int)'a');
     Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.3f), hitboxType(AABB), (int)'b');
-    bulletTypes[b1.Type] = b1;
-    bulletTypes[b2.Type] = b2;
+    ResourceManager::BulletTypes[b1.Type] = b1;
+    ResourceManager::BulletTypes[b2.Type] = b2;
 
     // load levels
     GameLevel test;

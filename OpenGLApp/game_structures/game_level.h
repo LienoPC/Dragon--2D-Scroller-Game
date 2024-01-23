@@ -8,6 +8,7 @@
 #include "dragon.h"
 #include "bullet.h"
 #include "../sprite_renderer/sprite_renderer.h"
+#include "../game_structures/window.h"
 
 #include <vector>
 
@@ -28,7 +29,7 @@ public:
 	int phase;
 
 	// attributi del livello
-	//std::vector<ThrowWindow> actualWindows;
+	std::vector<Window> actualWindows;
 	int maxInstancedBullet;
 	double minVel;
 	double maxVel;

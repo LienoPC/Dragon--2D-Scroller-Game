@@ -1,15 +1,18 @@
-
 #include "timerMy.h"
 
-double start_time;
-int FPS;
-double actual_time;
+double Timer::start_time;
+int Timer::FPS;
+double Timer::actual_time;
 
 Timer::Timer() {
 
 }
 
-/*
+
+void Timer::setChrono() {
+
+	start_time = glfwGetTime();
+}
 
 double Timer::getElapsedSeconds() {
 		double elapsed;
@@ -19,4 +22,4 @@ double Timer::getElapsedSeconds() {
 
 
 
-*/
+
