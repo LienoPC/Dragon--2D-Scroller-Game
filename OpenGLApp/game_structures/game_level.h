@@ -12,12 +12,13 @@
 
 #include <vector>
 
-/*
+
 #define PHASES 3
 #define SECONDS1 20
 #define SECONDS2 50
 #define SECONDS3 90
-*/
+#define VELINCREASE 10
+
 
 class GameLevel {
 	
@@ -29,7 +30,7 @@ public:
 	int phase;
 
 	// attributi del livello
-	std::vector<Window> actualWindows;
+	std::vector<ThrowWindow> actualWindows;
 	int maxInstancedBullet;
 	double minVel;
 	double maxVel;
@@ -45,8 +46,6 @@ public:
 
 
 	void instanceBullet(int bullet, glm::vec2 pos);
-
-	void AddBullet(int bullet);
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	//void MoveBullet(glm::vec2 move, int identificator);
 
@@ -54,6 +53,10 @@ public:
 	void PlayLevel();
 	void LoadLevel();
 	void Draw(SpriteRenderer& renderer, float dt);
+	
+	void IncreasePhase();
+
+	void instanceWindow(int identificator);
 };
 
 #endif

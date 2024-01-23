@@ -1,16 +1,20 @@
+#ifndef WINDOW_H
+#define WINDOW_H
 #include "../glm-master/glm/glm.hpp"
 
 
-class Window {
+class ThrowWindow {
 
-public: 
+public:
 	glm::vec2 Position;
 	double offsetInterval;
 	int identificator;
 
-	Window();
+	ThrowWindow();
 
-	Window(glm::vec2 Position, double offsetInterval, int identificator);
+	ThrowWindow(glm::vec2 Position, double offsetInterval, int identificator);
 
 
 };
+
+#endif

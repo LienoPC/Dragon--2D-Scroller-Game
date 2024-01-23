@@ -29,7 +29,7 @@ public:
     static std::map<std::string, Texture2D> Textures;
     static std::map<std::string, GameLevel> Levels;
     static std::map<int, Bullet>            BulletTypes;
-    std::map<int, Window>           Window::windowTypes;
+    static std::map<int, ThrowWindow>            WindowTypes;
     
 
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader
@@ -50,13 +50,17 @@ public:
     // properly de-allocates all loaded resources
     static void      Clear();
 
-    // prende un bulletType dalla lista di definiti
+    // metodi per gestire i bulletType
     static Bullet GetBullet(int type);
 
     static void SetBullet(Bullet b);
    
+    // metodi per gestire le Window
+    static ThrowWindow GetWindow(int identificator);
 
-    static void writeBulletListOnFile(const char* file, std::vector<int> list);
+    static void SetWindow(ThrowWindow t);
+
+
 private:
     // private constructor, that is we do not want any actual resource manager objects. Its members and functions should be publicly available (static).
     ResourceManager() { }

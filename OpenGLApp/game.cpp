@@ -60,8 +60,24 @@ void Game::Init()
 
     Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.5f), hitboxType(AABB), (int)'a');
     Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.3f), hitboxType(AABB), (int)'b');
-    ResourceManager::BulletTypes[b1.Type] = b1;
-    ResourceManager::BulletTypes[b2.Type] = b2;
+    ResourceManager::SetBullet(b1);
+    ResourceManager::SetBullet(b2);
+
+    // create all Throwing Windows
+    ThrowWindow center(glm::vec2(this->Width/2, 0.0f), this->Width/8, 0);
+    ThrowWindow leftAngle(glm::vec2(0.0f, 0.0f),0, 1);
+    ThrowWindow rightAngle(glm::vec2(this->Width, 0.0f), 0, 2);
+    ThrowWindow leftLeft(glm::vec2(0.0f, this->Height / 4), this->Height / 8, 3);
+    ThrowWindow rightRight(glm::vec2(this->Width, this->Height / 4), this->Height / 8, 4);
+    ThrowWindow topLeft(glm::vec2(this->Width / 4, 0.0f), this->Width / 8, 5);
+    ThrowWindow topRight(glm::vec2(this->Width - (this->Width / 4), 0.0f), this->Width / 8, 6);
+    ResourceManager::SetWindow(center);
+    ResourceManager::SetWindow(leftAngle);
+    ResourceManager::SetWindow(rightAngle);
+    ResourceManager::SetWindow(leftLeft);
+    ResourceManager::SetWindow(rightRight);
+    ResourceManager::SetWindow(topLeft);
+    ResourceManager::SetWindow(topRight);
 
     // load levels
     GameLevel test;

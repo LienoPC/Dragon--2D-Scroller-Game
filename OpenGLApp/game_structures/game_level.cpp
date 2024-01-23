@@ -21,17 +21,15 @@ void GameLevel::movePlayer(glm::vec2 move) {
 
 
 
-
-void GameLevel::AddBullet(int bullet) {
-	 this->bulletList.push_back(bullet);
-}
-
-
 void GameLevel::instanceBullet(int bullet, glm::vec2 pos) {
     Bullet b(ResourceManager::GetBullet(bullet));
     this->instancedBullets.push_back(b);
 }
 
+void GameLevel::instanceWindow(int identificator) {
+    ThrowWindow t(ResourceManager::GetWindow(identificator));
+    this->actualWindows.push_back(t);
+}
 
 
 
@@ -75,6 +73,10 @@ void GameLevel::LoadLevel() {
     this->maxVel = ResourceManager::GetLevel("LevelP").maxVel;
     this->bulletList = ResourceManager::GetLevel("LevelP").bulletList;
     
+    // Initiate all windows
+    instanceWindow(0);
+    instanceWindow(1);
+    instanceWindow(2);
    
 
     // Set initial time for the level
@@ -82,6 +84,8 @@ void GameLevel::LoadLevel() {
 
     Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(300.0f, 400.0f), glm::vec2(200.0f, 200.0f), glm::vec3(1.0f), glm::vec2(1.0f), 300.0f, hitboxType(AABB));
     this->setPlayer(player);
+    
+    // Definisco la phase e assegno le finestre
 }
 
 
@@ -95,7 +99,33 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     }
 }
 
+void GameLevel::IncreasePhase() {
+    if (phase + 1 <= PHASES) {
+        phase++;
+        this->minVel += VELINCREASE;
+        this->maxVel += VELINCREASE;
+        switch (phase) {
+        case 2:
+            instanceWindow(3);
+            instanceWindow(4);
+            break;
+        case 3:
+            instanceWindow(5);
+            instanceWindow(6);
+            break;
 
+        default:
+
+            break;
+
+        }
+    }
+    else {
+        // FINE LIVELLO?
+    }
+    
+
+}
 
 
 

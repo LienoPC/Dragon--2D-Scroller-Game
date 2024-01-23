@@ -21,7 +21,8 @@
 std::map<std::string, Texture2D>    ResourceManager::Textures;
 std::map<std::string, Shader>       ResourceManager::Shaders;
 std::map<std::string, GameLevel>    ResourceManager::Levels;
-std::map<int, Bullet>       ResourceManager::BulletTypes;
+std::map<int, Bullet>           ResourceManager::BulletTypes;
+std::map<int, ThrowWindow>          ResourceManager::WindowTypes;
 
 
 
@@ -62,28 +63,17 @@ Bullet ResourceManager::GetBullet(int type) {
 }
 
 void ResourceManager::SetBullet(Bullet b) {
-
+    BulletTypes[b.Type] = b;
 }
 
+ThrowWindow ResourceManager::GetWindow(int identificator) {
 
-
-/*
-* 
-* DEPRECATED
-void ResourceManager::writeBulletListOnFile(const char* file, std::vector<int> list) {
-    std::ofstream out(file, std::ios::out | std::ios::binary);
-    if (!out) {
-        std::cout << "Impossibile aprire il file" << std::endl;
-    }
-    for (int i = 0; i < list.size(); i++) {
-        out.write((char*)&list[i], sizeof(int));
-    }
-    out.close();
-
+    return WindowTypes[identificator];
 }
 
-
-*/
+void ResourceManager::SetWindow(ThrowWindow t) {
+    WindowTypes[t.identificator] = t;
+}
 
 
 
