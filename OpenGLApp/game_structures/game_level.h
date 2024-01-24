@@ -34,6 +34,7 @@ public:
 	int maxInstancedBullet;
 	double minVel;
 	double maxVel;
+	int windowNumber;
 
 	// dovremmo avere due file, uno che contiene il livello (con la lista di bullet da lanciare e le posizioni relative)
 	// un altro file che modellizza i bullet con tutti i parametri e ne definisce l'identificatore

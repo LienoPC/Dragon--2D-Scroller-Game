@@ -12,6 +12,7 @@
 #include "game_structures/bullet.h"
 #include "resource_manager/resource_manager.h"
 #include "sprite_renderer/sprite_renderer.h"
+#include "game_structures/window_constraints.h"
 
 
 // Game-related State data
@@ -64,13 +65,13 @@ void Game::Init()
     ResourceManager::SetBullet(b2);
 
     // create all Throwing Windows
-    ThrowWindow center(glm::vec2(this->Width/2, 0.0f), this->Width/8, 0);
-    ThrowWindow leftAngle(glm::vec2(0.0f, 0.0f),0, 1);
-    ThrowWindow rightAngle(glm::vec2(this->Width, 0.0f), 0, 2);
-    ThrowWindow leftLeft(glm::vec2(0.0f, this->Height / 4), this->Height / 8, 3);
-    ThrowWindow rightRight(glm::vec2(this->Width, this->Height / 4), this->Height / 8, 4);
-    ThrowWindow topLeft(glm::vec2(this->Width / 4, 0.0f), this->Width / 8, 5);
-    ThrowWindow topRight(glm::vec2(this->Width - (this->Width / 4), 0.0f), this->Width / 8, 6);
+    ThrowWindow center(glm::vec2(this->Width/2, 0.0f), glm::vec2(this->Width/8, 0.0f), 0, DirectionStart(UP));
+    ThrowWindow leftAngle(glm::vec2(0.0f, 0.0f),glm::vec2(0.0f), 1, DirectionStart(UP));
+    ThrowWindow rightAngle(glm::vec2(this->Width, 0.0f), glm::vec2(0.0f), 2, DirectionStart(UP));
+    ThrowWindow leftLeft(glm::vec2(0.0f, this->Height / 4), glm::vec2(0.0f, this->Height / 8), 3, DirectionStart(LEFT));
+    ThrowWindow rightRight(glm::vec2(this->Width, this->Height / 4), glm::vec2(0.0f, this->Height / 8), 4, DirectionStart(RIGHT));
+    ThrowWindow topLeft(glm::vec2(this->Width / 4, 0.0f), glm::vec2(this->Width / 8, 0.0f), 5, DirectionStart(UP));
+    ThrowWindow topRight(glm::vec2(this->Width - (this->Width / 4), 0.0f), glm::vec2(this->Width / 8, 0.0f), 6, DirectionStart(UP));
     ResourceManager::SetWindow(center);
     ResourceManager::SetWindow(leftAngle);
     ResourceManager::SetWindow(rightAngle);
@@ -80,9 +81,11 @@ void Game::Init()
     ResourceManager::SetWindow(topRight);
 
     // load levels
-    GameLevel test;
-    test.LoadLevel();
-    this->Levels.push_back(test);
+    // Level 1
+    GameLevel l1;
+    l1.windowNumber = W_NUMBER_1;
+    l1.LoadLevel();
+    this->Levels.push_back(l1);
     this->Level = 0;
 }
 

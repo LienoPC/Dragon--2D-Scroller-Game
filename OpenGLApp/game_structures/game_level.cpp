@@ -2,6 +2,8 @@
 #include "game_level.h"
 #include "../resource_manager/resource_manager.h"
 #include "../timer/timerMy.h"
+#include "window_constraints.h"
+#include <random>
 #include <fstream>
 #include <sstream>
 
@@ -34,22 +36,6 @@ void GameLevel::instanceWindow(int identificator) {
 
 
 
-void GameLevel::PlayLevel() {
-
-    // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
-    
-    // istanzio i proiettili che mi servono e verifico che quelli istanziati siano ancora validi
-    for (int i = 0; i < this->bulletList.size(); i++) {
-        instanceBullet(this->bulletList[i], glm::vec2(i * 5, 0.0f));
-    }
-
-    // muove tutti i proiettili istanziati nella scena
-    for (int i = 0; i < this->instancedBullets.size(); i++) {
-        this->instancedBullets[i].move(glm::vec2(0.3 + (i/10), 0.4 + (i/5)));
-    }
-
-
-}
 
 void GameLevel::LoadLevel() {
 
@@ -74,11 +60,10 @@ void GameLevel::LoadLevel() {
     this->bulletList = ResourceManager::GetLevel("LevelP").bulletList;
     
     // Initiate all windows
-    instanceWindow(0);
-    instanceWindow(1);
-    instanceWindow(2);
+    for (int i = 0; i < this->windowNumber; i++) {
+        instanceWindow(i);
+    }
    
-
     // Set initial time for the level
     Timer::setChrono();
 
@@ -88,6 +73,74 @@ void GameLevel::LoadLevel() {
     // Definisco la phase e assegno le finestre
 }
 
+void GameLevel::PlayLevel() {
+
+    // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
+
+    // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
+    for (int i = 0; this->instancedBullets.size(); i++) {
+        Bullet b = this->instancedBullets[i];
+        if ((b.Position.y > LEV_LIMITY) || ((b.Position.y > LEV_LIMITY/2) && (b.Position.x < 0 || b.Position.x > LEV_LIMITX))) {
+            // il bullet è uscito fuori dal livello
+            if (i != this->instancedBullets.size() - 1)
+            {
+                // Beware of move assignment to self
+                // see http://stackoverflow.com/questions/13127455/
+                this->instancedBullets[i] = std::move(this->instancedBullets.back());
+            }
+            this->instancedBullets.pop_back();
+        }
+
+    }
+
+    // istanzio i proiettili che mi servono
+    if (this->instancedBullets.size() < this->maxInstancedBullet) {
+        for (int i = 0; i < (this->maxInstancedBullet - this->instancedBullets.size()); i++) {
+            if (this->bulletList.size() > 0) {
+
+                // random seed setting
+                std::srand((int)glfwGetTime());
+                
+                // window selection
+                int nW = (rand() % this->windowNumber) + 1;
+                // X offset selection
+                double lower_bound = -(double)this->actualWindows[nW].offsetInterval.x/2;
+                double upper_bound = (double)this->actualWindows[nW].offsetInterval.x/2;
+                std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+                std::default_random_engine re;
+                double positionOffsetX = unif(re);
+
+                // Y offset selection
+                lower_bound = -(double)this->actualWindows[nW].offsetInterval.y / 2;
+                upper_bound = (double)this->actualWindows[nW].offsetInterval.y / 2;
+                std::uniform_real_distribution<double> unif2(lower_bound, upper_bound);
+                double positionOffsetY = unif2(re);
+
+
+                // istanzio il proiettile
+                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position+glm::vec2(positionOffsetX, positionOffsetY));
+                this->bulletList.erase(this->bulletList.begin());
+            }
+            else {
+                // PROIETTILI FINITI -> PROBLEMA?
+
+            }
+        }
+    }
+
+
+
+    for (int i = 0; i < this->bulletList.size(); i++) {
+        instanceBullet(this->bulletList[i], glm::vec2(i * 5, 0.0f));
+    }
+
+    // muove tutti i proiettili istanziati nella scena
+    for (int i = 0; i < this->instancedBullets.size(); i++) {
+        this->instancedBullets[i].move(glm::vec2(0.3 + (i / 10), 0.4 + (i / 5)));
+    }
+
+
+}
 
 
 void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
@@ -104,21 +157,25 @@ void GameLevel::IncreasePhase() {
         phase++;
         this->minVel += VELINCREASE;
         this->maxVel += VELINCREASE;
-        switch (phase) {
-        case 2:
-            instanceWindow(3);
-            instanceWindow(4);
-            break;
-        case 3:
-            instanceWindow(5);
-            instanceWindow(6);
-            break;
+        /*
+            PER ORA ABBIAMO DECISO DI NO
+            switch (phase) {
+            case 2:
+                instanceWindow(3);
+                instanceWindow(4);
+                break;
+            case 3:
+                instanceWindow(5);
+                instanceWindow(6);
+                break;
 
-        default:
+            default:
 
             break;
 
         }
+        */
+        
     }
     else {
         // FINE LIVELLO?
