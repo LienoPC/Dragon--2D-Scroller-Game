@@ -29,6 +29,7 @@ public:
 	void copyBullet(Bullet b);
 	void move(glm::vec2 move);
 	void move(float dt);
+	void syncRotation();
 	void destroy();
 	void dealDamage();
 	void isOutside();

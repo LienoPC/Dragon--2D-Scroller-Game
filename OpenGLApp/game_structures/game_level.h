@@ -11,13 +11,14 @@
 #include "../game_structures/window.h"
 
 #include <vector>
+#include <map>
 
 
 #define PHASES 3
 #define SECONDS1 20
 #define SECONDS2 50
 #define SECONDS3 90
-#define VELINCREASE 10
+#define VELINCREASE 150
 
 
 class GameLevel {
@@ -53,6 +54,11 @@ public:
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
 	void PlayLevel(float dt);
 	void LoadLevel();
+
+	int WindowPick(std::map<int, bool> alreadyUsedW);
+
+	double positionOffsetPick(int sel, int nW);
+
 	void Draw(SpriteRenderer& renderer, float dt);
 	
 	void IncreasePhase();

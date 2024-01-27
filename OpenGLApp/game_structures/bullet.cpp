@@ -1,4 +1,5 @@
 #include "bullet.h"
+#include "../glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 
 Bullet::Bullet()
 	: Power(0), ParticlesNumber(0) {}
@@ -39,6 +40,14 @@ void Bullet::move(glm::vec2 move) {
 
 void Bullet::move(float dt) {
 	this->Position += this->Velocity * this->Direction*this->velApplied *dt;
+	this->Position.y += SCROLLING_SPEED*dt; // Sync the scrolling level with bullets
+}
+
+void Bullet::syncRotation() {
+
+	float cosA = this->Direction.x;
+	float degrees = std::acos(cosA) * (180.0 / 3.141592653589793238463);
+	this->Rotation = degrees+90;
 }
 
 

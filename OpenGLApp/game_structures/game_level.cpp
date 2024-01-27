@@ -47,6 +47,7 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, Direc
     b.Position = actualPosition;
     b.Direction = calculateNormalizedDirection(b.Position);
     b.velApplied = velocity;
+    b.syncRotation();
     this->instancedBullets.push_back(b);
 }
 
@@ -112,7 +113,7 @@ void GameLevel::PlayLevel(float dt) {
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
-        if ((b.Position.y > LEV_LIMITY) || ((b.Position.y > LEV_LIMITY/2) && (b.Position.x < 0 || b.Position.x > LEV_LIMITX))) {
+        if ((b.Position.y > LEV_LIMITY) || ((b.Position.y > LEV_LIMITY/2) && (b.Position.x + b.Size.x < 0 || b.Position.x > LEV_LIMITX))) {
             // il bullet è uscito fuori dal livello
             if (i != this->instancedBullets.size() - 1)
             {
@@ -135,33 +136,17 @@ void GameLevel::PlayLevel(float dt) {
         for (int i = 0; i < (this->maxInstancedBullet - tempSize); i++) {
             if (this->bulletList.size() > 0) {
 
-                
-              
-                // window selection
-                std::random_device rd;
-                std::default_random_engine re(rd());
-                std::uniform_int_distribution<int> unifInt(0, this->windowNumber-1);
-                int nW = unifInt(re);
                
-                while (!alreadyUsedW[nW]) {
-                    nW = unifInt(re);
-                }
-                alreadyUsedW[nW] = false;
                
+                int nW = WindowPick(alreadyUsedW);
                 
-                // X offset selection
-                double lower_bound = -(double)this->actualWindows[nW].offsetInterval.x/2;
-                double upper_bound = (double)this->actualWindows[nW].offsetInterval.x/2;
-                std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
-                double positionOffsetX = unif(re);
+                double positionOffsetX = positionOffsetPick(0, nW);
 
-                // Y offset selection
-                lower_bound = -(double)this->actualWindows[nW].offsetInterval.y / 2;
-                upper_bound = (double)this->actualWindows[nW].offsetInterval.y / 2;
-                std::uniform_real_distribution<double> unif2(lower_bound, upper_bound);
-                double positionOffsetY = unif2(re);
+                double positionOffsetY = positionOffsetPick(1, nW);
 
                 // velocity selection
+                std::random_device rd;
+                std::default_random_engine re(rd());
                 std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
                 double velocity = unif3(re);
 
@@ -186,6 +171,47 @@ void GameLevel::PlayLevel(float dt) {
 
 }
 
+
+int GameLevel::WindowPick(std::map<int, bool> alreadyUsedW) {
+
+    // window selection
+    std::random_device rd;
+    std::default_random_engine re(rd());
+    std::uniform_int_distribution<int> unifInt(0, this->windowNumber - 1);
+    int nW = unifInt(re);
+
+    while (!alreadyUsedW[nW]) {
+        nW = unifInt(re);
+    }
+    alreadyUsedW[nW] = false;
+    return nW;
+}
+
+double GameLevel::positionOffsetPick(int sel, int nW) {
+    std::random_device rd;
+    std::default_random_engine re(rd());
+    double lower_bound;
+    double upper_bound;
+    if (sel == 0) {
+        // X offset selection
+        lower_bound = -(double)this->actualWindows[nW].offsetInterval.x / 2;
+        upper_bound = (double)this->actualWindows[nW].offsetInterval.x / 2;
+        std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+        
+
+    }
+    else {
+        // Y offset selection
+        lower_bound = -(double)this->actualWindows[nW].offsetInterval.y / 2;
+        upper_bound = (double)this->actualWindows[nW].offsetInterval.y / 2;
+        
+
+    }
+    std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+
+    return unif(re);
+   
+}
 
 void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     player.Draw(renderer, dt);
