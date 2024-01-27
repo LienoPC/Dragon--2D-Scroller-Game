@@ -46,18 +46,20 @@ public:
 	void movePlayer(glm::vec2 move);
 
 
-	void instanceBullet(int bullet, glm::vec2 pos);
+	void instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart);
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	//void MoveBullet(glm::vec2 move, int identificator);
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
-	void PlayLevel();
+	void PlayLevel(float dt);
 	void LoadLevel();
 	void Draw(SpriteRenderer& renderer, float dt);
 	
 	void IncreasePhase();
 
 	void instanceWindow(int identificator);
+
+	glm::vec2 calculateNormalizedDirection(glm::vec2 bPosition);
 };
 
 #endif

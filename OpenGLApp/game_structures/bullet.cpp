@@ -34,8 +34,11 @@ Bullet::Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::v
 
 
 void Bullet::move(glm::vec2 move) {
-	this->Position += move*this->Velocity;
+	this->Position += move*this->Velocity*this->velApplied;
 }
 
+void Bullet::move(float dt) {
+	this->Position += this->Velocity * this->Direction*this->velApplied *dt;
+}
 
 

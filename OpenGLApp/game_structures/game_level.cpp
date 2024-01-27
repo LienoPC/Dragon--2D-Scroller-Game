@@ -3,6 +3,7 @@
 #include "../resource_manager/resource_manager.h"
 #include "../timer/timerMy.h"
 #include "window_constraints.h"
+#include <ctime>
 #include <random>
 #include <fstream>
 #include <sstream>
@@ -23,14 +24,45 @@ void GameLevel::movePlayer(glm::vec2 move) {
 
 
 
-void GameLevel::instanceBullet(int bullet, glm::vec2 pos) {
+void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart) {
     Bullet b(ResourceManager::GetBullet(bullet));
+    glm::vec2 actualPosition = pos;
+    
+    switch (directionStart) {
+
+    case UP:
+        actualPosition = pos + glm::vec2(0.0f,-b.Size.y);
+        break;
+
+    case LEFT:
+        actualPosition = pos + glm::vec2(-b.Size.x, 0.0f);
+        break;
+
+    case RIGHT:
+        actualPosition = pos + glm::vec2(b.Size.x, 0.0f);
+        break;
+
+    }
+    
+    b.Position = actualPosition;
+    b.Direction = calculateNormalizedDirection(b.Position);
+    b.velApplied = velocity;
     this->instancedBullets.push_back(b);
 }
 
 void GameLevel::instanceWindow(int identificator) {
     ThrowWindow t(ResourceManager::GetWindow(identificator));
     this->actualWindows.push_back(t);
+}
+
+glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
+    double a = (this->player.Position.x+this->player.Size.x/2) - bPosition.x;
+    double b = (this->player.Position.y+this->player.Size.y/2) - bPosition.y;
+    double c = std::sqrt(std::pow(a, 2) + std::powf(b, 2)); // ipotenusa
+    double cosA = a / c;
+    double cosB = b / c;
+    glm::vec2 returned(cosA, cosB);
+    return returned;
 }
 
 
@@ -73,19 +105,17 @@ void GameLevel::LoadLevel() {
     // Definisco la phase e assegno le finestre
 }
 
-void GameLevel::PlayLevel() {
+void GameLevel::PlayLevel(float dt) {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
 
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
-    for (int i = 0; this->instancedBullets.size(); i++) {
+    for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
         if ((b.Position.y > LEV_LIMITY) || ((b.Position.y > LEV_LIMITY/2) && (b.Position.x < 0 || b.Position.x > LEV_LIMITX))) {
             // il bullet è uscito fuori dal livello
             if (i != this->instancedBullets.size() - 1)
             {
-                // Beware of move assignment to self
-                // see http://stackoverflow.com/questions/13127455/
                 this->instancedBullets[i] = std::move(this->instancedBullets.back());
             }
             this->instancedBullets.pop_back();
@@ -93,21 +123,36 @@ void GameLevel::PlayLevel() {
 
     }
 
+    // tengo conto delle finestre già usate in un singolo lancio
+    std::map<int, bool> alreadyUsedW;
+    for (int i = 0; i < this->actualWindows.size(); i++) {
+        alreadyUsedW[actualWindows[i].identificator] = true;
+    }
+    
     // istanzio i proiettili che mi servono
     if (this->instancedBullets.size() < this->maxInstancedBullet) {
-        for (int i = 0; i < (this->maxInstancedBullet - this->instancedBullets.size()); i++) {
+        int tempSize = this->instancedBullets.size();
+        for (int i = 0; i < (this->maxInstancedBullet - tempSize); i++) {
             if (this->bulletList.size() > 0) {
 
-                // random seed setting
-                std::srand((int)glfwGetTime());
                 
+              
                 // window selection
-                int nW = (rand() % this->windowNumber) + 1;
+                std::random_device rd;
+                std::default_random_engine re(rd());
+                std::uniform_int_distribution<int> unifInt(0, this->windowNumber-1);
+                int nW = unifInt(re);
+               
+                while (!alreadyUsedW[nW]) {
+                    nW = unifInt(re);
+                }
+                alreadyUsedW[nW] = false;
+               
+                
                 // X offset selection
                 double lower_bound = -(double)this->actualWindows[nW].offsetInterval.x/2;
                 double upper_bound = (double)this->actualWindows[nW].offsetInterval.x/2;
                 std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
-                std::default_random_engine re;
                 double positionOffsetX = unif(re);
 
                 // Y offset selection
@@ -116,9 +161,12 @@ void GameLevel::PlayLevel() {
                 std::uniform_real_distribution<double> unif2(lower_bound, upper_bound);
                 double positionOffsetY = unif2(re);
 
+                // velocity selection
+                std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
+                double velocity = unif3(re);
 
                 // istanzio il proiettile
-                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position+glm::vec2(positionOffsetX, positionOffsetY));
+                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position+glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
                 this->bulletList.erase(this->bulletList.begin());
             }
             else {
@@ -130,13 +178,9 @@ void GameLevel::PlayLevel() {
 
 
 
-    for (int i = 0; i < this->bulletList.size(); i++) {
-        instanceBullet(this->bulletList[i], glm::vec2(i * 5, 0.0f));
-    }
-
     // muove tutti i proiettili istanziati nella scena
     for (int i = 0; i < this->instancedBullets.size(); i++) {
-        this->instancedBullets[i].move(glm::vec2(0.3 + (i / 10), 0.4 + (i / 5)));
+        this->instancedBullets[i].move(dt);
     }
 
 

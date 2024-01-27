@@ -59,8 +59,8 @@ void Game::Init()
 
     // create bulletTypes
 
-    Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.5f), hitboxType(AABB), (int)'a');
-    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.3f), hitboxType(AABB), (int)'b');
+    Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), hitboxType(AABB), (int)'a');
+    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), hitboxType(AABB), (int)'b');
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
 
@@ -91,7 +91,7 @@ void Game::Init()
 
 void Game::Update(float dt)
 {
-    this->Levels[this->Level].PlayLevel();
+    this->Levels[this->Level].PlayLevel(dt);
 }
 
 void Game::ProcessInput(float dt)

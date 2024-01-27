@@ -29,7 +29,7 @@ public:
     static std::map<std::string, Texture2D> Textures;
     static std::map<std::string, GameLevel> Levels;
     static std::map<int, Bullet>            BulletTypes;
-    static std::map<int, ThrowWindow>            WindowTypes;
+    static std::map<int, ThrowWindow>       WindowTypes;
     
 
     // loads (and generates) a shader program from file loading vertex, fragment (and geometry) shader's source code. If gShaderFile is not nullptr, it also loads a geometry shader

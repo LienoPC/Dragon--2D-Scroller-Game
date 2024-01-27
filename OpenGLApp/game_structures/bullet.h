@@ -13,7 +13,10 @@ class Bullet : public GameObject {
 
 	// bullet characteristics
 public:
+
+	glm::vec2   Direction; //Direzione di movimento
 	float	Power;
+	float	velApplied; // Velocity applied
 	// pensare se aggiungere una lista di secondary effect (considerare però che devono valere solo se colpiscono il drago)
 	float	ParticlesNumber; //Bho poi vediamo
 	 
@@ -25,6 +28,7 @@ public:
 	// methods
 	void copyBullet(Bullet b);
 	void move(glm::vec2 move);
+	void move(float dt);
 	void destroy();
 	void dealDamage();
 	void isOutside();
