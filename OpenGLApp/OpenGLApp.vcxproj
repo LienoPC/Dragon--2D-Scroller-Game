@@ -144,6 +144,7 @@
     <ClCompile Include="game_structures\dragon.cpp" />
     <ClCompile Include="game_structures\game_level.cpp" />
     <ClCompile Include="game_structures\game_object.cpp" />
+    <ClCompile Include="game_structures\hitbox.cpp" />
     <ClCompile Include="game_structures\window.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="game_structures\dragon.h" />
     <ClInclude Include="game_structures\game_level.h" />
     <ClInclude Include="game_structures\game_object.h" />
+    <ClInclude Include="game_structures\hitbox.h" />
     <ClInclude Include="game_structures\window.h" />
     <ClInclude Include="game_structures\window_constraints.h" />
     <ClInclude Include="resource_manager\resource_manager.h" />

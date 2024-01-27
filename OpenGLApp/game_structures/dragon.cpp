@@ -7,13 +7,13 @@ Dragon::Dragon()
 
 Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, hitboxType hitbox)
 : velocityModifier(mvSpeed), animationFrames(NULL){
-	this->Position = pos;
-	this->Size = size;
-	this->Velocity = velocity;
-	this->Color = color;
-	this->Sprite = sprite;
-	this->Hitbox = hitbox;
-	this->Sprite = ResourceManager::GetTexture("dragon_f0");
+	this->position = pos;
+	this->size = size;
+	this->velocity = velocity;
+	this->color = color;
+	this->sprite = sprite;
+	this->hitbox = hitbox;
+	this->sprite = ResourceManager::GetTexture("dragon_f0");
 	// Save dragon animation frames
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f0"));
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f1"));
@@ -23,12 +23,15 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f5"));
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f6"));
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f7"));
-	// TODO: Setta Hitboxes
+	// Setta Hitboxes
+	coord hitboxCoord;
+	hitboxCoord.X = 45 * size.x / 800;
+	//this->hitboxes.push_back(Square())
 }
 
 void Dragon::move(glm::vec2 move) {
 	// TODO: Check bordi schermo
-	this->Position += move;
+	this->position += move;
 }
 
 void Dragon::Draw(SpriteRenderer& renderer, float dt) {
@@ -38,7 +41,7 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 	static bool reversed = false;
 
 	deltaTime += dt;
-	renderer.DrawSprite(this->animationFrames.at(frame), this->Position, this->Size, this->Rotation, this->Color);
+	renderer.DrawSprite(this->animationFrames.at(frame), this->position, this->size, this->rotation, this->color);
 	
 	if (deltaTime >= FRAME_TIME) {
 		if (frame == 0) {

@@ -16,17 +16,17 @@ class GameObject
 {
 public:
     // object state
-    glm::vec2   Position, Size, Velocity; // velocità effettiva da moltiplicare alla "direzione di lancio" caricata dal livello (o gestita dalla IA)
+    glm::vec2   position, size, velocity; // velocità effettiva da moltiplicare alla "direzione di lancio" caricata dal livello (o gestita dalla IA)
 								            // e che ha un valore sempre tra 0.0f e 1.0f (sia x che y)
     
-    glm::vec3   Color;
-    hitboxType  Hitbox;
-    float       Rotation;
-    bool        IsSolid; //Definisce se l'hitbox è solida
-    bool        Destroyed; //Indica se l'oggetto è distrutto (può essere anche esteso al giocatore)
+    glm::vec3   color;
+    hitboxType  hitbox;
+    float       rotation;
+    bool        isSolid; //Definisce se l'hitbox è solida
+    bool        destroyed; //Indica se l'oggetto è distrutto (può essere anche esteso al giocatore)
     
     // render state
-    Texture2D   Sprite;
+    Texture2D   sprite;
 
    
     // constructor(s)

@@ -31,21 +31,21 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, Direc
     switch (directionStart) {
 
     case UP:
-        actualPosition = pos + glm::vec2(0.0f,-b.Size.y);
+        actualPosition = pos + glm::vec2(0.0f,-b.size.y);
         break;
 
     case LEFT:
-        actualPosition = pos + glm::vec2(-b.Size.x, 0.0f);
+        actualPosition = pos + glm::vec2(-b.size.x, 0.0f);
         break;
 
     case RIGHT:
-        actualPosition = pos + glm::vec2(b.Size.x, 0.0f);
+        actualPosition = pos + glm::vec2(b.size.x, 0.0f);
         break;
 
     }
     
-    b.Position = actualPosition;
-    b.Direction = calculateNormalizedDirection(b.Position);
+    b.position = actualPosition;
+    b.Direction = calculateNormalizedDirection(b.position);
     b.velApplied = velocity;
     b.syncRotation();
     this->instancedBullets.push_back(b);
@@ -57,8 +57,8 @@ void GameLevel::instanceWindow(int identificator) {
 }
 
 glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
-    double a = (this->player.Position.x+this->player.Size.x/2) - bPosition.x;
-    double b = (this->player.Position.y+this->player.Size.y/2) - bPosition.y;
+    double a = (this->player.position.x+this->player.size.x/2) - bPosition.x;
+    double b = (this->player.position.y+this->player.size.y/2) - bPosition.y;
     double c = std::sqrt(std::pow(a, 2) + std::powf(b, 2)); // ipotenusa
     double cosA = a / c;
     double cosB = b / c;
@@ -100,7 +100,7 @@ void GameLevel::LoadLevel() {
     // Set initial time for the level
     Timer::setChrono();
 
-    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(300.0f, 400.0f), glm::vec2(200.0f, 200.0f), glm::vec3(1.0f), glm::vec2(1.0f), 300.0f, hitboxType(AABB));
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(370.0f, 830.0f), glm::vec2(300.0f, 300.0f), glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, hitboxType(AABB));
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre
@@ -113,7 +113,7 @@ void GameLevel::PlayLevel(float dt) {
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
-        if ((b.Position.y > LEV_LIMITY) || ((b.Position.y > LEV_LIMITY/2) && (b.Position.x + b.Size.x < 0 || b.Position.x > LEV_LIMITX))) {
+        if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY/2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX))) {
             // il bullet è uscito fuori dal livello
             if (i != this->instancedBullets.size() - 1)
             {
@@ -217,7 +217,7 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     player.Draw(renderer, dt);
 
     for (Bullet b : this->instancedBullets) {
-        if (!b.Destroyed)
+        if (!b.destroyed)
             b.Draw(renderer);
     }
 }
