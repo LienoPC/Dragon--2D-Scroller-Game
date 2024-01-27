@@ -1,10 +1,7 @@
 #ifndef HITBOX_H
 #define HITBOX_H
 
-struct coord {
-    float X;
-    float Y;
-};
+#include "../glm-master/glm/glm.hpp"
 
 class Hitbox {
 public:
@@ -18,21 +15,21 @@ public:
 class Circle : public Hitbox {
 public:
     float radius;
-    coord center;
+    glm::vec2 center;
 
     Circle();
-    Circle(float radius, coord center);
+    Circle(float radius, glm::vec2 center);
 };
 
 class Square : public Hitbox {
 public:
-    coord left_up;
-    coord left_down;
-    coord right_up;
-    coord right_down;
+    glm::vec2 left_up;
+    glm::vec2 left_down;
+    glm::vec2 right_up;
+    glm::vec2 right_down;
 
     Square();
-    Square(coord left_up, coord left_down, coord right_up, coord right_down);
+    Square(glm::vec2 left_up, glm::vec2 left_down, glm::vec2 right_up, glm::vec2 right_down);
 };
 
 /*bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {   //hitbox1: drago //hitbox2:bullet

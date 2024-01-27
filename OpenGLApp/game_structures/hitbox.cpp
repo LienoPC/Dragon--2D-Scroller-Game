@@ -5,9 +5,9 @@ Hitbox::Hitbox(HitboxType type):
 	type(type) {};
 
 Circle::Circle() {};
-Circle::Circle(float radius, coord center): 
+Circle::Circle(float radius, glm::vec2 center):
 	Hitbox(CIRCLE), radius(radius), center(center) {};
 
 Square::Square() {};
-Square::Square(coord left_up, coord left_down, coord right_up, coord right_down) :
+Square::Square(glm::vec2 left_up, glm::vec2 left_down, glm::vec2 right_up, glm::vec2 right_down) :
 	Hitbox(SQUARE), left_up(left_up), left_down(left_down), right_up(right_up), right_down(right_down) {};

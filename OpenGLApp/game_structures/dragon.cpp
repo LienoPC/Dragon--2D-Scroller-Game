@@ -24,9 +24,10 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f6"));
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f7"));
 	// Setta Hitboxes
-	coord hitboxCoord;
-	hitboxCoord.X = 45 * size.x / 800;
-	//this->hitboxes.push_back(Square())
+	this->hitboxes.push_back(Square(glm::vec2(45 * size.x / 800, 290 * size.y / 800),
+									glm::vec2(45 * size.x / 800, 475 * size.y / 800),
+									glm::vec2(245 * size.x / 800, 290 * size.y / 800),
+									glm::vec2(245 * size.x / 800, 475 * size.y / 800)));
 }
 
 void Dragon::move(glm::vec2 move) {

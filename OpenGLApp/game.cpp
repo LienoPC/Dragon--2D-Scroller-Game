@@ -95,9 +95,7 @@ void Game::Update(float dt)
 }
 
 void Game::ProcessInput(float dt)
-{
-
-   
+{  
      if (Game::State == GAME_ACTIVE) {
         float velocity = dt * this->Levels[this->Level].player.velocityModifier;
         glm::vec2 move;
@@ -120,23 +118,67 @@ void Game::ProcessInput(float dt)
         }
 
 
-    }
- 
-   
+    }   
 }
 
 void Game::Render(float dt)
 {
-
-
     if (Game::State == GAME_ACTIVE) {
         // draw background
         Renderer->DrawScrollingBackground(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
      
-    }
-    
+    } 
+}
 
-    
+//FUNZIONI HITBOX -------------------------------------------------------------------------------------------
+float dotProduct(glm::vec2 a, glm::vec2 b) {
+    return a.x * b.x + a.y * b.y;
+}
+
+bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
+    for (int i = 0; i < 4; ++i) {
+        // Calcola l'asse per la proiezione
+        glm::vec2 axis = {hitbox1.left_up.y - hitbox1.left_down.y,
+                       hitbox1.left_down.x - hitbox1.left_up.x};
+
+        float minhitbox1 = dotProduct(axis, hitbox1.left_up);
+        float maxhitbox1 = minhitbox1;
+
+        float minhitbox2 = dotProduct(axis, hitbox2.left_up);
+        float maxhitbox2 = minhitbox2;
+
+        // Calcola la proiezione su ogni asse
+        for (int j = 1; j < 4; ++j) {
+            float projectionhitbox1, projectionhitbox2;
+
+            if (j == 1) {
+                projectionhitbox1 = dotProduct(axis, hitbox1.left_down);
+                projectionhitbox2 = dotProduct(axis, hitbox2.left_down);
+            }
+            else if (j == 2) {
+                projectionhitbox1 = dotProduct(axis, hitbox1.right_up);
+                projectionhitbox2 = dotProduct(axis, hitbox2.right_up);
+            }
+            else {
+                projectionhitbox1 = dotProduct(axis, hitbox1.right_down);
+                projectionhitbox2 = dotProduct(axis, hitbox2.right_down);
+            }
+
+            minhitbox1 = std::min(minhitbox1, projectionhitbox1);
+            maxhitbox1 = std::max(maxhitbox1, projectionhitbox1);
+
+            minhitbox2 = std::min(minhitbox2, projectionhitbox2);
+            maxhitbox2 = std::max(maxhitbox2, projectionhitbox2);
+        }
+
+        // Se non c'è sovrapposizione su questo asse, i rettangoli non si intersecano
+        if (maxhitbox1 < minhitbox2 || maxhitbox2 < minhitbox1) {
+            return false;
+        }
+    }
+
+    // Sovrapposizione su tutti gli assi, i rettangoli si intersecano
+    return true;
 }
