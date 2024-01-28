@@ -14,7 +14,7 @@ class Dragon : public GameObject {
 
 public:
 	//dragon hitboxes vector
-	std::vector<Hitbox> hitboxes;
+	std::vector<Square> hitboxes;
 
 	// dragon characteristics
 	float velocityModifier;

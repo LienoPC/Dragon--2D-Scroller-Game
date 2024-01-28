@@ -2,6 +2,11 @@
 #ifndef GAME_H
 #define GAME_H
 
+// The width of the screen
+const unsigned int SCREEN_WIDTH = 1040;
+// The height of the screen
+const unsigned int SCREEN_HEIGHT = 1280;
+
 #include <vector>
 #include <map>
 

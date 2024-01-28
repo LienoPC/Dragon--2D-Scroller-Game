@@ -12,8 +12,6 @@
 GameLevel::GameLevel()
     : bulletList(NULL), instancedBullets(NULL){}
 
-
-
 void GameLevel::setPlayer(Dragon player) {
     this->player = player;
 }
@@ -22,7 +20,12 @@ void GameLevel::movePlayer(glm::vec2 move) {
     this->player.move(move);
 }
 
-
+bool GameLevel::isPlayerOutOfBounds(glm::vec2 pos, int height, int width) {
+    if (pos.x < 0 || pos.x + this->player.size.x > width ||
+        pos.y - 350 * this->player.size.y / 800 < 0 || pos.y + 705 * this->player.size.y / 800 > height)
+        return true;
+    return false;
+}
 
 void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart) {
     Bullet b(ResourceManager::GetBullet(bullet));
@@ -66,11 +69,7 @@ glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
     return returned;
 }
 
-
-
-
-
-void GameLevel::LoadLevel() {
+void GameLevel::LoadLevel(int height, int width) {
 
     /*
     * Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(0.4f), glm::vec2(1.0f), hitboxType(AABB),0);
@@ -100,7 +99,8 @@ void GameLevel::LoadLevel() {
     // Set initial time for the level
     Timer::setChrono();
 
-    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(370.0f, 830.0f), glm::vec2(300.0f, 300.0f), glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, hitboxType(AABB));
+    glm::vec2 playerSize = { 300.0f, 300.0f };
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, hitboxType(AABB));
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre

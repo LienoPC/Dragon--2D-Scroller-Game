@@ -45,6 +45,7 @@ public:
 
 	void setPlayer(Dragon dragon);
 	void movePlayer(glm::vec2 move);
+	bool isPlayerOutOfBounds(glm::vec2 pos, int height, int width);
 
 
 	void instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart);
@@ -53,7 +54,7 @@ public:
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
 	void PlayLevel(float dt);
-	void LoadLevel();
+	void LoadLevel(int height, int width);
 
 	int WindowPick(std::map<int, bool> alreadyUsedW);
 

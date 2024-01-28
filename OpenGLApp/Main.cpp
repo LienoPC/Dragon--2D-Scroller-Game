@@ -18,11 +18,6 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
-// The Width of the screen
-const unsigned int SCREEN_WIDTH = 1040;
-// The height of the screen
-const unsigned int SCREEN_HEIGHT = 1280;
-
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char* argv[])

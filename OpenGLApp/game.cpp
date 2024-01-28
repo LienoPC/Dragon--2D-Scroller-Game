@@ -84,7 +84,7 @@ void Game::Init()
     // Level 1
     GameLevel l1;
     l1.windowNumber = W_NUMBER_1;
-    l1.LoadLevel();
+    l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH);
     this->Levels.push_back(l1);
     this->Level = 0;
 }
@@ -98,26 +98,32 @@ void Game::ProcessInput(float dt)
 {  
      if (Game::State == GAME_ACTIVE) {
         float velocity = dt * this->Levels[this->Level].player.velocityModifier;
-        glm::vec2 move;
+        glm::vec2 move, playerPos = this->Levels[this->Level].player.position;
 
         if (this->Keys[GLFW_KEY_A]) {
             move = glm::vec2(-velocity, 0.0f);
-            this->Levels[this->Level].movePlayer(move);
+
+            if (!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                this->Levels[this->Level].movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
-            this->Levels[this->Level].movePlayer(move);
+
+            if(!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                this->Levels[this->Level].movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_W]) {
             move = glm::vec2(0.0f, -velocity);
-            this->Levels[this->Level].movePlayer(move);
+
+            if (!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                this->Levels[this->Level].movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_S]) {
             move = glm::vec2(0.0f, velocity);
-            this->Levels[this->Level].movePlayer(move);
+
+            if (!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                this->Levels[this->Level].movePlayer(move);
         }
-
-
     }   
 }
 
@@ -182,3 +188,30 @@ bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
     // Sovrapposizione su tutti gli assi, i rettangoli si intersecano
     return true;
 }
+
+bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet
+    float closestX = std::max(hitboxS.left_up.x, std::min(hitboxC.center.x, hitboxS.right_down.x));
+    float closestY = std::max(hitboxS.left_up.y, std::min(hitboxC.center.y, hitboxS.right_down.y));
+
+    // Calcola la distanza tra il punto più vicino e il centro del cerchio
+    float distanceX = hitboxC.center.x - closestX;
+    float distanceY = hitboxC.center.y - closestY;
+
+    // Se la distanza è inferiore al raggio, c'è intersezione
+    if ((distanceX * distanceX + distanceY * distanceY) < (hitboxC.radius * hitboxC.radius)) {
+        return true;
+    }
+    return false;
+}
+
+bool checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
+    // Calcola la distanza tra i centri dei due cerchi
+    float distance = std::sqrt(std::pow(hitbox2.center.x - hitbox1.center.x, 2) +   //pow usato per calcolare il quadrato
+        std::pow(hitbox2.center.y - hitbox1.center.y, 2));
+
+    if (distance <= (hitbox1.radius + hitbox2.radius)) {
+        return true;
+    }
+    return false;
+}
+//-------------------------------------------------------------------------------------------------------------------
