@@ -3,9 +3,9 @@
 #define GAME_H
 
 // The width of the screen
-const unsigned int SCREEN_WIDTH = 1040;
+const unsigned int SCREEN_WIDTH = 1280;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 1280;
+const unsigned int SCREEN_HEIGHT = 960;
 
 #include <vector>
 #include <map>

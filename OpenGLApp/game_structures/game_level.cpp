@@ -22,7 +22,7 @@ void GameLevel::movePlayer(glm::vec2 move) {
 
 bool GameLevel::isPlayerOutOfBounds(glm::vec2 pos, int height, int width) {
     if (pos.x < 0 || pos.x + this->player.size.x > width ||
-        pos.y - 350 * this->player.size.y / 800 < 0 || pos.y + 705 * this->player.size.y / 800 > height)
+        pos.y + 265 * this->player.size.y / 800 < 0 || pos.y + 705 * this->player.size.y / 800 > height)
         return true;
     return false;
 }
@@ -99,8 +99,8 @@ void GameLevel::LoadLevel(int height, int width) {
     // Set initial time for the level
     Timer::setChrono();
 
-    glm::vec2 playerSize = { 300.0f, 300.0f };
-    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, hitboxType(AABB));
+    glm::vec2 playerSize = { 375.0f, 375.0f };
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 450.0f, hitboxType(AABB));
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre
