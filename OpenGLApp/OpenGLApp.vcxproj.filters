@@ -116,4 +116,9 @@
       <Filter>File di origine</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Asset\level1.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

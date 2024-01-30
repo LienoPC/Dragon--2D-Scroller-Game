@@ -176,6 +176,9 @@
     <None Include="shader_light.fs" />
     <None Include="shader_light.vs" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Asset\level1.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
