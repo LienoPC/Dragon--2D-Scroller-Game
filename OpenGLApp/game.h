@@ -2,6 +2,11 @@
 #ifndef GAME_H
 #define GAME_H
 
+// The width of the screen
+const unsigned int SCREEN_WIDTH = 1280;
+// The height of the screen
+const unsigned int SCREEN_HEIGHT = 960;
+
 #include <vector>
 #include <map>
 
@@ -49,5 +54,11 @@ public:
     // prende un bulletType dalla lista di definiti
     static Bullet GetBullet(int type);
 };
+
+//funzioni controllo collisioni
+float dotProduct(glm::vec2 a, glm::vec2 b);
+bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2); //virtual per funzione del padre che può essere chiamata dal figlio
+bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC);
+bool checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2);
 
 #endif

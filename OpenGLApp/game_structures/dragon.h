@@ -2,6 +2,7 @@
 #define GAMEDRAGON_H
 
 #include "../game_structures/game_object.h"
+#include "../game_structures/hitbox.h"
 
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
@@ -13,7 +14,7 @@ class Dragon : public GameObject {
 
 public:
 	//dragon hitboxes vector
-	//std::vector<Hitbox> hitboxes;
+	std::vector<Square> hitboxes;
 
 	// dragon characteristics
 	float velocityModifier;

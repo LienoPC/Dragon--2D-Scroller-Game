@@ -5,14 +5,14 @@ Bullet::Bullet()
 	: Power(0), ParticlesNumber(0) {}
 
 Bullet::Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, hitboxType hitbox, int type){
-	this->Position = pos;
-	this->Size = size;
-	this->Velocity = velocity;
-	this->Color = color;
-	this->Sprite = sprite;
+	this->position = pos;
+	this->size = size;
+	this->velocity = velocity;
+	this->color = color;
+	this->sprite = sprite;
 	this->Power = pow;
 	this->ParticlesNumber = partNum;
-	this->Hitbox = hitbox;
+	this->hitbox = hitbox;
 	this->Type = type;
 	
 }
@@ -35,19 +35,19 @@ Bullet::Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::v
 
 
 void Bullet::move(glm::vec2 move) {
-	this->Position += move*this->Velocity*this->velApplied;
+	this->position += move*this->velocity*this->velApplied;
 }
 
 void Bullet::move(float dt) {
-	this->Position += this->Velocity * this->Direction*this->velApplied *dt;
-	this->Position.y += SCROLLING_SPEED*dt; // Sync the scrolling level with bullets
+	this->position += this->velocity * this->Direction*this->velApplied *dt;
+	this->position.y += SCROLLING_SPEED*dt; // Sync the scrolling level with bullets
 }
 
 void Bullet::syncRotation() {
 
 	float cosA = this->Direction.x;
 	float degrees = std::acos(cosA) * (180.0 / 3.141592653589793238463);
-	this->Rotation = degrees+90;
+	this->rotation = degrees+90;
 }
 
 

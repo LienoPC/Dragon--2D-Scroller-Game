@@ -12,8 +12,6 @@
 GameLevel::GameLevel()
     : bulletList(NULL), instancedBullets(NULL){}
 
-
-
 void GameLevel::setPlayer(Dragon player) {
     this->player = player;
 }
@@ -22,7 +20,12 @@ void GameLevel::movePlayer(glm::vec2 move) {
     this->player.move(move);
 }
 
-
+bool GameLevel::isPlayerOutOfBounds(glm::vec2 pos, int height, int width) {
+    if (pos.x < 0 || pos.x + this->player.size.x > width ||
+        pos.y + 265 * this->player.size.y / 800 < 0 || pos.y + 705 * this->player.size.y / 800 > height)
+        return true;
+    return false;
+}
 
 void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart) {
     Bullet b(ResourceManager::GetBullet(bullet));
@@ -31,21 +34,21 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, Direc
     switch (directionStart) {
 
     case UP:
-        actualPosition = pos + glm::vec2(0.0f,-b.Size.y);
+        actualPosition = pos + glm::vec2(0.0f,-b.size.y);
         break;
 
     case LEFT:
-        actualPosition = pos + glm::vec2(-b.Size.x, 0.0f);
+        actualPosition = pos + glm::vec2(-b.size.x, 0.0f);
         break;
 
     case RIGHT:
-        actualPosition = pos + glm::vec2(b.Size.x, 0.0f);
+        actualPosition = pos + glm::vec2(b.size.x, 0.0f);
         break;
 
     }
     
-    b.Position = actualPosition;
-    b.Direction = calculateNormalizedDirection(b.Position);
+    b.position = actualPosition;
+    b.Direction = calculateNormalizedDirection(b.position);
     b.velApplied = velocity;
     b.syncRotation();
     this->instancedBullets.push_back(b);
@@ -57,8 +60,8 @@ void GameLevel::instanceWindow(int identificator) {
 }
 
 glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
-    double a = (this->player.Position.x+this->player.Size.x/2) - bPosition.x;
-    double b = (this->player.Position.y+this->player.Size.y/2) - bPosition.y;
+    double a = (this->player.position.x+this->player.size.x/2) - bPosition.x;
+    double b = (this->player.position.y+this->player.size.y/2) - bPosition.y;
     double c = std::sqrt(std::pow(a, 2) + std::powf(b, 2)); // ipotenusa
     double cosA = a / c;
     double cosB = b / c;
@@ -66,11 +69,7 @@ glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
     return returned;
 }
 
-
-
-
-
-void GameLevel::LoadLevel() {
+void GameLevel::LoadLevel(int height, int width) {
 
     /*
     * Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(0.4f), glm::vec2(1.0f), hitboxType(AABB),0);
@@ -100,7 +99,8 @@ void GameLevel::LoadLevel() {
     // Set initial time for the level
     Timer::setChrono();
 
-    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(300.0f, 400.0f), glm::vec2(200.0f, 200.0f), glm::vec3(1.0f), glm::vec2(1.0f), 300.0f, hitboxType(AABB));
+    glm::vec2 playerSize = { 375.0f, 375.0f };
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 450.0f, hitboxType(AABB));
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre
@@ -113,7 +113,7 @@ void GameLevel::PlayLevel(float dt) {
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
-        if ((b.Position.y > LEV_LIMITY) || ((b.Position.y > LEV_LIMITY/2) && (b.Position.x + b.Size.x < 0 || b.Position.x > LEV_LIMITX))) {
+        if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY/2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX))) {
             // il bullet è uscito fuori dal livello
             if (i != this->instancedBullets.size() - 1)
             {
@@ -217,7 +217,7 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     player.Draw(renderer, dt);
 
     for (Bullet b : this->instancedBullets) {
-        if (!b.Destroyed)
+        if (!b.destroyed)
             b.Draw(renderer);
     }
 }
