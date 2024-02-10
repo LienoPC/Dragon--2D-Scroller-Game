@@ -17,13 +17,14 @@ public:
 	glm::vec2   Direction; //Direzione di movimento
 	float	Power;
 	float	velApplied; // Velocity applied
+	Hitbox*	hitbox;
 	// pensare se aggiungere una lista di secondary effect (considerare però che devono valere solo se colpiscono il drago)
 	float	ParticlesNumber; //Bho poi vediamo
 	 
 	int		Type;
 	// constructors
 	Bullet();
-	Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, hitboxType hitbox, int type);
+	Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, HitboxType hitboxType, int type);
 
 	// methods
 	void copyBullet(Bullet b);

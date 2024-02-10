@@ -3,9 +3,11 @@
 
 #include "../glm-master/glm/glm.hpp"
 
+enum HitboxType { CIRCLE, SQUARE };
+
 class Hitbox {
 public:
-    enum HitboxType { CIRCLE, SQUARE };
+   
     HitboxType type;
 
     Hitbox();

@@ -50,6 +50,7 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, Direc
     b.position = actualPosition;
     b.Direction = calculateNormalizedDirection(b.position);
     b.velApplied = velocity;
+    b.destroyed = false;
     b.syncRotation();
     this->instancedBullets.push_back(b);
 }
@@ -100,7 +101,7 @@ void GameLevel::LoadLevel(int height, int width) {
     Timer::setChrono();
 
     glm::vec2 playerSize = { 375.0f, 375.0f };
-    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 450.0f, hitboxType(AABB));
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 450.0f, HitboxType(SQUARE));
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre
@@ -111,6 +112,7 @@ void GameLevel::PlayLevel(float dt) {
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
 
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
+    // oppure se è stato distrutto
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
         if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY/2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX))) {
@@ -121,6 +123,20 @@ void GameLevel::PlayLevel(float dt) {
             }
             this->instancedBullets.pop_back();
         }
+
+      
+        // valuto se il bullet è stato distrutto
+        if (b.destroyed == true) {
+            // rimuovo il proiettile
+            if (i != this->instancedBullets.size() - 1)
+            {
+                this->instancedBullets[i] = std::move(this->instancedBullets.back());
+            }
+            this->instancedBullets.pop_back();
+
+        }
+    
+        
 
     }
 

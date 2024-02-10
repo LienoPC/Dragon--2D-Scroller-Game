@@ -44,7 +44,7 @@ void Game::Init()
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
     ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
-    ResourceManager::LoadTexture("textures/back2.png", true, "background");
+    ResourceManager::LoadTexture("textures/levels/Background4LUNGO.png", true, "level1Grass");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
     // load dragon animation frames
@@ -59,8 +59,8 @@ void Game::Init()
 
     // create bulletTypes
 
-    Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), hitboxType(AABB), (int)'a');
-    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), hitboxType(AABB), (int)'b');
+    Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
+    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
 
@@ -91,39 +91,82 @@ void Game::Init()
 
 void Game::Update(float dt)
 {
-    this->Levels[this->Level].PlayLevel(dt);
+    GameLevel* level = &this->Levels[this->Level];
+    level->PlayLevel(dt); // gestisce il lancio di nuovi proiettili e la cancellazione di quelli che escono dalla scena
+
+    //Verifica delle hitbox per ogni proiettile/palle del drago
+    //Non so come sono gestite le palle per mo
+
+   
+      for (int i = 0; i < level->instancedBullets.size(); i++) {
+        // Verifico per ogni proiettile istanziato se ci sono hit
+        Bullet* b = &level->instancedBullets[i];
+        switch (b->hitboxT) {
+
+        case SQUARE:
+            if (verifyDragonCollisionSquare((Square*)b->hitbox)) {
+                // il bullet i ha colpito il dragòn
+                hitDragon(b);
+            }
+            break;
+
+        case CIRCLE:
+            if (verifyDragonCollisionCircle((Circle*)b->hitbox)) {
+                // il bullet i ha colpito il dragòn
+
+            }
+            break;
+
+        }
+
+
+       
+    }
+    
+    
+  
+    
+  
+
 }
 
 void Game::ProcessInput(float dt)
 {  
+    GameLevel* level = &this->Levels[this->Level];
      if (Game::State == GAME_ACTIVE) {
-        float velocity = dt * this->Levels[this->Level].player.velocityModifier;
-        glm::vec2 move, playerPos = this->Levels[this->Level].player.position;
+
+        // Movimento del dragòn
+        float velocity = dt * level->player.velocityModifier;
+        glm::vec2 move, playerPos = level->player.position;
 
         if (this->Keys[GLFW_KEY_A]) {
             move = glm::vec2(-velocity, 0.0f);
 
-            if (!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                this->Levels[this->Level].movePlayer(move);
+            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                level->movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
 
-            if(!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                this->Levels[this->Level].movePlayer(move);
+            if(!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                level->movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_W]) {
             move = glm::vec2(0.0f, -velocity);
 
-            if (!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                this->Levels[this->Level].movePlayer(move);
+            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                level->movePlayer(move);
         }
         if (this->Keys[GLFW_KEY_S]) {
             move = glm::vec2(0.0f, velocity);
 
-            if (!this->Levels[this->Level].isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                this->Levels[this->Level].movePlayer(move);
+            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+               level->movePlayer(move);
         }
+
+        
+
+
     }   
 }
 
@@ -131,7 +174,7 @@ void Game::Render(float dt)
 {
     if (Game::State == GAME_ACTIVE) {
         // draw background
-        Renderer->DrawScrollingBackground(ResourceManager::GetTexture("background"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height), 0.0f, glm::vec3(1.0f), dt);
+        Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
      
@@ -139,11 +182,49 @@ void Game::Render(float dt)
 }
 
 //FUNZIONI HITBOX -------------------------------------------------------------------------------------------
-float dotProduct(glm::vec2 a, glm::vec2 b) {
+void Game::hitDragon(Bullet* b) {
+    // eliminare il bullet
+    b->destroyed = true;
+
+    //Se il drago viene colpito, TODO:
+    //-Danno agli HP
+    //-Proiettile sparisce->Fatto
+    //-Effetto visivo per il fatto di essere stati colpiti:
+    // -Quello sul drago è gestito dalla classe Dragòn(?)
+    // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)
+    //-Orchideo ci stiamo dimenticando completamente i suoni
+    this->Levels[this->Level].player.dealDamage(b->Power);
+}
+
+
+
+bool Game::verifyDragonCollisionSquare(Square* h) {
+    for (int i = 0; i < this->Levels[this->Level].player.hitboxes.size(); i++) {
+
+        if (checkCollisionSquareSquare(this->Levels[this->Level].player.hitboxes[i], *h)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Game::verifyDragonCollisionCircle(Circle* h) {
+    for (int i = 0; i < this->Levels[this->Level].player.hitboxes.size(); i++) {
+        if (checkCollisionSquareCircle(this->Levels[this->Level].player.hitboxes[i], *h)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+
+float Game::dotProduct(glm::vec2 a, glm::vec2 b) {
     return a.x * b.x + a.y * b.y;
 }
 
-bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
+bool Game::checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
     for (int i = 0; i < 4; ++i) {
         // Calcola l'asse per la proiezione
         glm::vec2 axis = {hitbox1.left_up.y - hitbox1.left_down.y,
@@ -177,19 +258,21 @@ bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
 
             minhitbox2 = std::min(minhitbox2, projectionhitbox2);
             maxhitbox2 = std::max(maxhitbox2, projectionhitbox2);
-        }
 
+            
+        }
         // Se non c'è sovrapposizione su questo asse, i rettangoli non si intersecano
         if (maxhitbox1 < minhitbox2 || maxhitbox2 < minhitbox1) {
             return false;
         }
+       
     }
 
     // Sovrapposizione su tutti gli assi, i rettangoli si intersecano
     return true;
 }
 
-bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet
+bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet
     float closestX = std::max(hitboxS.left_up.x, std::min(hitboxC.center.x, hitboxS.right_down.x));
     float closestY = std::max(hitboxS.left_up.y, std::min(hitboxC.center.y, hitboxS.right_down.y));
 
@@ -204,7 +287,7 @@ bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: d
     return false;
 }
 
-bool checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
+bool Game::checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
     // Calcola la distanza tra i centri dei due cerchi
     float distance = std::sqrt(std::pow(hitbox2.center.x - hitbox1.center.x, 2) +   //pow usato per calcolare il quadrato
         std::pow(hitbox2.center.y - hitbox1.center.y, 2));

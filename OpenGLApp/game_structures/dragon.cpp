@@ -5,14 +5,14 @@
 Dragon::Dragon()
 	:velocityModifier(0.0f) {};
 
-Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, hitboxType hitbox)
+Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, HitboxType hitboxT)
 : velocityModifier(mvSpeed), animationFrames(NULL){
 	this->position = pos;
 	this->size = size;
 	this->velocity = velocity;
 	this->color = color;
 	this->sprite = sprite;
-	this->hitbox = hitbox;
+	this->hitboxT = hitboxT;
 	this->sprite = ResourceManager::GetTexture("dragon_f0");
 	// Save dragon animation frames
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f0"));
@@ -92,4 +92,9 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 		}	
 		deltaTime = 0;
 	}
+}
+
+
+void Dragon::dealDamage(double damage) {
+	
 }

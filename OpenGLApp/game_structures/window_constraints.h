@@ -6,6 +6,6 @@
 #define W_NUMBER_3 7
 #define UPPER_OFFSET 100
 
-#define LEV_LIMITY 600 // E' uguale al level height
-#define LEV_LIMITX 800
+#define LEV_LIMITY 960 // E' uguale al level height
+#define LEV_LIMITX 1280
 #endif

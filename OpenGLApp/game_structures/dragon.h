@@ -23,12 +23,11 @@ public:
 
 	// constructors
 	Dragon();
-	Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, hitboxType hitbox);
+	Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, HitboxType hitbox);
 
 	// methods
 	void move(glm::vec2 move);
-	void destroy();
-	void dealDamage();
+	void dealDamage(double damage);
 	void isOutside();
 	void Draw(SpriteRenderer& renderer, float dt); //used instead of default GameObject::Draw method
 };

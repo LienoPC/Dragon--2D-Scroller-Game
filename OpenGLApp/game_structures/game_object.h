@@ -7,7 +7,8 @@
 #include "../shaders_textures/texture.h"
 #include "../sprite_renderer/sprite_renderer.h"
 
-enum hitboxType{AABB, CIRCULAR};
+#include "hitbox.h"
+
 
 // Container object for holding all state relevant for a single
 // game object entity. Each object in the game likely needs the
@@ -20,7 +21,7 @@ public:
 								            // e che ha un valore sempre tra 0.0f e 1.0f (sia x che y)
     
     glm::vec3   color;
-    hitboxType  hitbox;
+    HitboxType  hitboxT;
     float       rotation;
     bool        isSolid; //Definisce se l'hitbox è solida
     bool        destroyed; //Indica se l'oggetto è distrutto (può essere anche esteso al giocatore)
@@ -31,7 +32,7 @@ public:
    
     // constructor(s)
     GameObject();
-    GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f), hitboxType Hitbox = hitboxType(AABB));
+    GameObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f), HitboxType Hitbox = SQUARE);
     // draw sprite
     virtual void Draw(SpriteRenderer& renderer);
    
