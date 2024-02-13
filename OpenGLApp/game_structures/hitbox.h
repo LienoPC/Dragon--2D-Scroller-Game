@@ -12,6 +12,9 @@ public:
 
     Hitbox();
     Hitbox(HitboxType type); //costruttore
+    //funzione astratta
+    virtual void verify();
+    
 };
 
 class Circle : public Hitbox {
@@ -21,6 +24,7 @@ public:
 
     Circle();
     Circle(float radius, glm::vec2 center);
+    void verify();
 };
 
 class Square : public Hitbox {
@@ -32,6 +36,7 @@ public:
 
     Square();
     Square(glm::vec2 left_up, glm::vec2 left_down, glm::vec2 right_up, glm::vec2 right_down);
+    void verify();
 };
 
 /*bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {   //hitbox1: drago //hitbox2:bullet

@@ -13,6 +13,7 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 	this->color = color;
 	this->sprite = sprite;
 	this->hitboxT = hitboxT;
+	this->stats = DragonStats(); //Inzializzo il dragòn a full vita
 	this->sprite = ResourceManager::GetTexture("dragon_f0");
 	// Save dragon animation frames
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f0"));
@@ -96,5 +97,5 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 
 
 void Dragon::dealDamage(double damage) {
-	
+	this->stats.HP = this->stats.HP - damage;
 }

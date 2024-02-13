@@ -100,22 +100,30 @@ void Game::Update(float dt)
    
       for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
-        Bullet* b = &level->instancedBullets[i];
-        switch (b->hitboxT) {
+        Bullet b = level->instancedBullets[i];
+        switch (b.hitboxT) {
 
         case SQUARE:
-            if (verifyDragonCollisionSquare((Square*)b->hitbox)) {
+        {
+            std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
+            if (verifyDragonCollisionSquare(*s)) {
                 // il bullet i ha colpito il dragòn
-                hitDragon(b);
+                //hitDragon(b);
             }
-            break;
+
+        }
+        break;
 
         case CIRCLE:
-            if (verifyDragonCollisionCircle((Circle*)b->hitbox)) {
+        {
+            std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
+            if (verifyDragonCollisionCircle(*c)) {
                 // il bullet i ha colpito il dragòn
 
             }
-            break;
+
+        }
+        break;
 
         }
 
@@ -198,19 +206,19 @@ void Game::hitDragon(Bullet* b) {
 
 
 
-bool Game::verifyDragonCollisionSquare(Square* h) {
+bool Game::verifyDragonCollisionSquare(Square h) {
     for (int i = 0; i < this->Levels[this->Level].player.hitboxes.size(); i++) {
 
-        if (checkCollisionSquareSquare(this->Levels[this->Level].player.hitboxes[i], *h)) {
+        if (checkCollisionSquareSquare(this->Levels[this->Level].player.hitboxes[i], h)) {
             return true;
         }
     }
     return false;
 }
 
-bool Game::verifyDragonCollisionCircle(Circle* h) {
+bool Game::verifyDragonCollisionCircle(Circle h) {
     for (int i = 0; i < this->Levels[this->Level].player.hitboxes.size(); i++) {
-        if (checkCollisionSquareCircle(this->Levels[this->Level].player.hitboxes[i], *h)) {
+        if (checkCollisionSquareCircle(this->Levels[this->Level].player.hitboxes[i], h)) {
             return true;
         }
     }

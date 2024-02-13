@@ -28,7 +28,8 @@ bool GameLevel::isPlayerOutOfBounds(glm::vec2 pos, int height, int width) {
 }
 
 void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart) {
-    Bullet b(ResourceManager::GetBullet(bullet));
+    Bullet b;
+    b.copyBullet(ResourceManager::GetBullet(bullet));
     glm::vec2 actualPosition = pos;
     
     switch (directionStart) {

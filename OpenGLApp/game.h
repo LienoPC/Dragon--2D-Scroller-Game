@@ -57,8 +57,8 @@ public:
 
     void hitDragon(Bullet* b);
 
-    bool verifyDragonCollisionSquare(Square* h);
-    bool verifyDragonCollisionCircle(Circle* h);
+    bool verifyDragonCollisionSquare(Square h);
+    bool verifyDragonCollisionCircle(Circle h);
 
     //funzioni controllo collisioni
     float dotProduct(glm::vec2 a, glm::vec2 b);

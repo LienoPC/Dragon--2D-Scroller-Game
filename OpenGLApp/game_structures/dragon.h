@@ -3,6 +3,7 @@
 
 #include "../game_structures/game_object.h"
 #include "../game_structures/hitbox.h"
+#include "../game_structures/dragon_stats.h"
 
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
@@ -17,6 +18,7 @@ public:
 	std::vector<Square> hitboxes;
 
 	// dragon characteristics
+	DragonStats stats;
 	float velocityModifier;
 	// dragon animation frames
 	std::vector<Texture2D> animationFrames;
