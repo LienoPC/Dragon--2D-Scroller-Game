@@ -37,7 +37,7 @@ public:
 	void dealDamage();
 	void isOutside();
 	void updateHitbox();
-
+	void Draw(SpriteRenderer& renderer);
 	
 };
 

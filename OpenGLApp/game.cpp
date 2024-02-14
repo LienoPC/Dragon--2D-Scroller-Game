@@ -43,6 +43,7 @@ void Game::Init()
     // set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
+    ResourceManager::LoadTexture("textures/hitbox.png", true, "hitbox");
     ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
     ResourceManager::LoadTexture("textures/levels/Background4LUNGO.png", true, "level1Grass");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
@@ -108,7 +109,7 @@ void Game::Update(float dt)
             std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
             if (verifyDragonCollisionSquare(*s)) {
                 // il bullet i ha colpito il dragòn
-                //hitDragon(b);
+                hitDragon(&level->instancedBullets[i]);
             }
 
         }

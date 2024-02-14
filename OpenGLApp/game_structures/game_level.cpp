@@ -236,6 +236,9 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     for (Bullet b : this->instancedBullets) {
         if (!b.destroyed)
             b.Draw(renderer);
+        else {
+            // particles?
+        }
     }
 }
 

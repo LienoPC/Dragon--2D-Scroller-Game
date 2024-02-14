@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
         Breakout.Render(deltaTime);
 
         glfwSwapBuffers(window);
-    }
+}
 
     // delete all resources as loaded using the resource manager
     // ---------------------------------------------------------

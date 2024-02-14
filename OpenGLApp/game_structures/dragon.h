@@ -32,6 +32,8 @@ public:
 	void dealDamage(double damage);
 	void isOutside();
 	void Draw(SpriteRenderer& renderer, float dt); //used instead of default GameObject::Draw method
+	void drawHitbox(SpriteRenderer& renderer);
+
 };
 
 #endif
