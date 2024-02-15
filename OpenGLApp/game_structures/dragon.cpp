@@ -32,16 +32,16 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 
 	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 250 * size.x / 800, this->position.y + 350 * size.y / 800),
 									glm::vec2(this->position.x + 250 * size.x / 800, this->position.y + 465 * size.y / 800),
-									glm::vec2(this->position.x + 385 * size.x / 800, this->position.y + 350 * size.y / 800),
-									glm::vec2(this->position.x + 385 * size.x / 800, this->position.y + 465 * size.y / 800)));
+									glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 350 * size.y / 800),
+									glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 465 * size.y / 800)));
 
-	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 385 * size.x / 800, this->position.y + 270 * size.y / 800),
-									glm::vec2(this->position.x + 385 * size.x / 800, this->position.y + 690 * size.y / 800),
-									glm::vec2(this->position.x + 415 * size.x / 800, this->position.y + 270 * size.y / 800),
-									glm::vec2(this->position.x + 415 * size.x / 800, this->position.y + 690 * size.y / 800)));
+	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 270 * size.y / 800),
+									glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 690 * size.y / 800),
+									glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 270 * size.y / 800),
+									glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 690 * size.y / 800)));
 
-	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 415 * size.x / 800, this->position.y + 350 * size.y / 800),
-									glm::vec2(this->position.x + 415 * size.x / 800, this->position.y +  465 * size.y / 800),
+	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 350 * size.y / 800),
+									glm::vec2(this->position.x + 405 * size.x / 800, this->position.y +  465 * size.y / 800),
 									glm::vec2(this->position.x + 550 * size.x / 800, this->position.y + 350 * size.y / 800),
 									glm::vec2(this->position.x + 550 * size.x / 800, this->position.y + 465 * size.y / 800)));
 
@@ -61,6 +61,10 @@ void Dragon::move(glm::vec2 move) {
 		this->hitboxes[i].right_up += move;
 		this->hitboxes[i].right_down += move;
 	}
+}
+
+void Dragon::setVelocityModifier(float newVelMod) {
+	this->velocityModifier = newVelMod;
 }
 
 void Dragon::Draw(SpriteRenderer& renderer, float dt) {
@@ -108,7 +112,6 @@ void Dragon::drawHitbox(SpriteRenderer& renderer) {
 	}
 
 }
-
 
 void Dragon::dealDamage(double damage) {
 	this->stats.HP = this->stats.HP - damage;
