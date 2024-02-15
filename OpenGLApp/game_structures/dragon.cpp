@@ -55,9 +55,6 @@ void Dragon::move(glm::vec2 move) {
 	// Move the dragon
 	this->position += move;
 	// Move the hitboxes with the dragon
-	
-
-
 	this->hitboxes[0].left_up = glm::vec2(this->position.x + 45 * size.x / 800, this->position.y + 290 * size.y / 800);
 	this->hitboxes[0].left_down = glm::vec2(this->position.x + 45 * size.x / 800, this->position.y + 475 * size.y / 800);
 	this->hitboxes[0].right_up = glm::vec2(this->position.x + 250 * size.x / 800, this->position.y + 290 * size.y / 800);
@@ -82,33 +79,6 @@ void Dragon::move(glm::vec2 move) {
 	this->hitboxes[4].left_down = glm::vec2(this->position.x + 550 * size.x / 800, this->position.y + 475 * size.y / 800);
 	this->hitboxes[4].right_up = glm::vec2(this->position.x + 755 * size.x / 800, this->position.y + 290 * size.y / 800);
 	this->hitboxes[4].right_down = glm::vec2(this->position.x + 755 * size.x / 800, this->position.y + 475 * size.y / 800);
-
-
-	
-	
-	/*
-	for (Square s : this->hitboxes) {
-
-		
-		s.left_up.x = s.left_up.x + move.x;
-		s.left_up.y = s.left_up.y + move.y;
-		s.left_down.x = s.left_down.x + move.x;
-		s.left_down.y = s.left_down.y + move.y;
-		s.right_up.x = s.right_up.x + move.x;
-		s.right_up.y = s.right_up.y + move.y;
-		s.right_down.x = s.right_down.x + move.x;
-		s.right_down.y = s.right_down.y + move.y;
-		
-		}
-	*/
-	
-	
-	
-	
-		
-	
-
-	
 }
 
 void Dragon::Draw(SpriteRenderer& renderer, float dt) {
