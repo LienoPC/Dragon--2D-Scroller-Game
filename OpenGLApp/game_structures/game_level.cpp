@@ -102,7 +102,7 @@ void GameLevel::LoadLevel(int height, int width) {
     Timer::setChrono();
 
     glm::vec2 playerSize = { 375.0f, 375.0f };
-    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 450.0f, HitboxType(SQUARE));
+    Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width/2 - playerSize.x/2, height/2), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, HitboxType(SQUARE));
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre

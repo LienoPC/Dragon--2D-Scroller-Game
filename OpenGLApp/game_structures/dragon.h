@@ -29,10 +29,12 @@ public:
 
 	// methods
 	void move(glm::vec2 move);
-	void dealDamage(double damage);
-	void isOutside();
+	void setVelocityModifier(float newVelMod);
 	void Draw(SpriteRenderer& renderer, float dt); //used instead of default GameObject::Draw method
-	void drawHitbox(SpriteRenderer& renderer);
+	void dealDamage(double damage);
+
+	void drawHitbox(SpriteRenderer& renderer); //hitbox drawing debug method
+	//void isOutside();
 
 };
 

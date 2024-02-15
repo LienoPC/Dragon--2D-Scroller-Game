@@ -109,33 +109,27 @@ void Game::Update(float dt)
         // Verifico per ogni proiettile istanziato se ci sono hit
         Bullet b = level->instancedBullets[i];
         switch (b.hitboxT) {
-
-        case SQUARE:
-        {
-            std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
-            if (verifyDragonCollisionSquare(*s)) {
-                // il bullet i ha colpito il dragòn
-                hitDragon(&level->instancedBullets[i]);
-            }
-
-        }
-        break;
-
-        case CIRCLE:
-        {
-            std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
-            if (verifyDragonCollisionCircle(*c)) {
-                // il bullet i ha colpito il dragòn
+            case SQUARE:
+            {
+                std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
+                if (verifyDragonCollisionSquare(*s)) {
+                    // il bullet i ha colpito il dragòn
+                    hitDragon(&level->instancedBullets[i]);
+                }
 
             }
+            break;
+            case CIRCLE:
+            {
+                std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
+                if (verifyDragonCollisionCircle(*c)) {
+                    // il bullet i ha colpito il dragòn
 
-        }
-        break;
+                }
 
-        }
-
-
-       
+            }
+            break;
+        }      
     }
     
     
@@ -147,42 +141,59 @@ void Game::Update(float dt)
 
 void Game::ProcessInput(float dt)
 {  
-    GameLevel* level = &this->Levels[this->Level];
+     GameLevel* level = &this->Levels[this->Level];
      if (Game::State == GAME_ACTIVE) {
+         // Gestione della velocità (sprint, slowdown)
+         static bool sprint = false, slowdown = false;
 
-        // Movimento del dragòn
-        float velocity = dt * level->player.velocityModifier;
-        glm::vec2 move, playerPos = level->player.position;
+         if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
+            level->player.setVelocityModifier(650.0f);
+            sprint = true;       
+         }
+         else if (!this->Keys[GLFW_KEY_LEFT_SHIFT] && sprint) {
+             level->player.setVelocityModifier(400.0f);
+             sprint = false;
+         }
 
-        if (this->Keys[GLFW_KEY_A]) {
+         if (this->Keys[GLFW_KEY_LEFT_CONTROL] && !slowdown) {
+             level->player.setVelocityModifier(250.0f);
+             slowdown = true;
+         }
+         else if (!this->Keys[GLFW_KEY_LEFT_CONTROL] && slowdown) {
+             level->player.setVelocityModifier(400.0f);
+             slowdown = false;
+         }
+
+
+         // Movimento del drago
+         float velocity = dt * level->player.velocityModifier;
+         glm::vec2 move, playerPos = level->player.position;
+
+         if (this->Keys[GLFW_KEY_A]) {
             move = glm::vec2(-velocity, 0.0f);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-        if (this->Keys[GLFW_KEY_D]) {
+         if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
 
             if(!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-        if (this->Keys[GLFW_KEY_W]) {
+         if (this->Keys[GLFW_KEY_W]) {
             move = glm::vec2(0.0f, -velocity);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-        if (this->Keys[GLFW_KEY_S]) {
+         if (this->Keys[GLFW_KEY_S]) {
             move = glm::vec2(0.0f, velocity);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-               level->movePlayer(move);
+                level->movePlayer(move);
         }
-
-        
-
-
-    }   
+     }   
 }
 
 void Game::Render(float dt)
