@@ -7,8 +7,9 @@ class DragonStats {
 	
 public:
 	
-	double HP; //HP
-
+	float HP; //HP
+	
+	float FP; //FP (Mana)
 
 	DragonStats();
 };

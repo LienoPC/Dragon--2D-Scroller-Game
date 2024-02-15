@@ -60,6 +60,12 @@
     <ClCompile Include="game_structures\dragon_stats.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="text_renderer.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="hud\hud.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_s.h">
@@ -113,6 +119,12 @@
     <ClInclude Include="game_structures\dragon_stats.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="text_renderer.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="hud\hud.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader_light.fs">
@@ -127,6 +139,10 @@
     <None Include="shaders\sprite.fs">
       <Filter>File di origine</Filter>
     </None>
+    <None Include="shaders\text_2d.fs" />
+    <None Include="shaders\text_2d.vs" />
+    <None Include="shaders\flat.fs" />
+    <None Include="shaders\flat.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\..\..\Asset\level1.png">

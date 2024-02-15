@@ -13,10 +13,12 @@
 #include "resource_manager/resource_manager.h"
 #include "sprite_renderer/sprite_renderer.h"
 #include "game_structures/window_constraints.h"
-
+#include "text_renderer.h"
 
 // Game-related State data
 SpriteRenderer* Renderer;
+TextRenderer* Text;
+
 
 
 Game::Game(unsigned int width, unsigned int height)
@@ -59,7 +61,6 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
     // create bulletTypes
-
     Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
     Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
     ResourceManager::SetBullet(b1);
@@ -80,6 +81,11 @@ void Game::Init()
     ResourceManager::SetWindow(rightRight);
     ResourceManager::SetWindow(topLeft);
     ResourceManager::SetWindow(topRight);
+
+    //Initialization of the text renderer
+    Text = new TextRenderer(this->Width, this->Height);
+    Text->Load("fonts/aAbsoluteEmpire.ttf", 24);
+
 
     // load levels
     // Level 1
@@ -186,7 +192,8 @@ void Game::Render(float dt)
         Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
-     
+        
+        Text->RenderText("ONORE AL COMPAGNO GIUSEPPE STALIN TERRORE DEI FASCISTI E DEI FALSI COMUNISTI", 100.0f, 850.0f, 1.0f);
     } 
 }
 
