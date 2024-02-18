@@ -10,13 +10,11 @@
 
 #define HPTextY 800
 #define HPBarY 820
-#define FPBarY 845
-#define timeY 900
-#define medalX 400
 #define HUDX 50
 #define BARHEIGHT 20
 #define HPBARLENGHT 500
 #define FPBARLENGHT 300
+#define FONT 26
 
 enum Medal{BRONZE, SILVER, GOLD};
 
@@ -37,7 +35,9 @@ public:
 	std::string HPText;
 	float HPbarLenght;
 	float FPbarLenght;
-	std::string timeText;
+	std::string secondTimeText;
+	std::string millisTimeText;
+	std::string minuteTimeText;
 	Medal actualMedal;
 
 	HUD();
@@ -49,6 +49,7 @@ private:
 
 	void CalculateHPBar(float hp);
 	void CalculateFPBar(float fp);
+	void Scale();
 };
 
 #endif // !HUD_H

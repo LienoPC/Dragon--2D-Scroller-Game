@@ -16,10 +16,10 @@ void Timer::setChrono() {
 
 double Timer::getElapsedSeconds() {
 		double elapsed;
+		actual_time = glfwGetTime();
 		elapsed = actual_time - start_time;
 		return elapsed;
 }
-
 
 
 

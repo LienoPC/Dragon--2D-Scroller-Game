@@ -86,7 +86,7 @@ void Game::Init()
 
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
-    Text->Load("fonts/aAbsoluteEmpire.ttf", 18);
+    Text->Load("fonts/aAbsoluteEmpire.ttf", FONT);
 
     //Initialization of the flat renderer
     ResourceManager::LoadShader("shaders/flat.vs", "shaders/flat.fs", nullptr, "flat");
