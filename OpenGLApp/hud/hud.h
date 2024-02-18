@@ -6,13 +6,17 @@
 #include "../resource_manager/resource_manager.h"
 #include "../text_renderer.h"
 #include "../game_structures/dragon.h"
+#include "../flat_renderer/flat_renderer.h"
 
-#define HPY 650
-#define HPTextY 700
-#define HPBarY 750
-#define FPBarY 800
-#define timeY 850
-#define HUDX 200
+#define HPTextY 800
+#define HPBarY 820
+#define FPBarY 845
+#define timeY 900
+#define medalX 400
+#define HUDX 50
+#define BARHEIGHT 20
+#define HPBARLENGHT 500
+#define FPBARLENGHT 300
 
 enum Medal{BRONZE, SILVER, GOLD};
 
@@ -26,6 +30,8 @@ public:
 	const glm::vec2 posFPBar;
 	const glm::vec2 posTimeText;
 	const glm::vec2 posMedal;
+	const glm::vec3 HPcolor;
+	const glm::vec3 FPcolor;
 
 	// valore di ogni elemento nell'HUD
 	std::string HPText;
@@ -34,8 +40,10 @@ public:
 	std::string timeText;
 	Medal actualMedal;
 
+	HUD();
+
 	void init();
-	void RenderHUD(SpriteRenderer& r, TextRenderer& t, Dragon d);
+	void RenderHUD(SpriteRenderer& r, TextRenderer& t, FlatRenderer& f, Dragon d);
 
 private:
 

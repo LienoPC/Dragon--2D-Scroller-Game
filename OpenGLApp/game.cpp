@@ -14,10 +14,12 @@
 #include "sprite_renderer/sprite_renderer.h"
 #include "game_structures/window_constraints.h"
 #include "text_renderer.h"
+#include "flat_renderer/flat_renderer.h"
 
 // Game-related State data
 SpriteRenderer* Renderer;
 TextRenderer* Text;
+FlatRenderer* Flat;
 
 
 
@@ -61,8 +63,8 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
     // create bulletTypes
-    Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
-    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
+    Bullet b1(20.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
+    Bullet b2(50.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
 
@@ -84,8 +86,14 @@ void Game::Init()
 
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
-    Text->Load("fonts/aAbsoluteEmpire.ttf", 24);
+    Text->Load("fonts/aAbsoluteEmpire.ttf", 18);
 
+    //Initialization of the flat renderer
+    ResourceManager::LoadShader("shaders/flat.vs", "shaders/flat.fs", nullptr, "flat");
+    Flat = new FlatRenderer(ResourceManager::GetShader("flat"));
+
+    //HUD initialization
+    this->HUD.init();
 
     // load levels
     // Level 1
@@ -174,7 +182,7 @@ void Game::ProcessInput(float dt)
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
-        }
+         }
          if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
 
@@ -203,8 +211,8 @@ void Game::Render(float dt)
         Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
+        this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
         
-        Text->RenderText("ONORE AL COMPAGNO GIUSEPPE STALIN TERRORE DEI FASCISTI E DEI FALSI COMUNISTI", 100.0f, 850.0f, 1.0f);
     } 
 }
 
