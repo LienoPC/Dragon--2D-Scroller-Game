@@ -151,6 +151,8 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="hud\hud.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="menu\button.cpp" />
+    <ClCompile Include="menu\menu.cpp" />
     <ClCompile Include="resource_manager\resource_manager.cpp" />
     <ClCompile Include="shaders_textures\shader.cpp" />
     <ClCompile Include="shaders_textures\texture.cpp" />
@@ -171,6 +173,8 @@
     <ClInclude Include="game_structures\window.h" />
     <ClInclude Include="game_structures\window_constraints.h" />
     <ClInclude Include="hud\hud.h" />
+    <ClInclude Include="menu\button.h" />
+    <ClInclude Include="menu\menu.h" />
     <ClInclude Include="resource_manager\resource_manager.h" />
     <ClInclude Include="shaders_textures\shader.h" />
     <ClInclude Include="shaders_textures\texture.h" />

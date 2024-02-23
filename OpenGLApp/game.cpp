@@ -36,7 +36,6 @@ Game::~Game()
 
 void Game::Init()
 {
-
     // load shaders
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     // configure shaders
@@ -111,8 +110,7 @@ void Game::Update(float dt)
 
     //Verifica delle hitbox per ogni proiettile/palle del drago
     //Non so come sono gestite le palle per mo
-
-   
+  
       for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
         Bullet b = level->instancedBullets[i];
@@ -139,12 +137,6 @@ void Game::Update(float dt)
             break;
         }      
     }
-    
-    
-  
-    
-  
-
 }
 
 void Game::ProcessInput(float dt)
@@ -171,7 +163,6 @@ void Game::ProcessInput(float dt)
              level->player.setVelocityModifier(400.0f);
              slowdown = false;
          }
-
 
          // Movimento del drago
          float velocity = dt * level->player.velocityModifier;
@@ -227,7 +218,6 @@ void Game::hitDragon(Bullet* b) {
     //-Effetto visivo per il fatto di essere stati colpiti:
     // -Quello sul drago è gestito dalla classe Dragòn(?)
     // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)
-    //-Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power);
 }
 
