@@ -24,9 +24,7 @@ FlatRenderer* Flat;
 
 
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
-{
-
+    : State(GAME_MENU), Keys(), Width(width), Height(height) {
 }
 
 Game::~Game()
@@ -82,6 +80,14 @@ void Game::Init()
     ResourceManager::SetWindow(rightRight);
     ResourceManager::SetWindow(topLeft);
     ResourceManager::SetWindow(topRight);
+
+    //create Menus and Buttons
+    int id = 0;  
+    Menu mainMenu(id, ResourceManager::GetTexture("hitbox"));
+    Button playButton({ 1280.0f/2 - 720.0f/2 , 960.0f/2 - 480.0f/2 }, { 720.0f, 480.0f }, buttonType::link, ResourceManager::GetTexture("hitbox"), ResourceManager::GetTexture("hitbox"));
+    mainMenu.addButton(playButton);
+    this->Menus.push_back(mainMenu);
+    this->currMenu = id;
 
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
@@ -141,52 +147,55 @@ void Game::Update(float dt)
 
 void Game::ProcessInput(float dt)
 {  
-     GameLevel* level = &this->Levels[this->Level];
-     if (Game::State == GAME_ACTIVE) {
-         // Gestione della velocità (sprint, slowdown)
-         static bool sprint = false, slowdown = false;
+    if (Game::State == GAME_MENU) {
 
-         if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
+    }
+    else if (Game::State == GAME_ACTIVE) {
+        GameLevel* level = &this->Levels[this->Level];
+        // Gestione della velocità (sprint, slowdown)
+        static bool sprint = false, slowdown = false;
+
+        if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
             level->player.setVelocityModifier(650.0f);
             sprint = true;       
-         }
-         else if (!this->Keys[GLFW_KEY_LEFT_SHIFT] && sprint) {
+        }
+        else if (!this->Keys[GLFW_KEY_LEFT_SHIFT] && sprint) {
              level->player.setVelocityModifier(400.0f);
              sprint = false;
-         }
+        }
 
-         if (this->Keys[GLFW_KEY_LEFT_CONTROL] && !slowdown) {
+        if (this->Keys[GLFW_KEY_LEFT_CONTROL] && !slowdown) {
              level->player.setVelocityModifier(250.0f);
              slowdown = true;
-         }
-         else if (!this->Keys[GLFW_KEY_LEFT_CONTROL] && slowdown) {
+        }
+        else if (!this->Keys[GLFW_KEY_LEFT_CONTROL] && slowdown) {
              level->player.setVelocityModifier(400.0f);
              slowdown = false;
-         }
+        }
 
-         // Movimento del drago
-         float velocity = dt * level->player.velocityModifier;
-         glm::vec2 move, playerPos = level->player.position;
+        // Movimento del drago
+        float velocity = dt * level->player.velocityModifier;
+        glm::vec2 move, playerPos = level->player.position;
 
-         if (this->Keys[GLFW_KEY_A]) {
+        if (this->Keys[GLFW_KEY_A]) {
             move = glm::vec2(-velocity, 0.0f);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
-         }
-         if (this->Keys[GLFW_KEY_D]) {
+        }
+        if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
 
             if(!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-         if (this->Keys[GLFW_KEY_W]) {
+        if (this->Keys[GLFW_KEY_W]) {
             move = glm::vec2(0.0f, -velocity);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-         if (this->Keys[GLFW_KEY_S]) {
+        if (this->Keys[GLFW_KEY_S]) {
             move = glm::vec2(0.0f, velocity);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
@@ -196,8 +205,11 @@ void Game::ProcessInput(float dt)
 }
 
 void Game::Render(float dt)
-{
-    if (Game::State == GAME_ACTIVE) {
+{   
+    if (Game::State == GAME_MENU) {
+        this->Menus[this->currMenu].drawMenu(*Renderer, NULL);
+    }
+    else if (Game::State == GAME_ACTIVE) {
         // draw background
         Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in

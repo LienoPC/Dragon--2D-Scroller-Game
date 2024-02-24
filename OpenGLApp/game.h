@@ -14,6 +14,7 @@ const unsigned int SCREEN_HEIGHT = 960;
 #include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 #include "game_structures/game_level.h"
 #include "hud/hud.h"
+#include "menu/menu.h"
 
 // Represents the current state of the game
 enum GameState {
@@ -34,6 +35,8 @@ public:
     unsigned int            Width, Height;
     std::vector<GameLevel>  Levels;
     unsigned int            Level;
+    std::vector<Menu>       Menus;
+    unsigned int            currMenu;
     HUD                     HUD;
 
     
