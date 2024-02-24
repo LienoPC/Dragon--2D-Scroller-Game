@@ -21,6 +21,6 @@ public:
 
 	// methods
 	void addButton(Button b);
-	void drawMenu(SpriteRenderer& renderer, Button *mouseOver);
+	void drawMenu(SpriteRenderer& renderer);
 };
 #endif

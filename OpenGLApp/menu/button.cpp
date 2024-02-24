@@ -1,13 +1,14 @@
 #include "button.h"
 
-Button::Button() {}
+Button::Button()
+	:selected(false) {}
 Button::Button(glm::vec2 position, glm::vec2 size, buttonType type, Texture2D spriteBase, Texture2D spriteSelected)
-	:position(position), size(size), type(type), subMenuId(-1), spriteBase(spriteBase), spriteSelected(spriteSelected) {}
+	:position(position), size(size), type(type), subMenuId(-1), selected(false), spriteBase(spriteBase), spriteSelected(spriteSelected) {}
 Button::Button(glm::vec2 position, glm::vec2 size, buttonType type, int subMenuId, Texture2D spriteBase, Texture2D spriteSelected)
-	:position(position), size(size), type(type), subMenuId(subMenuId), spriteBase(spriteBase), spriteSelected(spriteSelected) {}
+	:position(position), size(size), type(type), subMenuId(subMenuId), selected(false), spriteBase(spriteBase), spriteSelected(spriteSelected) {}
 
-void Button::drawButton(SpriteRenderer& renderer, bool selected) {
-	if (selected)
+void Button::drawButton(SpriteRenderer& renderer) {
+	if (this->selected)
 		renderer.DrawSprite(this->spriteSelected, this->position, this->size, 0.0f, {0.0f, 0.5f, 1.0f});
 	else
 		renderer.DrawSprite(this->spriteBase, this->position, this->size, 0.0f, {1.0f, 0.5f, 0.0f});

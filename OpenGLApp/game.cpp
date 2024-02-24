@@ -24,7 +24,7 @@ FlatRenderer* Flat;
 
 
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_MENU), Keys(), Width(width), Height(height) {
+    : State(GAME_MENU), Keys(), Width(width), Height(height), window(window) {
 }
 
 Game::~Game()
@@ -32,8 +32,9 @@ Game::~Game()
     delete Renderer;
 }
 
-void Game::Init()
+void Game::Init(GLFWwindow* window)
 {
+    this->window = window;
     // load shaders
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     // configure shaders
@@ -83,11 +84,21 @@ void Game::Init()
 
     //create Menus and Buttons
     int id = 0;  
-    Menu mainMenu(id, ResourceManager::GetTexture("hitbox"));
-    Button playButton({ 1280.0f/2 - 720.0f/2 , 960.0f/2 - 480.0f/2 }, { 720.0f, 480.0f }, buttonType::link, ResourceManager::GetTexture("hitbox"), ResourceManager::GetTexture("hitbox"));
-    mainMenu.addButton(playButton);
+    Menu mainMenu(id++, ResourceManager::GetTexture("hitbox"));
+    Button button1({ 1280.0f/2 - 720.0f/2 , 960.0f/2 - 480.0f/2 - 150.0f }, { 720.0f, 240.0f }, buttonType::link, id, ResourceManager::GetTexture("hitbox"), ResourceManager::GetTexture("hitbox"));
+    Button button2({ 1280.0f / 2 - 720.0f / 2 , 960.0f / 2 - 480.0f / 2 + 150.0f }, { 720.0f, 240.0f }, buttonType::link, id, ResourceManager::GetTexture("hitbox"), ResourceManager::GetTexture("hitbox"));
+
+    Menu subMenu(id++, ResourceManager::GetTexture("hitbox"));
+    Button button3({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 - 150.0f }, { 720.0f, 240.0f }, buttonType::action, ResourceManager::GetTexture("stalin"), ResourceManager::GetTexture("stalin"));
+    Button button4({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 + 150.0f }, { 720.0f, 240.0f }, buttonType::action, ResourceManager::GetTexture("lenin"), ResourceManager::GetTexture("lenin"));
+
+    mainMenu.addButton(button1);
+    mainMenu.addButton(button2);
+    subMenu.addButton(button3);
+    subMenu.addButton(button4);
     this->Menus.push_back(mainMenu);
-    this->currMenu = id;
+    this->Menus.push_back(subMenu);
+    this->currMenu = 0;
 
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
@@ -148,7 +159,46 @@ void Game::Update(float dt)
 void Game::ProcessInput(float dt)
 {  
     if (Game::State == GAME_MENU) {
+        static Button *cursorOver = NULL, *clicked = NULL;
+        static bool mouseClicked = false;
+        double cursorX, cursorY;
+        glfwGetCursorPos(this->window, &cursorX, &cursorY);
 
+        if (!isCursorOnButton(cursorX, cursorY, cursorOver)) {
+            if (cursorOver != NULL) {
+                cursorOver->selected = false;
+                cursorOver = NULL;
+            }
+            for (Button& b : this->Menus[currMenu].buttons) {
+                if (isCursorOnButton(cursorX, cursorY, &b)) {
+                    cursorOver = &b;
+                    b.selected = true;
+                    break;
+                }
+            }
+        }
+
+        if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
+            if (cursorOver != NULL && !mouseClicked) {
+                mouseClicked = true;
+                clicked = cursorOver;
+            }
+            else {
+                mouseClicked = false;
+                clicked = NULL;
+            }
+        }
+
+        if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && mouseClicked) {
+            if (cursorOver != NULL && clicked != NULL && cursorOver == clicked) {
+                if (clicked->type == buttonType::link) {
+                    this->currMenu = clicked->subMenuId;
+                    cursorOver = NULL;
+                }
+            }
+            clicked = NULL;
+            mouseClicked = false;
+        }
     }
     else if (Game::State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
@@ -207,7 +257,7 @@ void Game::ProcessInput(float dt)
 void Game::Render(float dt)
 {   
     if (Game::State == GAME_MENU) {
-        this->Menus[this->currMenu].drawMenu(*Renderer, NULL);
+        this->Menus[this->currMenu].drawMenu(*Renderer);
     }
     else if (Game::State == GAME_ACTIVE) {
         // draw background
@@ -335,3 +385,17 @@ bool Game::checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
     return false;
 }
 //-------------------------------------------------------------------------------------------------------------------
+
+bool Game::isCursorOnButton(double xpos, double ypos, Button *b) {
+    if (b == NULL)
+        return false;
+
+    double cursorX, cursorY, bX, bY, bSizeX, bSizeY;
+    glfwGetCursorPos(this->window, &cursorX, &cursorY);
+    bX = b->position.x;
+    bY = b->position.y;
+    bSizeX = b->size.x;
+    bSizeY = b->size.y;
+
+    return !(b != NULL && (cursorX < bX || cursorX > bX + bSizeX || cursorY < bY || cursorY > bY + bSizeY)) ;
+}
