@@ -167,49 +167,51 @@ void Game::Init(GLFWwindow* window)
 
 void Game::Update(float dt)
 {
-    GameLevel* level = &this->Levels[this->Level];
-    level->PlayLevel(dt); // gestisce il lancio di nuovi proiettili e la cancellazione di quelli che escono dalla scena
+    if (this->State == GAME_ACTIVE) {
+        GameLevel* level = &this->Levels[this->Level];
+        level->PlayLevel(dt); // gestisce il lancio di nuovi proiettili e la cancellazione di quelli che escono dalla scena
 
-    //Verifica delle hitbox per ogni proiettile/palle del drago
-    //Non so come sono gestite le palle per mo
-  
-      for (int i = 0; i < level->instancedBullets.size(); i++) {
-        // Verifico per ogni proiettile istanziato se ci sono hit
-        Bullet b = level->instancedBullets[i];
-        if (b.destroyed == false) {
-            switch (b.hitboxT) {
-            case SQUARE:
-            {
-                std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
-                if (verifyDragonCollisionSquare(*s)) {
-                    // il bullet i ha colpito il drag�n
-                    //sEngine->play2D("audio/Hit.wav");
-                    hitDragon(&level->instancedBullets[i], i);
-                    
+        //Verifica delle hitbox per ogni proiettile/palle del drago
+        //Non so come sono gestite le palle per mo
 
+        for (int i = 0; i < level->instancedBullets.size(); i++) {
+            // Verifico per ogni proiettile istanziato se ci sono hit
+            Bullet b = level->instancedBullets[i];
+            if (b.destroyed == false) {
+                switch (b.hitboxT) {
+                case SQUARE:
+                {
+                    std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
+                    if (verifyDragonCollisionSquare(*s)) {
+                        // il bullet i ha colpito il drag�n
+                        //sEngine->play2D("audio/Hit.wav");
+                        hitDragon(&level->instancedBullets[i], i);
+
+
+                    }
                 }
-            }
-            break;
-            case CIRCLE:
-            {
-                std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
-                if (verifyDragonCollisionCircle(*c)) {
-                    // il bullet i ha colpito il drag�n
-                    //sEngine->play2D("audio/Hit.wav");
-                    hitDragon(&level->instancedBullets[i], i);
+                break;
+                case CIRCLE:
+                {
+                    std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
+                    if (verifyDragonCollisionCircle(*c)) {
+                        // il bullet i ha colpito il drag�n
+                        //sEngine->play2D("audio/Hit.wav");
+                        hitDragon(&level->instancedBullets[i], i);
+                    }
                 }
-            }
-            break;
-            }
+                break;
+                }
 
-        }              
-      }
-      if (ShakeTime > 0.0f)
-      {
-          ShakeTime -= dt;
-          if (ShakeTime <= 0.0f)
-              Effects->Shake = false;
-      }
+            }
+        }
+        if (ShakeTime > 0.0f)
+        {
+            ShakeTime -= dt;
+            if (ShakeTime <= 0.0f)
+                Effects->Shake = false;
+        }
+    }
 }
 
 void Game::ProcessInput(float dt)
