@@ -66,7 +66,7 @@ Bullet::Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec
 		break;
 
 	case CIRCLE:
-		c = std::make_shared<Circle>(Circle((float)std::max(this->size.x, this->size.y), this->position + (glm::vec2(this->size.x / 2, this->size.y / 2))));
+		c = std::make_shared<Circle>(Circle((float)std::max(this->size.x, this->size.y)/2, this->position + (glm::vec2(this->size.x / 2, this->size.y / 2))));
 		this->hitbox = c;
 		break;
 	}
@@ -76,13 +76,13 @@ Bullet::Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec
 			{
 		case HIT:
 		{
-			std::shared_ptr<HitParticleGenerator> h = std::make_shared<HitParticleGenerator>(HitParticleGenerator(b.particles[i]->getShader(), b.particles[i]->getTexture(), b.ParticlesNumber, ParticleType(HIT)));
+			std::shared_ptr<HitParticleGenerator> h = std::make_shared<HitParticleGenerator>(HitParticleGenerator(b.particles[i]->getShader(), b.particles[i]->getTexture(), b.ParticlesNumber, ParticleType(HIT), b.particles[i]->getSize()));
 			this->particles.push_back(h);
 			break;
 		}
 		case CONTINOUS:
 		{
-			std::shared_ptr<HitParticleGenerator> c = std::make_shared<HitParticleGenerator>(HitParticleGenerator(b.particles[i]->getShader(), b.particles[i]->getTexture(), b.ParticlesNumber, ParticleType(CONTINOUS)));
+			std::shared_ptr<HitParticleGenerator> c = std::make_shared<HitParticleGenerator>(HitParticleGenerator(b.particles[i]->getShader(), b.particles[i]->getTexture(), b.ParticlesNumber, ParticleType(CONTINOUS), b.particles[i]->getSize()));
 			this->particles.push_back(c);
 			break;
 		}

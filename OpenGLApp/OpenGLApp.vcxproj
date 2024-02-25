@@ -110,13 +110,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\glm-master;..\..\glad\include;..\..\glfw-3.3.8.bin.WIN64\include;\freetype\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\glm-master;..\..\glad\include;..\..\glfw-3.3.8.bin.WIN64\include;\freetype\;\irrKlang\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>glfw-3.3.8.bin.WIN64\lib-vc2022;\irrKlang\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -155,7 +155,10 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="hud\hud.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="menu\button.cpp" />
+    <ClCompile Include="menu\menu.cpp" />
     <ClCompile Include="resource_manager\resource_manager.cpp" />
+    <ClCompile Include="shaders_textures\post_processor.cpp" />
     <ClCompile Include="shaders_textures\shader.cpp" />
     <ClCompile Include="shaders_textures\texture.cpp" />
     <ClCompile Include="sprite_renderer\sprite_renderer.cpp" />
@@ -179,7 +182,10 @@
     <ClInclude Include="game_structures\window.h" />
     <ClInclude Include="game_structures\window_constraints.h" />
     <ClInclude Include="hud\hud.h" />
+    <ClInclude Include="menu\button.h" />
+    <ClInclude Include="menu\menu.h" />
     <ClInclude Include="resource_manager\resource_manager.h" />
+    <ClInclude Include="shaders_textures\post_processor.h" />
     <ClInclude Include="shaders_textures\shader.h" />
     <ClInclude Include="shaders_textures\texture.h" />
     <ClInclude Include="shader_s.h" />
@@ -193,6 +199,8 @@
     <None Include="shaders\flat.vs" />
     <None Include="shaders\particle.fs" />
     <None Include="shaders\particle.vs" />
+    <None Include="shaders\post_processing.fs" />
+    <None Include="shaders\post_processing.vs" />
     <None Include="shaders\sprite.fs" />
     <None Include="shaders\sprite.vs" />
     <None Include="shaders\text_2d.fs" />

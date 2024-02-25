@@ -19,7 +19,7 @@ public:
 
     ~ParticleGenerator() {};
 
-	ParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type);
+	ParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type, float size);
     ParticleType type;
 
     bool particleEnded;
@@ -32,11 +32,13 @@ public:
     void DrawSprite(SpriteRenderer& s);
     Shader getShader();
     Texture2D getTexture();
+    float getSize();
 
 protected:
     // state
     std::vector<Particle> particles;
     unsigned int amount;
+    float size;
     // render state
     Shader shader;
     Texture2D texture;
