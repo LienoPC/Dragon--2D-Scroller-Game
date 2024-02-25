@@ -2,10 +2,12 @@
 #include "../glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 #include <memory>
 #include "../resource_manager/resource_manager.h"
+#include "../game_structures/particle_generators/hit_particle_generator.h"
+#include "../game_structures/particle_generators/continuous_particle_generator.h"
 
 Bullet::Bullet() {}
 
-Bullet::Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, HitboxType hitboxT, int type){
+Bullet::Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, HitboxType hitboxT, int type){
 	this->position = pos;
 	this->size = size;
 	this->velocity = velocity;
@@ -39,8 +41,6 @@ Bullet::Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::v
 	break;
 	
 	}
-
-	
 	this->Type = type;
 	
 }
@@ -70,6 +70,25 @@ Bullet::Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::v
 		this->hitbox = c;
 		break;
 	}
+	for (int i = 0; i < b.particles.size(); i++) {
+		ParticleType t = b.particles[i]->type;
+		switch (t) {
+			{
+		case HIT:
+		{
+			std::shared_ptr<HitParticleGenerator> h = std::make_shared<HitParticleGenerator>(HitParticleGenerator(b.particles[i]->getShader(), b.particles[i]->getTexture(), b.ParticlesNumber, ParticleType(HIT)));
+			this->particles.push_back(h);
+			break;
+		}
+		case CONTINOUS:
+		{
+			std::shared_ptr<HitParticleGenerator> c = std::make_shared<HitParticleGenerator>(HitParticleGenerator(b.particles[i]->getShader(), b.particles[i]->getTexture(), b.ParticlesNumber, ParticleType(CONTINOUS)));
+			this->particles.push_back(c);
+			break;
+		}
+			}
+		}
+	}
 
 }
 
@@ -81,10 +100,16 @@ void Bullet::move(glm::vec2 move) {
 }
 
 void Bullet::move(float dt) {
-	this->position += this->velocity * this->Direction*this->velApplied *dt;
-	this->position.y += SCROLLING_SPEED*dt; // Sync the scrolling level with bullets
-	// aggiorna la hitbox
-	updateHitbox();
+	if (this->destroyed == false) {
+		this->position += this->velocity * this->Direction * this->velApplied * dt;
+		this->position.y += SCROLLING_SPEED * dt; // Sync the scrolling level with bullets
+		// aggiorna la hitbox
+		updateHitbox();
+	}
+	else {
+		this->UpdateParticles(dt);
+	}
+	
 }
 
 void Bullet::syncRotation() {
@@ -155,7 +180,16 @@ void Bullet::updateHitbox() {
 
 void Bullet::Draw(SpriteRenderer& renderer) {
 
-	renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
+	if (this->destroyed == true) {
+		// renderizzo i particellari
+		this->DrawParticles(renderer);
+	}
+	else {
+		renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
+	}
+
+	
+	/*
 	switch (this->hitboxT) {
 
 	case SQUARE:
@@ -175,6 +209,8 @@ void Bullet::Draw(SpriteRenderer& renderer) {
 
 
 	}
+	*/
+	
 }
 
 
@@ -183,6 +219,51 @@ void Bullet::Draw(SpriteRenderer& renderer) {
 void Bullet::destroy() {
 
 	this->destroyed = true;
+	// attivo l'effetto particellare
+	for (int i = 0; i < this->particles.size(); i++) {
+		ParticleType t = this->particles[i]->type;
+		switch (t) {
+			{
+		case HIT:
+		{
+			std::dynamic_pointer_cast<HitParticleGenerator>(this->particles[i])->HitStart(this->position);
+			break;
+		}
+		case CONTINOUS:
+		{
+			//std::dynamic_pointer_cast<ContinousParticleGenerator>(this->particles[i]);
+			break;
+		}
+			}
+		}
+	}
 }
 
+void Bullet::UpdateParticles(float dt) {
+	for (int i = 0; i < this->particles.size(); i++) {
+		ParticleType t = this->particles[i]->type;
+		switch (t) {
+			{
+		case HIT:
+		{
+			std::dynamic_pointer_cast<HitParticleGenerator>(this->particles[i])->Update(dt, *this);
+			break;
+		}
+		case CONTINOUS:
+		{
+			std::dynamic_pointer_cast<ContinousParticleGenerator>(this->particles[i])->Update(dt, *this);
+			break;
+		}
+			}
+		}
+	}
+}
+
+void Bullet::DrawParticles(SpriteRenderer &renderer) {
+	for (int i = 0; i < this->particles.size(); i++) {
+		//this->particles[i]->DrawSprite(renderer);
+		this->particles[i]->Draw();
+
+	}
+}
 

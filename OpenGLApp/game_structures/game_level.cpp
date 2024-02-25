@@ -1,4 +1,3 @@
-//#include "../resource_manager/resource_manager.h"
 #include "game_level.h"
 #include "../resource_manager/resource_manager.h"
 #include "../timer/timerMy.h"
@@ -106,8 +105,10 @@ void GameLevel::LoadLevel(int height, int width) {
     this->setPlayer(player);
     
     // Definisco la phase e assegno le finestre
+    numRefresh = this->maxInstancedBullet;
 }
 
+short numRefresh = 0; // conto quanti proiettili sono stati distrutti
 void GameLevel::PlayLevel(float dt) {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
@@ -123,19 +124,29 @@ void GameLevel::PlayLevel(float dt) {
                 this->instancedBullets[i] = std::move(this->instancedBullets.back());
             }
             this->instancedBullets.pop_back();
+            numRefresh++;
         }
 
-      
+        
         // valuto se il bullet è stato distrutto
         if (b.destroyed == true) {
-            // rimuovo il proiettile
-            if (i != this->instancedBullets.size() - 1)
-            {
-                this->instancedBullets[i] = std::move(this->instancedBullets.back());
+            bool a = false;
+            // verifico che tutti gli effetti siano terminati
+            for (int i = 0; i < b.particles.size(); i++) {
+                if (b.particles[i]->particleEnded)
+                    a = true;
             }
-            this->instancedBullets.pop_back();
+            if (a == true) {
+                // rimuovo il proiettile
+                if (i != this->instancedBullets.size() - 1)
+                {
+                    this->instancedBullets[i] = std::move(this->instancedBullets.back());
+                }
+                this->instancedBullets.pop_back();
 
+            }
         }
+       
     
         
 
@@ -148,36 +159,33 @@ void GameLevel::PlayLevel(float dt) {
     }
     
     // istanzio i proiettili che mi servono
-    if (this->instancedBullets.size() < this->maxInstancedBullet) {
-        int tempSize = this->instancedBullets.size();
-        for (int i = 0; i < (this->maxInstancedBullet - tempSize); i++) {
-            if (this->bulletList.size() > 0) {
+    for (int i = 0; i < numRefresh; i++) {
+        if (this->bulletList.size() > 0) {
 
                
                
-                int nW = WindowPick(alreadyUsedW);
+            int nW = WindowPick(alreadyUsedW);
                 
-                double positionOffsetX = positionOffsetPick(0, nW);
+            double positionOffsetX = positionOffsetPick(0, nW);
 
-                double positionOffsetY = positionOffsetPick(1, nW);
+            double positionOffsetY = positionOffsetPick(1, nW);
 
-                // velocity selection
-                std::random_device rd;
-                std::default_random_engine re(rd());
-                std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
-                double velocity = unif3(re);
+            // velocity selection
+            std::random_device rd;
+            std::default_random_engine re(rd());
+            std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
+            double velocity = unif3(re);
 
-                // istanzio il proiettile
-                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position+glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
-                this->bulletList.erase(this->bulletList.begin());
-            }
-            else {
-                // PROIETTILI FINITI -> PROBLEMA?
+            // istanzio il proiettile
+            instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position+glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
+            this->bulletList.erase(this->bulletList.begin());
+        }
+        else {
+            // PROIETTILI FINITI -> PROBLEMA?
 
-            }
         }
     }
-
+    numRefresh = 0;
 
 
     // muove tutti i proiettili istanziati nella scena
@@ -234,12 +242,13 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
     player.Draw(renderer, dt);
 
     for (Bullet b : this->instancedBullets) {
-        if (!b.destroyed)
-            b.Draw(renderer);
-        else {
-            // particles?
-        }
+          b.Draw(renderer);
     }
+}
+
+void GameLevel::DestroyBullet(unsigned int i) {
+    this->numRefresh++;
+    this->instancedBullets[i].destroy();
 }
 
 void GameLevel::IncreasePhase() {

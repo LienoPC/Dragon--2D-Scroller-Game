@@ -15,6 +15,9 @@
 #include "game_structures/window_constraints.h"
 #include "text_renderer.h"
 #include "flat_renderer/flat_renderer.h"
+#include "game_structures/particle_generators/particle_generator.h"
+#include "game_structures/particle_generators/hit_particle_generator.h"
+#include "game_structures/particle_generators/continuous_particle_generator.h"
 
 // Game-related State data
 SpriteRenderer* Renderer;
@@ -39,19 +42,28 @@ void Game::Init()
 
     // load shaders
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
+    ResourceManager::LoadShader("shaders/flat.vs", "shaders/flat.fs", nullptr, "flat");
+    ResourceManager::LoadShader("shaders/particle.vs", "shaders/particle.fs", nullptr, "particle");
     // configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width),
         static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
+    ResourceManager::GetShader("flat").Use().SetInteger("image", 0);
+    ResourceManager::GetShader("flat").SetMatrix4("projection", projection);
+    ResourceManager::GetShader("particle").Use().SetInteger("image", 0);
+    ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
     // set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
     ResourceManager::LoadTexture("textures/hitbox.png", true, "hitbox");
     ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
     ResourceManager::LoadTexture("textures/levels/Background4LUNGO.png", true, "level1Grass");
+    ResourceManager::LoadTexture("textures/levels/Level2.png", true, "level2Rock");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
+    ResourceManager::LoadTexture("textures/pietra.png", true, "particle");
+
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
     ResourceManager::LoadTexture("textures/dragon_frame1.png", true, "dragon_f1");
@@ -63,8 +75,16 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
     // create bulletTypes
-    Bullet b1(20.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
-    Bullet b2(50.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
+    Bullet b1(20.0f, 40, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
+    Bullet b2(50.0f, 30, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
+    // per ogni bullet istanzio gli effetti particellari associati
+    //b1.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
+    //b2.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
+
+    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT))));
+    b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT))));
+
+
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
 
@@ -89,7 +109,6 @@ void Game::Init()
     Text->Load("fonts/aAbsoluteEmpire.ttf", FONT);
 
     //Initialization of the flat renderer
-    ResourceManager::LoadShader("shaders/flat.vs", "shaders/flat.fs", nullptr, "flat");
     Flat = new FlatRenderer(ResourceManager::GetShader("flat"));
 
     //HUD initialization
@@ -116,13 +135,14 @@ void Game::Update(float dt)
       for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
         Bullet b = level->instancedBullets[i];
-        switch (b.hitboxT) {
+        if (b.destroyed == false) {
+            switch (b.hitboxT) {
             case SQUARE:
             {
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
                 if (verifyDragonCollisionSquare(*s)) {
                     // il bullet i ha colpito il dragòn
-                    hitDragon(&level->instancedBullets[i]);
+                    hitDragon(&level->instancedBullets[i], i);
                 }
 
             }
@@ -137,7 +157,10 @@ void Game::Update(float dt)
 
             }
             break;
-        }      
+            }
+
+        }
+         
     }
     
     
@@ -209,6 +232,7 @@ void Game::Render(float dt)
     if (Game::State == GAME_ACTIVE) {
         // draw background
         Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
+        //Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level2Rock"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height * 15), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
@@ -217,7 +241,7 @@ void Game::Render(float dt)
 }
 
 //FUNZIONI HITBOX -------------------------------------------------------------------------------------------
-void Game::hitDragon(Bullet* b) {
+void Game::hitDragon(Bullet* b, int i) {
     // eliminare il bullet
     b->destroyed = true;
 
@@ -229,6 +253,7 @@ void Game::hitDragon(Bullet* b) {
     // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)
     //-Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power);
+    this->Levels[this->Level].DestroyBullet(i);
 }
 
 
