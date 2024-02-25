@@ -147,6 +147,10 @@
     <ClCompile Include="game_structures\game_level.cpp" />
     <ClCompile Include="game_structures\game_object.cpp" />
     <ClCompile Include="game_structures\hitbox.cpp" />
+    <ClCompile Include="game_structures\particle_generators\hit_particle_generator.cpp" />
+    <ClCompile Include="game_structures\particle_generators\particle.cpp" />
+    <ClCompile Include="game_structures\particle_generators\continuous_particle_generator.cpp" />
+    <ClCompile Include="game_structures\particle_generators\particle_generator.cpp" />
     <ClCompile Include="game_structures\window.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="hud\hud.cpp" />
@@ -168,6 +172,10 @@
     <ClInclude Include="game_structures\game_level.h" />
     <ClInclude Include="game_structures\game_object.h" />
     <ClInclude Include="game_structures\hitbox.h" />
+    <ClInclude Include="game_structures\particle_generators\hit_particle_generator.h" />
+    <ClInclude Include="game_structures\particle_generators\particle.h" />
+    <ClInclude Include="game_structures\particle_generators\continuous_particle_generator.h" />
+    <ClInclude Include="game_structures\particle_generators\particle_generator.h" />
     <ClInclude Include="game_structures\window.h" />
     <ClInclude Include="game_structures\window_constraints.h" />
     <ClInclude Include="hud\hud.h" />
@@ -183,6 +191,8 @@
   <ItemGroup>
     <None Include="shaders\flat.fs" />
     <None Include="shaders\flat.vs" />
+    <None Include="shaders\particle.fs" />
+    <None Include="shaders\particle.vs" />
     <None Include="shaders\sprite.fs" />
     <None Include="shaders\sprite.vs" />
     <None Include="shaders\text_2d.fs" />

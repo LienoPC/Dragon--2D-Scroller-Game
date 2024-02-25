@@ -57,7 +57,7 @@ public:
     static Bullet GetBullet(int type);
 
 
-    void hitDragon(Bullet* b);
+    void hitDragon(Bullet* b, int i);
 
     bool verifyDragonCollisionSquare(Square h);
     bool verifyDragonCollisionCircle(Circle h);

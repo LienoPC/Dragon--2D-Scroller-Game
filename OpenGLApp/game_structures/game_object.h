@@ -19,7 +19,7 @@ public:
     // object state
     glm::vec2   position, size, velocity; // velocità effettiva da moltiplicare alla "direzione di lancio" caricata dal livello (o gestita dalla IA)
 								            // e che ha un valore sempre tra 0.0f e 1.0f (sia x che y)
-    
+    glm::vec2   Direction; //Direzione di movimento
     glm::vec3   color;
     HitboxType  hitboxT;
     float       rotation;

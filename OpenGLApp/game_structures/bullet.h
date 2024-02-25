@@ -5,6 +5,7 @@
 
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
+#include "particle_generators/particle_generator.h"
 #include <memory>
 
 // Class that defines a bullet in the game.
@@ -14,17 +15,18 @@ class Bullet : public GameObject {
 	// bullet characteristics
 public:
 
-	glm::vec2   Direction; //Direzione di movimento
+	
 	float	Power;
 	float	velApplied; // Velocity applied
 	std::shared_ptr<Hitbox> hitbox;
 	// pensare se aggiungere una lista di secondary effect (considerare però che devono valere solo se colpiscono il drago)
-	float	ParticlesNumber; //Bho poi vediamo
-	 
+	int	ParticlesNumber; //Bho poi vediamo
+	std::vector<std::shared_ptr<ParticleGenerator>> particles;
+
 	int		Type;
 	// constructors
 	Bullet();
-	Bullet(float pow, float partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, HitboxType hitboxType, int type);
+	Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, HitboxType hitboxType, int type);
 
 
 
@@ -38,7 +40,9 @@ public:
 	void isOutside();
 	void updateHitbox();
 	void Draw(SpriteRenderer& renderer);
-	
+	void UpdateParticles(float dt);
+	void DrawParticles(SpriteRenderer &renderer);
+
 };
 
 #endif
