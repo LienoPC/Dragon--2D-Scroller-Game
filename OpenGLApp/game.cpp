@@ -186,9 +186,7 @@ void Game::Update(float dt)
             break;
             }
 
-        }
-        
-         
+        }              
       }
       if (ShakeTime > 0.0f)
       {
@@ -196,18 +194,53 @@ void Game::Update(float dt)
           if (ShakeTime <= 0.0f)
               Effects->Shake = false;
       }
-    
-    
-  
-    
-  
-
 }
 
 void Game::ProcessInput(float dt)
 {  
-     GameLevel* level = &this->Levels[this->Level];
+    if (Game::State == GAME_MENU) {
+        static Button* cursorOver = NULL, * clicked = NULL;
+        double cursorX, cursorY;
+        glfwGetCursorPos(this->window, &cursorX, &cursorY);
+
+        if (!isCursorOnButton(cursorX, cursorY, cursorOver)) {
+            if (cursorOver != NULL) {
+                cursorOver->selected = false;
+                cursorOver = NULL;
+            }
+            for (Button& b : this->Menus[currMenu].buttons) {
+                if (isCursorOnButton(cursorX, cursorY, &b)) {
+                    cursorOver = &b;
+                    b.selected = true;
+                    break;
+                }
+            }
+        }
+
+        if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
+            if (cursorOver != NULL) {
+                clicked = cursorOver;
+            }
+        }
+        else {
+            if (clicked != NULL) {
+                if (cursorOver != NULL && cursorOver == clicked) {
+                    if (clicked->type == buttonType::link) {
+                        this->currMenu = clicked->subMenuId;
+                        cursorOver = NULL;
+                    }
+                    else if (clicked->type == buttonType::play) {
+                        this->currMenu = 0;
+                        cursorOver = NULL;
+                        this->State = GAME_ACTIVE;
+                    }
+                }
+            }
+            clicked = NULL;
+        }
+    }   
      if (Game::State == GAME_ACTIVE) {
+         GameLevel* level = &this->Levels[this->Level];
          // Gestione della velocità (sprint, slowdown)
          static bool sprint = false, slowdown = false;
 
