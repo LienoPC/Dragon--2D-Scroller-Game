@@ -31,6 +31,7 @@ public:
     // game state
     GameState               State;	
     bool                    Keys[1024];
+    bool                    MouseButtons[8];
     unsigned int            Width, Height;
     std::vector<GameLevel>  Levels;
     unsigned int            Level;
