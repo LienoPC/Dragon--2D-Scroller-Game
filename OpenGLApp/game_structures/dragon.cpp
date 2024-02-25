@@ -56,12 +56,11 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 void Dragon::move(glm::vec2 move) {
 	// Move the dragon
 	this->position += move;
-	// Move the hitboxes with the dragon
-	for (int i = 0; i < this->hitboxes.size(); i++) {
-		this->hitboxes[i].left_up += move;
-		this->hitboxes[i].left_down += move;
-		this->hitboxes[i].right_up += move;
-		this->hitboxes[i].right_down += move;
+	for (Square& s : this->hitboxes) {
+		s.left_up += move;
+		s.left_down += move;
+		s.right_up += move;
+		s.right_down += move;
 	}
 }
 

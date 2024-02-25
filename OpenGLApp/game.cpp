@@ -31,9 +31,7 @@ PostProcessor* Effects;
 float ShakeTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
-{
-
+    : State(GAME_MENU), Keys(), Width(width), Height(height), window(window) {
 }
 
 Game::~Game()
@@ -45,10 +43,9 @@ Game::~Game()
     delete Effects;
 }
 
-void Game::Init()
+void Game::Init(GLFWwindow* window)
 {
-
-    
+    this->window = window;
     // load shaders
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     ResourceManager::LoadShader("shaders/flat.vs", "shaders/flat.fs", nullptr, "flat");
@@ -79,6 +76,11 @@ void Game::Init()
 
 
 
+    ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
+    ResourceManager::LoadTexture("textures/menu/level_selection_bg1.png", true, "levelSelBG");
+    ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
+    ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
+    ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
     ResourceManager::LoadTexture("textures/dragon_frame1.png", true, "dragon_f1");
@@ -119,6 +121,23 @@ void Game::Init()
     ResourceManager::SetWindow(topLeft);
     ResourceManager::SetWindow(topRight);
 
+    //create Menus and Buttons
+    int id = 0;  
+    Menu mainMenu(id++, ResourceManager::GetTexture("mainMenuBG"));
+    Button button1({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, id, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
+
+    Menu subMenu(id++, ResourceManager::GetTexture("levelSelBG"));
+    Button button2({ 135.0f, 735.0f }, { 210.0f, 90.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"));
+    Button button3({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton"));
+    //Aggiungere bottoni sotto agli altri livelli (oltre Foresta)
+
+    mainMenu.addButton(button1);
+    subMenu.addButton(button2);
+    subMenu.addButton(button3);
+    this->Menus.push_back(mainMenu);
+    this->Menus.push_back(subMenu);
+    this->currMenu = 0;
+
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
     Text->Load("fonts/aAbsoluteEmpire.ttf", FONT);
@@ -153,8 +172,7 @@ void Game::Update(float dt)
 
     //Verifica delle hitbox per ogni proiettile/palle del drago
     //Non so come sono gestite le palle per mo
-
-   
+  
       for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
         Bullet b = level->instancedBullets[i];
@@ -164,24 +182,22 @@ void Game::Update(float dt)
             {
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
                 if (verifyDragonCollisionSquare(*s)) {
-                    // il bullet i ha colpito il dragòn
+                    // il bullet i ha colpito il drag�n
                     //sEngine->play2D("audio/Hit.wav");
                     hitDragon(&level->instancedBullets[i], i);
                     
 
                 }
-
             }
             break;
             case CIRCLE:
             {
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
                 if (verifyDragonCollisionCircle(*c)) {
-                    // il bullet i ha colpito il dragòn
+                    // il bullet i ha colpito il drag�n
                     //sEngine->play2D("audio/Hit.wav");
                     hitDragon(&level->instancedBullets[i], i);
                 }
-
             }
             break;
             }
@@ -244,48 +260,47 @@ void Game::ProcessInput(float dt)
          // Gestione della velocità (sprint, slowdown)
          static bool sprint = false, slowdown = false;
 
-         if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
+        if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
             level->player.setVelocityModifier(650.0f);
             sprint = true;       
-         }
-         else if (!this->Keys[GLFW_KEY_LEFT_SHIFT] && sprint) {
+        }
+        else if (!this->Keys[GLFW_KEY_LEFT_SHIFT] && sprint) {
              level->player.setVelocityModifier(400.0f);
              sprint = false;
-         }
+        }
 
-         if (this->Keys[GLFW_KEY_LEFT_CONTROL] && !slowdown) {
+        if (this->Keys[GLFW_KEY_LEFT_CONTROL] && !slowdown) {
              level->player.setVelocityModifier(250.0f);
              slowdown = true;
-         }
-         else if (!this->Keys[GLFW_KEY_LEFT_CONTROL] && slowdown) {
+        }
+        else if (!this->Keys[GLFW_KEY_LEFT_CONTROL] && slowdown) {
              level->player.setVelocityModifier(400.0f);
              slowdown = false;
-         }
+        }
 
+        // Movimento del drago
+        float velocity = dt * level->player.velocityModifier;
+        glm::vec2 move, playerPos = level->player.position;
 
-         // Movimento del drago
-         float velocity = dt * level->player.velocityModifier;
-         glm::vec2 move, playerPos = level->player.position;
-
-         if (this->Keys[GLFW_KEY_A]) {
+        if (this->Keys[GLFW_KEY_A]) {
             move = glm::vec2(-velocity, 0.0f);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
-         }
-         if (this->Keys[GLFW_KEY_D]) {
+        }
+        if (this->Keys[GLFW_KEY_D]) {
             move = glm::vec2(velocity, 0.0f);
 
             if(!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-         if (this->Keys[GLFW_KEY_W]) {
+        if (this->Keys[GLFW_KEY_W]) {
             move = glm::vec2(0.0f, -velocity);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                 level->movePlayer(move);
         }
-         if (this->Keys[GLFW_KEY_S]) {
+        if (this->Keys[GLFW_KEY_S]) {
             move = glm::vec2(0.0f, velocity);
 
             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
@@ -295,8 +310,11 @@ void Game::ProcessInput(float dt)
 }
 
 void Game::Render(float dt)
-{
-    if (Game::State == GAME_ACTIVE) {
+{   
+    if (Game::State == GAME_MENU) {
+        this->Menus[this->currMenu].drawMenu(*Renderer);
+    }
+    else if (Game::State == GAME_ACTIVE) {
         // prepare postProcesser
         Effects->BeginRender();
         // draw background
@@ -323,7 +341,7 @@ void Game::hitDragon(Bullet* b, int i) {
     //-Danno agli HP
     //-Proiettile sparisce->Fatto
     //-Effetto visivo per il fatto di essere stati colpiti:
-    // -Quello sul drago è gestito dalla classe Dragòn(?)
+    // -Quello sul drago � gestito dalla classe Drag�n(?)
     // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)->In realtà no
     // -Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
@@ -379,11 +397,11 @@ bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitb
     float closestX = std::max(hitboxS.left_up.x, std::min(hitboxC.center.x, hitboxS.right_down.x));
     float closestY = std::max(hitboxS.left_up.y, std::min(hitboxC.center.y, hitboxS.right_down.y));
 
-    // Calcola la distanza tra il punto più vicino e il centro del cerchio
+    // Calcola la distanza tra il punto pi� vicino e il centro del cerchio
     float distanceX = hitboxC.center.x - closestX;
     float distanceY = hitboxC.center.y - closestY;
 
-    // Se la distanza è inferiore al raggio, c'è intersezione
+    // Se la distanza � inferiore al raggio, c'� intersezione
     if ((distanceX * distanceX + distanceY * distanceY) < (hitboxC.radius * hitboxC.radius)) {
         return true;
     }
@@ -401,3 +419,17 @@ bool Game::checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
     return false;
 }
 //-------------------------------------------------------------------------------------------------------------------
+
+bool Game::isCursorOnButton(double xpos, double ypos, Button *b) {
+    if (b == NULL)
+        return false;
+
+    double cursorX, cursorY, bX, bY, bSizeX, bSizeY;
+    glfwGetCursorPos(this->window, &cursorX, &cursorY);
+    bX = b->position.x;
+    bY = b->position.y;
+    bSizeX = b->size.x;
+    bSizeY = b->size.y;
+
+    return !(b != NULL && (cursorX < bX || cursorX > bX + bSizeX || cursorY < bY || cursorY > bY + bSizeY)) ;
+}
