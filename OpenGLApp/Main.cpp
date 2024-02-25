@@ -17,6 +17,7 @@
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -105,6 +106,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             Breakout.Keys[key] = true;
         else if (action == GLFW_RELEASE)
             Breakout.Keys[key] = false;
+    }
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button >= 0 && button <= 8) {
+        if (action == GLFW_PRESS)
+            Breakout.MouseButtons[button] = true;
+        else if (action == GLFW_RELEASE)
+            Breakout.MouseButtons[button] = false;
     }
 }
 
