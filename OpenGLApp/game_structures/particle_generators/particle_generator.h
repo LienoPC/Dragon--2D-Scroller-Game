@@ -32,6 +32,7 @@ public:
     void DrawSprite(SpriteRenderer& s);
     Shader getShader();
     Texture2D getTexture();
+    float getSize();
 
 protected:
     // state

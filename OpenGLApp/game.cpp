@@ -18,13 +18,17 @@
 #include "game_structures/particle_generators/particle_generator.h"
 #include "game_structures/particle_generators/hit_particle_generator.h"
 #include "game_structures/particle_generators/continuous_particle_generator.h"
+#include "irrKlang/include/irrKlang.h"
+#include "shaders_textures/post_processor.h"
 
 // Game-related State data
 SpriteRenderer* Renderer;
 TextRenderer* Text;
 FlatRenderer* Flat;
+irrklang::ISoundEngine* sEngine;
+PostProcessor* Effects;
 
-
+float ShakeTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
@@ -35,15 +39,21 @@ Game::Game(unsigned int width, unsigned int height)
 Game::~Game()
 {
     delete Renderer;
+    delete Text;
+    delete Flat;
+    delete sEngine;
+    delete Effects;
 }
 
 void Game::Init()
 {
 
+    
     // load shaders
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
     ResourceManager::LoadShader("shaders/flat.vs", "shaders/flat.fs", nullptr, "flat");
     ResourceManager::LoadShader("shaders/particle.vs", "shaders/particle.fs", nullptr, "particle");
+    ResourceManager::LoadShader("shaders/post_processing.vs", "shaders/post_processing.fs", nullptr, "postprocessing");
     // configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width),
         static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
@@ -53,6 +63,7 @@ void Game::Init()
     ResourceManager::GetShader("flat").SetMatrix4("projection", projection);
     ResourceManager::GetShader("particle").Use().SetInteger("image", 0);
     ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
+    
     // set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
@@ -80,13 +91,13 @@ void Game::Init()
 
     // create bulletTypes
     Bullet b1(20.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
-    Bullet b2(60.0f, 30, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(150.0f, 150.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'b');
+    Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(150.0f, 150.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'b');
     // per ogni bullet istanzio gli effetti particellari associati
     //b1.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
     //b2.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
 
-    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), glm::vec2())));
-    b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT))));
+    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
+    b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
 
 
     ResourceManager::SetBullet(b1);
@@ -125,6 +136,14 @@ void Game::Init()
     l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH);
     this->Levels.push_back(l1);
     this->Level = 0;
+
+    // load sound engine
+    sEngine = irrklang::createIrrKlangDevice();
+    sEngine->play2D("audio/Megalovania.wav", true);
+        
+    // configure postprocessing renderer
+    Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+
 }
 
 void Game::Update(float dt)
@@ -146,7 +165,10 @@ void Game::Update(float dt)
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
                 if (verifyDragonCollisionSquare(*s)) {
                     // il bullet i ha colpito il dragòn
+                    //sEngine->play2D("audio/Hit.wav");
                     hitDragon(&level->instancedBullets[i], i);
+                    
+
                 }
 
             }
@@ -156,6 +178,7 @@ void Game::Update(float dt)
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
                 if (verifyDragonCollisionCircle(*c)) {
                     // il bullet i ha colpito il dragòn
+                    //sEngine->play2D("audio/Hit.wav");
                     hitDragon(&level->instancedBullets[i], i);
                 }
 
@@ -164,8 +187,15 @@ void Game::Update(float dt)
             }
 
         }
+        
          
-    }
+      }
+      if (ShakeTime > 0.0f)
+      {
+          ShakeTime -= dt;
+          if (ShakeTime <= 0.0f)
+              Effects->Shake = false;
+      }
     
     
   
@@ -234,21 +264,28 @@ void Game::ProcessInput(float dt)
 void Game::Render(float dt)
 {
     if (Game::State == GAME_ACTIVE) {
+        // prepare postProcesser
+        Effects->BeginRender();
         // draw background
         Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
         //Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level2Rock"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height * 15), 0.0f, glm::vec3(1.0f), dt);
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
-        
+        // end rendering to postprocessing framebuffer
+        Effects->EndRender();
+        // render postprocessing quad
+        Effects->Render(glfwGetTime());
     } 
 }
 
 //FUNZIONI HITBOX -------------------------------------------------------------------------------------------
 void Game::hitDragon(Bullet* b, int i) {
+    ShakeTime = 0.10f;
+    Effects->Shake = true;
     // eliminare il bullet
     b->destroyed = true;
-
+    
     //Se il drago viene colpito, TODO:
     //-Danno agli HP
     //-Proiettile sparisce->Fatto
@@ -258,6 +295,7 @@ void Game::hitDragon(Bullet* b, int i) {
     // -Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
+    //sEngine->play2D("audio/Pain.wav");
 }
 
 

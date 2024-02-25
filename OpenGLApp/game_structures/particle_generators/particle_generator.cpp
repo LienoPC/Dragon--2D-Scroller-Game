@@ -45,7 +45,6 @@ void ParticleGenerator::init()
 // render all particles
 void ParticleGenerator::Draw()
 {
-    // use additive blending to give it a 'glow' effect
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     this->shader.Use();
     for (Particle &particle : this->particles)
@@ -60,6 +59,7 @@ void ParticleGenerator::Draw()
             model = glm::translate(model, glm::vec3(particle.Position, 0.0f)); 
             //model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // move origin of rotation to center of quad
             model = glm::rotate(model, glm::radians(particle.Rotation), glm::vec3(0.0f, 0.0f, 1.0f)); // then rotate
+            model = glm::scale(model, glm::vec3(particle.Size, 1.0f)); // last scale
             model = glm::translate(model, glm::vec3(-particle.Position, 0.0f));
             this->shader.SetMatrix4("model", model);
             this->texture.Bind();
@@ -93,4 +93,8 @@ Shader ParticleGenerator::getShader() {
 }
 Texture2D ParticleGenerator::getTexture() {
     return this->texture;
+}
+
+float ParticleGenerator::getSize() {
+    return this->size;
 }

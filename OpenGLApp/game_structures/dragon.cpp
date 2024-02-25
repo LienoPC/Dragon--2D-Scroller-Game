@@ -49,6 +49,8 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 									glm::vec2(this->position.x + 555 * size.x / 800, this->position.y + 440 * size.y / 800),
 									glm::vec2(this->position.x + 720 * size.x / 800, this->position.y + 315 * size.y / 800),
 									glm::vec2(this->position.x + 720 * size.x / 800, this->position.y + 440 * size.y / 800)));
+
+	this->hit = false;
 }
 
 void Dragon::move(glm::vec2 move) {
@@ -75,13 +77,15 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 	static int frameStart;
 	deltaTime += dt;
 	if (this->hit) {
-		//float rColor = 0.5f + ((rand() % 100) / 100.0f);
-		//this->color = glm::vec3(rColor, rColor, rColor);
+		float rColor = 0.5f + ((rand() % 100) / 100.0f);
+		this->color = glm::vec3(rColor, rColor, rColor);
 	}
 	renderer.DrawSprite(this->animationFrames.at(frame), this->position, this->size, this->rotation, this->color);
+	/*
 	if (this->hit && frameStart == 30) {
 		frameStart = frame;
 	}
+	*/
 
 	if (deltaTime >= FRAME_TIME) {
 		if (frame == 0) {
@@ -90,11 +94,15 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 				reversed = false;
 		}
 		else if (frame == 7) {
+			this->hit = false;
+			this->color = glm::vec3(1.0f);
 			frame--;
 			if (!reversed)
 				reversed = true;
-			else
+			else {
 				exit(-1); // can't reach the 8th frame of the animation while rendering it in reverse
+			}
+				
 		}
 		else { 
 			if (reversed)
@@ -110,7 +118,7 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 }
 
 void Dragon::drawHitbox(SpriteRenderer& renderer) {
-
+	
 	for (Square s: this->hitboxes) {
 		renderer.DrawSprite(ResourceManager::GetTexture("hitbox"), s.left_up, glm::vec3(10.0f), this->rotation, glm::vec3(1.0f, 1.0f, 1.0f));
 		renderer.DrawSprite(ResourceManager::GetTexture("hitbox"), s.left_down, glm::vec3(10.0f), this->rotation, glm::vec3(1.0f, 0.0f, 0.0f));

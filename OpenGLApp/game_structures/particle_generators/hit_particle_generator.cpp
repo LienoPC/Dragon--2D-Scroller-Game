@@ -60,11 +60,13 @@ void HitParticleGenerator::spawnParticle(Particle& particle, glm::vec2 position,
 
 	float random = ((rand() % 100) - 50) / 20.0f;
 	float rColor = 0.5f + ((rand() % 100) / 100.0f);
-	float angle = (rand() % 360); // random angle
+	float rotation = (rand() % 360); // random angle
 	 
-	particle.Rotation = angle;
+	particle.Rotation = rotation;
 	particle.Position = position;
 	particle.Color = glm::vec4(rColor, rColor, rColor, 1.0f);
 	particle.Life = 1.0f;
-	particle.Velocity = glm::vec2(cosa, sina)*random;
+	particle.Velocity = glm::vec2(cosa, sina) * random;
+	particle.Size = glm::vec2(this->size);
+	
 }
