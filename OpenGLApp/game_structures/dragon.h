@@ -23,6 +23,9 @@ public:
 	// dragon animation frames
 	std::vector<Texture2D> animationFrames;
 
+	//numero fireball sparate
+	int fbnum = 0;
+
 	// constructors
 	Dragon();
 	Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, HitboxType hitbox);
@@ -34,6 +37,7 @@ public:
 	void dealDamage(double damage);
 
 	void drawHitbox(SpriteRenderer& renderer); //hitbox drawing debug method
+	
 	//void isOutside();
 
 };

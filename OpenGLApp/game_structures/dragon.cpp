@@ -1,6 +1,6 @@
 #include "dragon.h"
 #include "../resource_manager/resource_manager.h"
-
+#include "./game_level.h"
 
 Dragon::Dragon()
 	:velocityModifier(0.0f) {};

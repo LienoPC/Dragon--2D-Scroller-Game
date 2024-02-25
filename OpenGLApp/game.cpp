@@ -8,6 +8,7 @@
 ******************************************************************/
 
 
+#include "./game_structures/dragon.h"
 #include "game.h"
 #include "game_structures/bullet.h"
 #include "resource_manager/resource_manager.h"
@@ -18,6 +19,7 @@
 #include "game_structures/particle_generators/particle_generator.h"
 #include "game_structures/particle_generators/hit_particle_generator.h"
 #include "game_structures/particle_generators/continuous_particle_generator.h"
+
 
 // Game-related State data
 SpriteRenderer* Renderer;
@@ -63,6 +65,7 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
     ResourceManager::LoadTexture("textures/pietra.png", true, "particle");
+    ResourceManager::LoadTexture("textures/fireball.png", true, "fireball");
 
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
@@ -77,6 +80,8 @@ void Game::Init()
     // create bulletTypes
     Bullet b1(20.0f, 40, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
     Bullet b2(50.0f, 30, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
+    
+    
     // per ogni bullet istanzio gli effetti particellari associati
     //b1.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
     //b2.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
@@ -135,31 +140,50 @@ void Game::Update(float dt)
       for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
         Bullet b = level->instancedBullets[i];
-        if (b.destroyed == false) {
             switch (b.hitboxT) {
             case SQUARE:
             {
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
-                if (verifyDragonCollisionSquare(*s)) {
-                    // il bullet i ha colpito il dragòn
-                    hitDragon(&level->instancedBullets[i], i);
+                for (int j = 0; j < level->instancedFireballs.size(); j++) {
+                    Bullet fb = level->instancedFireballs[j];
+                    if (fb.destroyed == false) {
+                        std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
+                        if (verifyBulletCollisionCircleSquare(*s, *fbHitbox)) {
+                            hitBullet(&level->instancedBullets[i] , &level->instancedFireballs[j], i, j);
+                        }
+                    }
                 }
 
+                if (b.destroyed == false) {
+                    if (verifyDragonCollisionSquare(*s)) {
+                        // il bullet i ha colpito il dragòn
+                        hitDragon(&level->instancedBullets[i], i);
+                    }
+                }
             }
             break;
             case CIRCLE:
             {
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
-                if (verifyDragonCollisionCircle(*c)) {
-                    // il bullet i ha colpito il dragòn
-
+                for (int j = 0; j < level->instancedFireballs.size(); j++) {
+                    Bullet fb = level->instancedFireballs[j];
+                    if (fb.destroyed == false) {
+                        std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
+                        if (verifyBulletCollisionCircleCircle(*c, *fbHitbox)) {
+                            hitBullet(&level->instancedBullets[i], &level->instancedFireballs[j], i, j);
+                        }
+                    }
                 }
 
+                if (b.destroyed == false) {
+                    if (verifyDragonCollisionCircle(*c)) {
+                        // il bullet i ha colpito il dragòn
+                        hitDragon(&level->instancedBullets[i], i);
+                    }
+                }
             }
             break;
             }
-
-        }
          
     }
     
@@ -170,8 +194,7 @@ void Game::Update(float dt)
 
 }
 
-void Game::ProcessInput(float dt)
-{  
+void Game::ProcessInput(float dt){  
      GameLevel* level = &this->Levels[this->Level];
      if (Game::State == GAME_ACTIVE) {
          // Gestione della velocità (sprint, slowdown)
@@ -196,35 +219,40 @@ void Game::ProcessInput(float dt)
          }
 
 
+         
+
          // Movimento del drago
          float velocity = dt * level->player.velocityModifier;
          glm::vec2 move, playerPos = level->player.position;
 
          if (this->Keys[GLFW_KEY_A]) {
-            move = glm::vec2(-velocity, 0.0f);
+             move = glm::vec2(-velocity, 0.0f);
 
-            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
+             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                 level->movePlayer(move);
          }
          if (this->Keys[GLFW_KEY_D]) {
-            move = glm::vec2(velocity, 0.0f);
+             move = glm::vec2(velocity, 0.0f);
 
-            if(!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
-        }
+             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                 level->movePlayer(move);
+         }
          if (this->Keys[GLFW_KEY_W]) {
-            move = glm::vec2(0.0f, -velocity);
+             move = glm::vec2(0.0f, -velocity);
 
-            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
-        }
+             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                 level->movePlayer(move);
+         }
          if (this->Keys[GLFW_KEY_S]) {
-            move = glm::vec2(0.0f, velocity);
+             move = glm::vec2(0.0f, velocity);
 
-            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
-        }
-     }   
+             if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
+                 level->movePlayer(move);
+         }
+         if (this->Keys[GLFW_KEY_L]) {
+             level->instanceFireball(level->player.position, 40.0f);
+         }
+     }
 }
 
 void Game::Render(float dt)
@@ -256,11 +284,18 @@ void Game::hitDragon(Bullet* b, int i) {
     this->Levels[this->Level].DestroyBullet(i);
 }
 
+void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
+    GameLevel* level = &this->Levels[this->Level];
 
+    b->destroyed = true;
+    this->Levels[this->Level].DestroyBullet(i);
+
+    fb->destroyed = true;
+    level->instancedFireballs[j].destroy();
+}
 
 bool Game::verifyDragonCollisionSquare(Square h) {
     for (int i = 0; i < this->Levels[this->Level].player.hitboxes.size(); i++) {
-
         if (checkCollisionSquareSquare(this->Levels[this->Level].player.hitboxes[i], h)) {
             return true;
         }
@@ -277,7 +312,19 @@ bool Game::verifyDragonCollisionCircle(Circle h) {
     return false;
 }
 
+bool Game::verifyBulletCollisionCircleSquare(Square s, Circle c) {
+    if (checkCollisionSquareCircle(s, c)) {
+        return true;
+    }
+    return false;
+}
 
+bool Game::verifyBulletCollisionCircleCircle(Circle c1, Circle c2) {
+    if (checkCollisionCircleCircle(c1, c2)) {
+        return true;
+    }
+    return false;
+}
 
 
 float Game::dotProduct(glm::vec2 a, glm::vec2 b) {
@@ -285,19 +332,19 @@ float Game::dotProduct(glm::vec2 a, glm::vec2 b) {
 }
 
 bool Game::checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
-        // Calcolare le proiezioni dei rettangoli sugli assi x e y
-        float left1 = std::min(hitbox1.left_up.x, std::min(hitbox1.left_down.x, std::min(hitbox1.right_up.x, hitbox1.right_down.x)));
-        float right1 = std::max(hitbox1.left_up.x, std::max(hitbox1.left_down.x, std::max(hitbox1.right_up.x, hitbox1.right_down.x)));
-        float top1 = std::min(hitbox1.left_up.y, std::min(hitbox1.left_down.y, std::min(hitbox1.right_up.y, hitbox1.right_down.y)));
-        float bottom1 = std::max(hitbox1.left_up.y, std::max(hitbox1.left_down.y, std::max(hitbox1.right_up.y, hitbox1.right_down.y)));
+       // Calcolare le proiezioni dei rettangoli sugli assi x e y
+       float left1 = std::min(hitbox1.left_up.x, std::min(hitbox1.left_down.x, std::min(hitbox1.right_up.x, hitbox1.right_down.x)));
+       float right1 = std::max(hitbox1.left_up.x, std::max(hitbox1.left_down.x, std::max(hitbox1.right_up.x, hitbox1.right_down.x)));
+       float top1 = std::min(hitbox1.left_up.y, std::min(hitbox1.left_down.y, std::min(hitbox1.right_up.y, hitbox1.right_down.y)));
+       float bottom1 = std::max(hitbox1.left_up.y, std::max(hitbox1.left_down.y, std::max(hitbox1.right_up.y, hitbox1.right_down.y)));
 
-        float left2 = std::min(hitbox2.left_up.x, std::min(hitbox2.left_down.x, std::min(hitbox2.right_up.x, hitbox2.right_down.x)));
-        float right2 = std::max(hitbox2.left_up.x, std::max(hitbox2.left_down.x, std::max(hitbox2.right_up.x, hitbox2.right_down.x)));
-        float top2 = std::min(hitbox2.left_up.y, std::min(hitbox2.left_down.y, std::min(hitbox2.right_up.y, hitbox2.right_down.y)));
-        float bottom2 = std::max(hitbox2.left_up.y, std::max(hitbox2.left_down.y, std::max(hitbox2.right_up.y, hitbox2.right_down.y)));
+       float left2 = std::min(hitbox2.left_up.x, std::min(hitbox2.left_down.x, std::min(hitbox2.right_up.x, hitbox2.right_down.x)));
+       float right2 = std::max(hitbox2.left_up.x, std::max(hitbox2.left_down.x, std::max(hitbox2.right_up.x, hitbox2.right_down.x)));
+       float top2 = std::min(hitbox2.left_up.y, std::min(hitbox2.left_down.y, std::min(hitbox2.right_up.y, hitbox2.right_down.y)));
+       float bottom2 = std::max(hitbox2.left_up.y, std::max(hitbox2.left_down.y, std::max(hitbox2.right_up.y, hitbox2.right_down.y)));
 
-        // Controllare se le proiezioni si sovrappongono sugli assi x e y
-        return !(right1 < left2 || right2 < left1 || bottom1 < top2 || bottom2 < top1);
+       // Controllare se le proiezioni si sovrappongono sugli assi x e y
+       return !(right1 < left2 || right2 < left1 || bottom1 < top2 || bottom2 < top1);
 }
 
 bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet

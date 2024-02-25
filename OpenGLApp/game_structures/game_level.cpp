@@ -55,6 +55,15 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, Direc
     this->instancedBullets.push_back(b);
 }
 
+void GameLevel::instanceFireball(glm::vec2 pos, double velocity) {
+    Bullet fb(50.0f, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'a');
+    pos.x = pos.x + 167.0;
+    fb.position = pos;
+    fb.Direction = glm::vec2 (0,1);
+    fb.velApplied = velocity;
+    fb.destroyed = false;
+    this->instancedFireballs.push_back(fb);
+}
 void GameLevel::instanceWindow(int identificator) {
     ThrowWindow t(ResourceManager::GetWindow(identificator));
     this->actualWindows.push_back(t);
@@ -138,18 +147,34 @@ void GameLevel::PlayLevel(float dt) {
             }
             if (a == true) {
                 // rimuovo il proiettile
-                if (i != this->instancedBullets.size() - 1)
-                {
+                if (i != this->instancedBullets.size() - 1){
                     this->instancedBullets[i] = std::move(this->instancedBullets.back());
                 }
                 this->instancedBullets.pop_back();
-
             }
         }
-       
-    
-        
+    }
 
+    for (int i = 0; i < this->instancedFireballs.size(); i++) {
+        Bullet b = this->instancedFireballs[i];
+        if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY / 2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX))) {
+            // il bullet è uscito fuori dal livello
+            if (i != this->instancedFireballs.size() - 1)
+            {
+                this->instancedFireballs[i] = std::move(this->instancedFireballs.back());
+            }
+            this->instancedFireballs.pop_back();
+        }
+
+
+        // valuto se il bullet è stato distrutto
+        if (b.destroyed == true) {
+            // rimuovo il proiettile
+            if (i != this->instancedFireballs.size() - 1) {
+                this->instancedFireballs[i] = std::move(this->instancedFireballs.back());
+            }
+            this->instancedFireballs.pop_back();
+        } 
     }
 
     // tengo conto delle finestre già usate in un singolo lancio
@@ -243,6 +268,10 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
 
     for (Bullet b : this->instancedBullets) {
           b.Draw(renderer);
+    }
+
+    for (Bullet fb : this->instancedFireballs) {
+        fb.Draw(renderer);
     }
 }
 
