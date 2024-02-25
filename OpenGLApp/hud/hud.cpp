@@ -30,8 +30,8 @@ void HUD::RenderHUD(SpriteRenderer& r, TextRenderer& t, FlatRenderer& f, Dragon 
 	t.RenderText(s, this->posHPText.x, this->posHPText.y, 1.0f, glm::vec3(1.0f)); //HP attuali
 	// Render della barra della vita
 	r.DrawSprite(ResourceManager::GetTexture("HUDlifeFrame"), this->posHPBar, glm::vec2(HPBARLENGHT*SCALE, BARHEIGHT*SCALE), 0.0f, glm::vec3(1.0));
-	r.DrawSprite(ResourceManager::GetTexture("HUDlifeFill"), this->posHPBar, glm::vec2(this->HPbarLenght, BARHEIGHT*SCALE), 0.0f, this->HPcolor);
-	//f.DrawFlatRectangle(glm::vec2(this->posHPBar.x, this->posHPBar.y), glm::vec2(this->HPbarLenght, BARHEIGHT), 0.0f, this->HPcolor);
+	//r.DrawSprite(ResourceManager::GetTexture("HUDlifeFill"), this->posHPBar, glm::vec2(this->HPbarLenght, BARHEIGHT*SCALE), 0.0f, this->HPcolor);
+	f.DrawFlatRectangle(glm::vec2(this->posHPBar.x, this->posHPBar.y), glm::vec2(this->HPbarLenght, BARHEIGHT), 0.0f, this->HPcolor);
 
 	// Render della barra del mana
 	r.DrawSprite(ResourceManager::GetTexture("HUDlifeFrame"), this->posFPBar, glm::vec2(FPBARLENGHT*SCALE, BARHEIGHT*SCALE), 0.0f, glm::vec3(1.0));

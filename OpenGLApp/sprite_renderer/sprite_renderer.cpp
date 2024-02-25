@@ -26,7 +26,6 @@ SpriteRenderer::~SpriteRenderer()
 void SpriteRenderer::DrawSprite(Texture2D texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
     
-    initRenderData();
     // prepare transformations
     this->shader.Use();
     glm::mat4 model = glm::mat4(1.0f);
@@ -55,7 +54,6 @@ void SpriteRenderer::DrawSprite(Texture2D texture, glm::vec2 position, glm::vec2
 
 void SpriteRenderer::DrawScrollingBackground(Texture2D texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color, float dt)
 {
-    initRenderData();
     // prepare transformations
     this->shader.Use();
     glm::mat4 model = glm::mat4(1.0f);
