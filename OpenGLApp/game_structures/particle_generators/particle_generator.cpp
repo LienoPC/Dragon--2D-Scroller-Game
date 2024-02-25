@@ -5,7 +5,7 @@ ParticleGenerator::ParticleGenerator() {
 
 }
 
-ParticleGenerator::ParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type)
+ParticleGenerator::ParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type, float size)
     : shader(shader), texture(texture), amount(amount), type(type)
 {
     this->particleEnded = false;
@@ -46,7 +46,7 @@ void ParticleGenerator::init()
 void ParticleGenerator::Draw()
 {
     // use additive blending to give it a 'glow' effect
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     this->shader.Use();
     for (Particle &particle : this->particles)
     {
@@ -54,6 +54,14 @@ void ParticleGenerator::Draw()
         {
             this->shader.SetVector2f("offset", particle.Position);
             this->shader.SetVector4f("color", particle.Color);
+            // define the model matrix
+            
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(particle.Position, 0.0f)); 
+            //model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // move origin of rotation to center of quad
+            model = glm::rotate(model, glm::radians(particle.Rotation), glm::vec3(0.0f, 0.0f, 1.0f)); // then rotate
+            model = glm::translate(model, glm::vec3(-particle.Position, 0.0f));
+            this->shader.SetMatrix4("model", model);
             this->texture.Bind();
             glBindVertexArray(this->VAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -61,7 +69,7 @@ void ParticleGenerator::Draw()
         }
     }
     // don't forget to reset to default blending mode
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /*

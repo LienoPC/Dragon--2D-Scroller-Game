@@ -62,7 +62,11 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/levels/Level2.png", true, "level2Rock");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
-    ResourceManager::LoadTexture("textures/pietra.png", true, "particle");
+    ResourceManager::LoadTexture("textures/particlePietra.png", true, "particle");
+    ResourceManager::LoadTexture("textures/arrow_sprite.png", true, "arrow");
+    ResourceManager::LoadTexture("textures/pietra.png", true, "rock");
+
+
 
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
@@ -75,13 +79,13 @@ void Game::Init()
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
     // create bulletTypes
-    Bullet b1(20.0f, 40, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
-    Bullet b2(50.0f, 30, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
+    Bullet b1(20.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
+    Bullet b2(60.0f, 30, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(150.0f, 150.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'b');
     // per ogni bullet istanzio gli effetti particellari associati
     //b1.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
     //b2.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
 
-    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT))));
+    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), glm::vec2())));
     b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT))));
 
 
@@ -152,7 +156,7 @@ void Game::Update(float dt)
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
                 if (verifyDragonCollisionCircle(*c)) {
                     // il bullet i ha colpito il dragòn
-
+                    hitDragon(&level->instancedBullets[i], i);
                 }
 
             }
@@ -250,9 +254,9 @@ void Game::hitDragon(Bullet* b, int i) {
     //-Proiettile sparisce->Fatto
     //-Effetto visivo per il fatto di essere stati colpiti:
     // -Quello sul drago è gestito dalla classe Dragòn(?)
-    // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)
-    //-Orchideo ci stiamo dimenticando completamente i suoni
-    this->Levels[this->Level].player.dealDamage(b->Power);
+    // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)->In realtà no
+    // -Orchideo ci stiamo dimenticando completamente i suoni
+    this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
 }
 

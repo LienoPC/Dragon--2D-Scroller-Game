@@ -49,6 +49,7 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 									glm::vec2(this->position.x + 550 * size.x / 800, this->position.y + 475 * size.y / 800),
 									glm::vec2(this->position.x + 755 * size.x / 800, this->position.y + 290 * size.y / 800),
 									glm::vec2(this->position.x + 755 * size.x / 800, this->position.y + 475 * size.y / 800)));
+	this->hit = false;
 }
 
 void Dragon::move(glm::vec2 move) {
@@ -72,10 +73,17 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 	static float deltaTime;
 	static int frame = 0;
 	static bool reversed = false;
-
+	static int frameStart;
 	deltaTime += dt;
+	if (this->hit) {
+		//float rColor = 0.5f + ((rand() % 100) / 100.0f);
+		//this->color = glm::vec3(rColor, rColor, rColor);
+	}
 	renderer.DrawSprite(this->animationFrames.at(frame), this->position, this->size, this->rotation, this->color);
-	
+	if (this->hit && frameStart == 30) {
+		frameStart = frame;
+	}
+
 	if (deltaTime >= FRAME_TIME) {
 		if (frame == 0) {
 			frame++;
@@ -115,4 +123,5 @@ void Dragon::drawHitbox(SpriteRenderer& renderer) {
 
 void Dragon::dealDamage(double damage) {
 	this->stats.HP = this->stats.HP - damage;
+	this->hit = true;
 }

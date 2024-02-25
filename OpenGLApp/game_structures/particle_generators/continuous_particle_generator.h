@@ -13,7 +13,7 @@ class ContinousParticleGenerator : public ParticleGenerator
 public:
    
     ContinousParticleGenerator();
-    ContinousParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type);
+    ContinousParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type, glm::vec2 size);
     // method implementation
     void Update(float dt, GameObject& object);
     

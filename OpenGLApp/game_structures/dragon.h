@@ -22,6 +22,7 @@ public:
 	float velocityModifier;
 	// dragon animation frames
 	std::vector<Texture2D> animationFrames;
+	bool hit;
 
 	// constructors
 	Dragon();

@@ -6,8 +6,8 @@ ContinousParticleGenerator::ContinousParticleGenerator() {
 
 }
 
-ContinousParticleGenerator::ContinousParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type) {
-    ParticleGenerator(shader, texture, amount, type);
+ContinousParticleGenerator::ContinousParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type, glm::vec2 size) {
+    //ParticleGenerator(shader, texture, amount, type);
 }
 
 

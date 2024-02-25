@@ -108,7 +108,7 @@ void GameLevel::LoadLevel(int height, int width) {
     numRefresh = this->maxInstancedBullet;
 }
 
-short numRefresh = 0; // conto quanti proiettili sono stati distrutti
+static short numRefresh = 0; // conto quanti proiettili sono stati distrutti
 void GameLevel::PlayLevel(float dt) {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet

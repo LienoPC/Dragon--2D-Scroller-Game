@@ -6,7 +6,7 @@ class HitParticleGenerator : public ParticleGenerator
 {
 public:
     HitParticleGenerator();
-    HitParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type);
+    HitParticleGenerator(Shader shader, Texture2D texture, unsigned int amount, ParticleType type, float size);
 
     // method implementation    
     void Update(float dt, GameObject& object);
