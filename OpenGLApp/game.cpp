@@ -50,6 +50,8 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/levels/Background4LUNGO.png", true, "level1Grass");
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
+    ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
+    ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
     ResourceManager::LoadTexture("textures/dragon_frame1.png", true, "dragon_f1");
@@ -84,16 +86,14 @@ void Game::Init(GLFWwindow* window)
 
     //create Menus and Buttons
     int id = 0;  
-    Menu mainMenu(id++, ResourceManager::GetTexture("hitbox"));
-    Button button1({ 1280.0f/2 - 720.0f/2 , 960.0f/2 - 480.0f/2 - 150.0f }, { 720.0f, 240.0f }, buttonType::link, id, ResourceManager::GetTexture("hitbox"), ResourceManager::GetTexture("hitbox"));
-    Button button2({ 1280.0f / 2 - 720.0f / 2 , 960.0f / 2 - 480.0f / 2 + 150.0f }, { 720.0f, 240.0f }, buttonType::link, id, ResourceManager::GetTexture("hitbox"), ResourceManager::GetTexture("hitbox"));
+    Menu mainMenu(id++, ResourceManager::GetTexture("mainMenuBG"));
+    Button button1({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, id, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
 
     Menu subMenu(id++, ResourceManager::GetTexture("hitbox"));
-    Button button3({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 - 150.0f }, { 720.0f, 240.0f }, buttonType::action, ResourceManager::GetTexture("stalin"), ResourceManager::GetTexture("stalin"));
-    Button button4({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 + 150.0f }, { 720.0f, 240.0f }, buttonType::action, ResourceManager::GetTexture("lenin"), ResourceManager::GetTexture("lenin"));
+    Button button3({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 - 150.0f }, { 720.0f, 240.0f }, buttonType::play, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
+    Button button4({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 + 150.0f }, { 720.0f, 240.0f }, buttonType::action, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
 
     mainMenu.addButton(button1);
-    mainMenu.addButton(button2);
     subMenu.addButton(button3);
     subMenu.addButton(button4);
     this->Menus.push_back(mainMenu);
@@ -160,7 +160,6 @@ void Game::ProcessInput(float dt)
 {  
     if (Game::State == GAME_MENU) {
         static Button *cursorOver = NULL, *clicked = NULL;
-        static bool mouseClicked = false;
         double cursorX, cursorY;
         glfwGetCursorPos(this->window, &cursorX, &cursorY);
 
@@ -179,26 +178,26 @@ void Game::ProcessInput(float dt)
         }
 
         if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
-            if (cursorOver != NULL && !mouseClicked) {
-                mouseClicked = true;
+            if (cursorOver != NULL) {
                 clicked = cursorOver;
             }
-            else {
-                mouseClicked = false;
-                clicked = NULL;
-            }
         }
-
-        if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && mouseClicked) {
-            if (cursorOver != NULL && clicked != NULL && cursorOver == clicked) {
-                if (clicked->type == buttonType::link) {
-                    this->currMenu = clicked->subMenuId;
-                    cursorOver = NULL;
+        else {
+            if (clicked != NULL) {
+                if (cursorOver != NULL && cursorOver == clicked) {
+                    if (clicked->type == buttonType::link) {
+                        this->currMenu = clicked->subMenuId;
+                        cursorOver = NULL;
+                    }
+                    else if (clicked->type == buttonType::play) {
+                        this->currMenu = 0;
+                        cursorOver = NULL;
+                        this->State = GAME_ACTIVE;
+                    }
                 }
             }
             clicked = NULL;
-            mouseClicked = false;
-        }
+        }   
     }
     else if (Game::State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];

@@ -9,9 +9,9 @@ Button::Button(glm::vec2 position, glm::vec2 size, buttonType type, int subMenuI
 
 void Button::drawButton(SpriteRenderer& renderer) {
 	if (this->selected)
-		renderer.DrawSprite(this->spriteSelected, this->position, this->size, 0.0f, {0.0f, 0.5f, 1.0f});
+		renderer.DrawSprite(this->spriteSelected, this->position, this->size*1.05f, 0.0f, glm::vec3(1.0f));
 	else
-		renderer.DrawSprite(this->spriteBase, this->position, this->size, 0.0f, {1.0f, 0.5f, 0.0f});
+		renderer.DrawSprite(this->spriteBase, this->position, this->size, 0.0f, glm::vec3(1.0f));
 }
 
 bool Button::operator==(const Button& other) const {

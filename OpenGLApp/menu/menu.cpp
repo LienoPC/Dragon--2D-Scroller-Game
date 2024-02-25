@@ -13,7 +13,7 @@ void Menu::addButton(Button b) {
 void Menu::drawMenu(SpriteRenderer& renderer) {
 	Button b;
 	//Render the background
-	renderer.DrawSprite(this->background, { 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT }, 0.0f, glm::vec3(0.0f));
+	renderer.DrawSprite(this->background, { 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT }, 0.0f, glm::vec3(1.0f));
 	//Render all the buttons
 	for (Button b : this->buttons) {
 		b.drawButton(renderer);
