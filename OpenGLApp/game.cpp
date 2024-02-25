@@ -51,7 +51,10 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
     ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
     ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
+    ResourceManager::LoadTexture("textures/menu/level_selection_bg1.png", true, "levelSelBG");
     ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
+    ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
+    ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
     ResourceManager::LoadTexture("textures/dragon_frame1.png", true, "dragon_f1");
@@ -89,13 +92,14 @@ void Game::Init(GLFWwindow* window)
     Menu mainMenu(id++, ResourceManager::GetTexture("mainMenuBG"));
     Button button1({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, id, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
 
-    Menu subMenu(id++, ResourceManager::GetTexture("hitbox"));
-    Button button3({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 - 150.0f }, { 720.0f, 240.0f }, buttonType::play, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
-    Button button4({ 1280.0f / 2 - 540.0f / 2 , 960.0f / 2 - 480.0f / 2 + 150.0f }, { 720.0f, 240.0f }, buttonType::action, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
+    Menu subMenu(id++, ResourceManager::GetTexture("levelSelBG"));
+    Button button2({ 135.0f, 735.0f }, { 210.0f, 90.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"));
+    Button button3({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton"));
+    //Aggiungere bottoni sotto agli altri livelli (oltre Foresta)
 
     mainMenu.addButton(button1);
+    subMenu.addButton(button2);
     subMenu.addButton(button3);
-    subMenu.addButton(button4);
     this->Menus.push_back(mainMenu);
     this->Menus.push_back(subMenu);
     this->currMenu = 0;
@@ -139,7 +143,6 @@ void Game::Update(float dt)
                     // il bullet i ha colpito il dragòn
                     hitDragon(&level->instancedBullets[i]);
                 }
-
             }
             break;
             case CIRCLE:
@@ -149,7 +152,6 @@ void Game::Update(float dt)
                     // il bullet i ha colpito il dragòn
 
                 }
-
             }
             break;
         }      
