@@ -145,7 +145,7 @@ void Game::Update(float dt)
             {
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
                 if (verifyDragonCollisionSquare(*s)) {
-                    // il bullet i ha colpito il dragòn
+                    // il bullet i ha colpito il dragÃ²n
                     hitDragon(&level->instancedBullets[i], i);
                 }
 
@@ -155,7 +155,7 @@ void Game::Update(float dt)
             {
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
                 if (verifyDragonCollisionCircle(*c)) {
-                    // il bullet i ha colpito il dragòn
+                    // il bullet i ha colpito il dragÃ²n
                     hitDragon(&level->instancedBullets[i], i);
                 }
 
@@ -178,7 +178,7 @@ void Game::ProcessInput(float dt)
 {  
      GameLevel* level = &this->Levels[this->Level];
      if (Game::State == GAME_ACTIVE) {
-         // Gestione della velocità (sprint, slowdown)
+         // Gestione della velocitÃ  (sprint, slowdown)
          static bool sprint = false, slowdown = false;
 
          if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
@@ -253,8 +253,8 @@ void Game::hitDragon(Bullet* b, int i) {
     //-Danno agli HP
     //-Proiettile sparisce->Fatto
     //-Effetto visivo per il fatto di essere stati colpiti:
-    // -Quello sul drago è gestito dalla classe Dragòn(?)
-    // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)->In realtà no
+    // -Quello sul drago Ã¨ gestito dalla classe DragÃ²n(?)
+    // -Quello sul proiettile Ã¨ gestito direttamente da qua(per evitare overhead del gameLoop)->In realtÃ  no
     // -Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
@@ -289,62 +289,30 @@ float Game::dotProduct(glm::vec2 a, glm::vec2 b) {
 }
 
 bool Game::checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
-    for (int i = 0; i < 4; ++i) {
-        // Calcola l'asse per la proiezione
-        glm::vec2 axis = {hitbox1.left_up.y - hitbox1.left_down.y,
-                       hitbox1.left_down.x - hitbox1.left_up.x};
+        // Calcolare le proiezioni dei rettangoli sugli assi x e y
+        float left1 = std::min(hitbox1.left_up.x, std::min(hitbox1.left_down.x, std::min(hitbox1.right_up.x, hitbox1.right_down.x)));
+        float right1 = std::max(hitbox1.left_up.x, std::max(hitbox1.left_down.x, std::max(hitbox1.right_up.x, hitbox1.right_down.x)));
+        float top1 = std::min(hitbox1.left_up.y, std::min(hitbox1.left_down.y, std::min(hitbox1.right_up.y, hitbox1.right_down.y)));
+        float bottom1 = std::max(hitbox1.left_up.y, std::max(hitbox1.left_down.y, std::max(hitbox1.right_up.y, hitbox1.right_down.y)));
 
-        float minhitbox1 = dotProduct(axis, hitbox1.left_up);
-        float maxhitbox1 = minhitbox1;
+        float left2 = std::min(hitbox2.left_up.x, std::min(hitbox2.left_down.x, std::min(hitbox2.right_up.x, hitbox2.right_down.x)));
+        float right2 = std::max(hitbox2.left_up.x, std::max(hitbox2.left_down.x, std::max(hitbox2.right_up.x, hitbox2.right_down.x)));
+        float top2 = std::min(hitbox2.left_up.y, std::min(hitbox2.left_down.y, std::min(hitbox2.right_up.y, hitbox2.right_down.y)));
+        float bottom2 = std::max(hitbox2.left_up.y, std::max(hitbox2.left_down.y, std::max(hitbox2.right_up.y, hitbox2.right_down.y)));
 
-        float minhitbox2 = dotProduct(axis, hitbox2.left_up);
-        float maxhitbox2 = minhitbox2;
-
-        // Calcola la proiezione su ogni asse
-        for (int j = 1; j < 4; ++j) {
-            float projectionhitbox1, projectionhitbox2;
-
-            if (j == 1) {
-                projectionhitbox1 = dotProduct(axis, hitbox1.left_down);
-                projectionhitbox2 = dotProduct(axis, hitbox2.left_down);
-            }
-            else if (j == 2) {
-                projectionhitbox1 = dotProduct(axis, hitbox1.right_up);
-                projectionhitbox2 = dotProduct(axis, hitbox2.right_up);
-            }
-            else {
-                projectionhitbox1 = dotProduct(axis, hitbox1.right_down);
-                projectionhitbox2 = dotProduct(axis, hitbox2.right_down);
-            }
-
-            minhitbox1 = std::min(minhitbox1, projectionhitbox1);
-            maxhitbox1 = std::max(maxhitbox1, projectionhitbox1);
-
-            minhitbox2 = std::min(minhitbox2, projectionhitbox2);
-            maxhitbox2 = std::max(maxhitbox2, projectionhitbox2);
-
-            
-        }
-        // Se non c'è sovrapposizione su questo asse, i rettangoli non si intersecano
-        if (maxhitbox1 < minhitbox2 || maxhitbox2 < minhitbox1) {
-            return false;
-        }
-       
-    }
-
-    // Sovrapposizione su tutti gli assi, i rettangoli si intersecano
-    return true;
+        // Controllare se le proiezioni si sovrappongono sugli assi x e y
+        return !(right1 < left2 || right2 < left1 || bottom1 < top2 || bottom2 < top1);
 }
 
 bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet
     float closestX = std::max(hitboxS.left_up.x, std::min(hitboxC.center.x, hitboxS.right_down.x));
     float closestY = std::max(hitboxS.left_up.y, std::min(hitboxC.center.y, hitboxS.right_down.y));
 
-    // Calcola la distanza tra il punto più vicino e il centro del cerchio
+    // Calcola la distanza tra il punto piÃ¹ vicino e il centro del cerchio
     float distanceX = hitboxC.center.x - closestX;
     float distanceY = hitboxC.center.y - closestY;
 
-    // Se la distanza è inferiore al raggio, c'è intersezione
+    // Se la distanza Ã¨ inferiore al raggio, c'Ã¨ intersezione
     if ((distanceX * distanceX + distanceY * distanceY) < (hitboxC.radius * hitboxC.radius)) {
         return true;
     }
