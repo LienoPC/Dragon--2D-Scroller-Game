@@ -155,7 +155,6 @@ Texture2D ResourceManager::loadTextureFromFile(const char *file, bool alpha)
 GameLevel ResourceManager::loadLevelFile(const char* file) {
     std::ifstream input(file, std::ios::binary);
     std::vector<int> bulletList;
-    std::vector<int> fireballList;
     GameLevel newL;
 
     std::string in;

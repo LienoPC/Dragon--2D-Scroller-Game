@@ -1,8 +1,6 @@
 #ifndef GAMELEVEL_H
 #define GAMELEVEL_H
 
-
-
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
 #include "dragon.h"
@@ -26,9 +24,8 @@ class GameLevel {
 public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
-	std::vector<Bullet> instancedFireballs;
-
-	 // ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
+	// ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
+	
 	int phase;
 
 	// attributi del livello
@@ -36,7 +33,6 @@ public:
 	int maxInstancedBullet;
 	double minVel;
 	double maxVel;
-	double fireballVel;
 	int windowNumber;
 	short numRefresh;
 
@@ -52,7 +48,6 @@ public:
 
 
 	void instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart);
-	void instanceFireball(glm::vec2 pos, double velocity);
 	// sposta la posizione di un bullet dalla lista di quelli istanziati
 	//void MoveBullet(glm::vec2 move, int identificator);
 

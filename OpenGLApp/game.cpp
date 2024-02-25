@@ -67,20 +67,12 @@ void Game::Init(GLFWwindow* window)
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
     ResourceManager::LoadTexture("textures/hitbox.png", true, "hitbox");
-    ResourceManager::LoadTexture("textures/stalin.png", true, "stalin");
     ResourceManager::LoadTexture("textures/levels/Background4LUNGO.png", true, "level1Grass");
     ResourceManager::LoadTexture("textures/levels/Level2.png", true, "level2Rock");
-    ResourceManager::LoadTexture("textures/trozky.png", true, "trozky");
-    ResourceManager::LoadTexture("textures/lenin.png", true, "lenin");
-<<<<<<< HEAD
-    ResourceManager::LoadTexture("textures/pietra.png", true, "particle");
     ResourceManager::LoadTexture("textures/fireball.png", true, "fireball");
-=======
     ResourceManager::LoadTexture("textures/particlePietra.png", true, "particle");
     ResourceManager::LoadTexture("textures/arrow_sprite.png", true, "arrow");
     ResourceManager::LoadTexture("textures/pietra.png", true, "rock");
->>>>>>> 80eeaf610b08632df17ea2fdad349a9e1d1ac521
-
 
 
     ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
@@ -99,15 +91,11 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
     // create bulletTypes
-<<<<<<< HEAD
-    Bullet b1(20.0f, 40, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
-    Bullet b2(50.0f, 30, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(SQUARE), (int)'b');
-    
-    
-=======
+
     Bullet b1(20.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
     Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(150.0f, 150.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'b');
->>>>>>> 80eeaf610b08632df17ea2fdad349a9e1d1ac521
+    //Bullet fb(50.0f, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+    
     // per ogni bullet istanzio gli effetti particellari associati
     //b1.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
     //b2.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
@@ -118,6 +106,7 @@ void Game::Init(GLFWwindow* window)
 
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
+    //ResourceManager::SetBullet(fb);
 
     // create all Throwing Windows
     ThrowWindow center(glm::vec2(this->Width/2, 0.0f), glm::vec2(this->Width/8, 0.0f), 0, DirectionStart(UP));
@@ -179,8 +168,8 @@ void Game::Init(GLFWwindow* window)
 
 }
 
-void Game::Update(float dt)
-{
+void Game::Update(float dt){
+
     if (this->State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
         level->PlayLevel(dt); // gestisce il lancio di nuovi proiettili e la cancellazione di quelli che escono dalla scena
@@ -188,52 +177,22 @@ void Game::Update(float dt)
         //Verifica delle hitbox per ogni proiettile/palle del drago
         //Non so come sono gestite le palle per mo
 
-<<<<<<< HEAD
-   
-      for (int i = 0; i < level->instancedBullets.size(); i++) {
+        for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
         Bullet b = level->instancedBullets[i];
-            switch (b.hitboxT) {
-            case SQUARE:
-            {
+            switch(b.hitboxT) {
+            case SQUARE: {
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
-                for (int j = 0; j < level->instancedFireballs.size(); j++) {
-                    Bullet fb = level->instancedFireballs[j];
-                    if (fb.destroyed == false) {
-                        std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
-                        if (verifyBulletCollisionCircleSquare(*s, *fbHitbox)) {
-                            hitBullet(&level->instancedBullets[i] , &level->instancedFireballs[j], i, j);
+                if (b.destroyed == false) {
+                    for (int j = 0; j < level->player.instancedFireballs.size(); j++) {
+                        Bullet fb = level->player.instancedFireballs[j];
+                        if (fb.destroyed == false) {
+                            std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
+                            if (verifyBulletCollisionCircleSquare(*s, *fbHitbox)) {
+                                hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                            }
                         }
                     }
-=======
-        for (int i = 0; i < level->instancedBullets.size(); i++) {
-            // Verifico per ogni proiettile istanziato se ci sono hit
-            Bullet b = level->instancedBullets[i];
-            if (b.destroyed == false) {
-                switch (b.hitboxT) {
-                case SQUARE:
-                {
-                    std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(b.hitbox);
-                    if (verifyDragonCollisionSquare(*s)) {
-                        // il bullet i ha colpito il drag�n
-                        //sEngine->play2D("audio/Hit.wav");
-                        hitDragon(&level->instancedBullets[i], i);
-
-
-                    }
-                }
-                break;
-                case CIRCLE:
-                {
-                    std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
-                    if (verifyDragonCollisionCircle(*c)) {
-                        // il bullet i ha colpito il drag�n
-                        //sEngine->play2D("audio/Hit.wav");
-                        hitDragon(&level->instancedBullets[i], i);
-                    }
-                }
-                break;
->>>>>>> 80eeaf610b08632df17ea2fdad349a9e1d1ac521
                 }
 
                 if (b.destroyed == false) {
@@ -243,17 +202,18 @@ void Game::Update(float dt)
                     }
                 }
             }
-<<<<<<< HEAD
             break;
-            case CIRCLE:
-            {
+
+            case CIRCLE:{
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(b.hitbox);
-                for (int j = 0; j < level->instancedFireballs.size(); j++) {
-                    Bullet fb = level->instancedFireballs[j];
-                    if (fb.destroyed == false) {
-                        std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
-                        if (verifyBulletCollisionCircleCircle(*c, *fbHitbox)) {
-                            hitBullet(&level->instancedBullets[i], &level->instancedFireballs[j], i, j);
+                if (b.destroyed == false) {
+                    for (int j = 0; j < level->player.instancedFireballs.size(); j++) {
+                        Bullet fb = level->player.instancedFireballs[j];
+                        if (fb.destroyed == false) {
+                            std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
+                            if (verifyBulletCollisionCircleCircle(*c, *fbHitbox)) {
+                                hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                            }
                         }
                     }
                 }
@@ -267,25 +227,18 @@ void Game::Update(float dt)
             }
             break;
             }
-         
-=======
         }
-        if (ShakeTime > 0.0f)
-        {
+
+        if (ShakeTime > 0.0f){
             ShakeTime -= dt;
             if (ShakeTime <= 0.0f)
                 Effects->Shake = false;
         }
->>>>>>> 80eeaf610b08632df17ea2fdad349a9e1d1ac521
     }
 }
 
-<<<<<<< HEAD
+
 void Game::ProcessInput(float dt){  
-     GameLevel* level = &this->Levels[this->Level];
-=======
-void Game::ProcessInput(float dt)
-{  
     if (Game::State == GAME_MENU) {
         static Button* cursorOver = NULL, * clicked = NULL;
         double cursorX, cursorY;
@@ -327,7 +280,7 @@ void Game::ProcessInput(float dt)
             clicked = NULL;
         }
     }   
->>>>>>> 80eeaf610b08632df17ea2fdad349a9e1d1ac521
+
      if (Game::State == GAME_ACTIVE) {
          GameLevel* level = &this->Levels[this->Level];
          // Gestione della velocità (sprint, slowdown)
@@ -351,65 +304,32 @@ void Game::ProcessInput(float dt)
              slowdown = false;
         }
 
-        // Movimento del drago
-        float velocity = dt * level->player.velocityModifier;
-        glm::vec2 move, playerPos = level->player.position;
-
-<<<<<<< HEAD
-         
-
          // Movimento del drago
          float velocity = dt * level->player.velocityModifier;
          glm::vec2 move, playerPos = level->player.position;
 
          if (this->Keys[GLFW_KEY_A]) {
              move = glm::vec2(-velocity, 0.0f);
-
              if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                  level->movePlayer(move);
          }
          if (this->Keys[GLFW_KEY_D]) {
              move = glm::vec2(velocity, 0.0f);
-
              if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                  level->movePlayer(move);
          }
          if (this->Keys[GLFW_KEY_W]) {
              move = glm::vec2(0.0f, -velocity);
-
              if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                  level->movePlayer(move);
          }
          if (this->Keys[GLFW_KEY_S]) {
              move = glm::vec2(0.0f, velocity);
-=======
-        if (this->Keys[GLFW_KEY_A]) {
-            move = glm::vec2(-velocity, 0.0f);
-
-            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
-        }
-        if (this->Keys[GLFW_KEY_D]) {
-            move = glm::vec2(velocity, 0.0f);
-
-            if(!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
-        }
-        if (this->Keys[GLFW_KEY_W]) {
-            move = glm::vec2(0.0f, -velocity);
-
-            if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
-                level->movePlayer(move);
-        }
-        if (this->Keys[GLFW_KEY_S]) {
-            move = glm::vec2(0.0f, velocity);
->>>>>>> 80eeaf610b08632df17ea2fdad349a9e1d1ac521
-
              if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                  level->movePlayer(move);
          }
-         if (this->Keys[GLFW_KEY_L]) {
-             level->instanceFireball(level->player.position, 40.0f);
+         if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
+             level->player.instanceFireball(level->player.position, 350.0f);
          }
      }
 }
@@ -461,7 +381,7 @@ void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
     this->Levels[this->Level].DestroyBullet(i);
 
     fb->destroyed = true;
-    level->instancedFireballs[j].destroy();
+    level->player.instancedFireballs[j].destroy();
 }
 
 bool Game::verifyDragonCollisionSquare(Square h) {

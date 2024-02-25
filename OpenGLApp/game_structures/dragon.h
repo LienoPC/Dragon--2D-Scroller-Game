@@ -4,7 +4,7 @@
 #include "../game_structures/game_object.h"
 #include "../game_structures/hitbox.h"
 #include "../game_structures/dragon_stats.h"
-
+#include "bullet.h"
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
 #include <vector>
@@ -16,6 +16,7 @@ class Dragon : public GameObject {
 public:
 	//dragon hitboxes vector
 	std::vector<Square> hitboxes;
+	std::vector<Bullet> instancedFireballs;
 
 	// dragon characteristics
 	DragonStats stats;
@@ -38,7 +39,9 @@ public:
 	void dealDamage(double damage);
 
 	void drawHitbox(SpriteRenderer& renderer); //hitbox drawing debug method
-	
+
+	void instanceFireball(glm::vec2 pos, double velocity);
+	void checkFireballs();
 	//void isOutside();
 
 };
