@@ -127,7 +127,7 @@ void Game::Init(GLFWwindow* window)
     Button button1({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, id, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
 
     Menu subMenu(id++, ResourceManager::GetTexture("levelSelBG"));
-    Button button2({ 135.0f, 735.0f }, { 210.0f, 90.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"));
+    Button button2({ 220.0f, 790.0f }, { 220.0f, 80.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"));
     Button button3({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton"));
     //Aggiungere bottoni sotto agli altri livelli (oltre Foresta)
 
