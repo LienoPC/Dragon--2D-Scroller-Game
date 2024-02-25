@@ -35,9 +35,9 @@ Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color,
 									glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 360 * size.y / 800),
 									glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 440 * size.y / 800)));
 
-	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 270 * size.y / 800),
+	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 285 * size.y / 800),
 									glm::vec2(this->position.x + 375 * size.x / 800, this->position.y + 690 * size.y / 800),
-									glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 270 * size.y / 800),
+									glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 285 * size.y / 800),
 									glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 690 * size.y / 800)));
 
 	this->hitboxes.push_back(Square(glm::vec2(this->position.x + 405 * size.x / 800, this->position.y + 360 * size.y / 800),
