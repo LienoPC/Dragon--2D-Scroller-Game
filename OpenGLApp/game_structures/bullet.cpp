@@ -188,7 +188,7 @@ void Bullet::Draw(SpriteRenderer& renderer) {
 		renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
 	}
 
-	
+	// Render delle hitbox
 	/*
 	switch (this->hitboxT) {
 

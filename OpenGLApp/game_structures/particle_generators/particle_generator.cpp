@@ -57,7 +57,6 @@ void ParticleGenerator::Draw()
             
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(particle.Position, 0.0f)); 
-            //model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // move origin of rotation to center of quad
             model = glm::rotate(model, glm::radians(particle.Rotation), glm::vec3(0.0f, 0.0f, 1.0f)); // then rotate
             model = glm::scale(model, glm::vec3(particle.Size, 1.0f)); // last scale
             model = glm::translate(model, glm::vec3(-particle.Position, 0.0f));
@@ -68,24 +67,8 @@ void ParticleGenerator::Draw()
             glBindVertexArray(0);
         }
     }
-    // don't forget to reset to default blending mode
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
-
-/*
-void ParticleGenerator::DrawSprite(SpriteRenderer& s) {
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    for (Particle& particle : this->particles)
-    {
-        if (particle.Life > 0.0f)
-        {
-            s.DrawSprite(this->texture, particle.Position);
-        }
-    }
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-*/
 
 
 Shader ParticleGenerator::getShader() {

@@ -29,7 +29,7 @@ void HitParticleGenerator::Update(float dt, GameObject& object) {
 		Particle& p = this->particles[i];
 		p.Life -= dt; // reduce life
 		if (p.Life > 0.0f)
-		{	// particle is alive, thus update
+		{	
 			p.Position += p.Velocity * (dt * VEL_MODIFY);
 			p.Color.a -= dt * 1.5f;
 		}
