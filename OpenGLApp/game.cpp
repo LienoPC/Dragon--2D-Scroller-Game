@@ -314,9 +314,12 @@ void Game::ProcessInput(float dt){
              if (!level->isPlayerOutOfBounds(playerPos + move, SCREEN_HEIGHT, SCREEN_WIDTH))
                  level->movePlayer(move);
          }
-         if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
-             level->player.instanceFireball(level->player.position, 350.0f);
-         }
+         if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && !shoot) {
+            level->player.instanceFireball(level->player.position, 350.0f);
+            shoot = true;
+        }else if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && shoot) {
+            shoot = false;
+        }
      }
 }
 
