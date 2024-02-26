@@ -179,6 +179,13 @@ void GameLevel::PlayLevel(float dt) {
         this->instancedBullets[i].move(dt);
     }
 
+    // verifico il passaggio di fase
+    if (Timer::getElapsedSeconds() > SECONDS1 && Timer::getElapsedSeconds() < SECONDS2) {
+        this->IncreasePhase();
+    }
+    if (Timer::getElapsedSeconds() > SECONDS2) {
+        this->IncreasePhase();
+    }
 
 }
 

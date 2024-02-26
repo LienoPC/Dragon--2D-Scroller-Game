@@ -49,7 +49,6 @@ private:
 
 	void CalculateHPBar(float hp);
 	void CalculateFPBar(float fp);
-	void Scale();
 };
 
 #endif // !HUD_H

@@ -1,11 +1,3 @@
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
 #include "glad/include/glad/glad.h"
 #include "glfw-3.3.8.bin.WIN64/include/GLFW/glfw3.h"
 #include <iostream>
@@ -19,7 +11,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
+Game Dragòn(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char* argv[])
 {
@@ -32,7 +24,7 @@ int main(int argc, char* argv[])
 #endif
     glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Dragon", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers
@@ -55,7 +47,7 @@ int main(int argc, char* argv[])
 
     // initialize game
     // ---------------
-    Breakout.Init(window);
+    Dragòn.Init(window);
 
     // deltaTime variables
     // -------------------
@@ -73,17 +65,17 @@ int main(int argc, char* argv[])
 
         // manage user input
         // -----------------
-        Breakout.ProcessInput(deltaTime);
+        Dragòn.ProcessInput(deltaTime);
 
         // update game state
         // -----------------
-        Breakout.Update(deltaTime);
+        Dragòn.Update(deltaTime);
 
         // render
         // ------
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        Breakout.Render(deltaTime);
+        Dragòn.Render(deltaTime);
 
         glfwSwapBuffers(window);
 }
@@ -104,9 +96,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            Breakout.Keys[key] = true;
+            Dragòn.Keys[key] = true;
         else if (action == GLFW_RELEASE)
-            Breakout.Keys[key] = false;
+            Dragòn.Keys[key] = false;
     }
 }
 
@@ -114,9 +106,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button >= 0 && button <= 8) {
         if (action == GLFW_PRESS)
-            Breakout.MouseButtons[button] = true;
+            Dragòn.MouseButtons[button] = true;
         else if (action == GLFW_RELEASE)
-            Breakout.MouseButtons[button] = false;
+            Dragòn.MouseButtons[button] = false;
     }
 }
 
