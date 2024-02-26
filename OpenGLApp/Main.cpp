@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
     }
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // OpenGL configuration
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
 
     // initialize game
     // ---------------
-    Breakout.Init();
+    Breakout.Init(window);
 
     // deltaTime variables
     // -------------------

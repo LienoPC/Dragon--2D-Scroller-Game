@@ -56,6 +56,7 @@ void GameLevel::instanceBullet(int bullet, glm::vec2 pos, double velocity, Direc
     this->instancedBullets.push_back(b);
 }
 
+
 void GameLevel::instanceWindow(int identificator) {
     ThrowWindow t(ResourceManager::GetWindow(identificator));
     this->actualWindows.push_back(t);
@@ -127,19 +128,15 @@ void GameLevel::PlayLevel(float dt) {
             }
             if (a == true) {
                 // rimuovo il proiettile
-                if (i != this->instancedBullets.size() - 1)
-                {
+                if (i != this->instancedBullets.size() - 1){
                     this->instancedBullets[i] = std::move(this->instancedBullets.back());
                 }
                 this->instancedBullets.pop_back();
-
             }
         }
-       
-    
-        
-
     }
+
+    player.checkFireballs();
 
     // tengo conto delle finestre già usate in un singolo lancio
     std::map<int, bool> alreadyUsedW;

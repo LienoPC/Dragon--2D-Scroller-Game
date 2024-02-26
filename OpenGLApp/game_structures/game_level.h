@@ -1,8 +1,6 @@
 #ifndef GAMELEVEL_H
 #define GAMELEVEL_H
 
-
-
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
 #include "dragon.h"
@@ -26,8 +24,8 @@ class GameLevel {
 public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
-	 // ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
-
+	// ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
+	
 	int phase;
 
 	// attributi del livello

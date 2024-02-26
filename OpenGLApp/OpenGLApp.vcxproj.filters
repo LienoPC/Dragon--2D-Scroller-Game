@@ -84,6 +84,12 @@
     <ClCompile Include="shaders_textures\post_processor.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="menu\button.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="menu\menu.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_s.h">
@@ -159,6 +165,12 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="shaders_textures\post_processor.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="menu\button.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="menu\menu.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
