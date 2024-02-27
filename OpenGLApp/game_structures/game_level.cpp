@@ -145,32 +145,35 @@ void GameLevel::PlayLevel(float dt) {
     }
     
     // istanzio i proiettili che mi servono
-    for (int i = 0; i < numRefresh; i++) {
-        if (this->bulletList.size() > 0) {
+   
+        for (int i = 0; i < numRefresh; i++) {
+            if (this->bulletList.size() > 0) {
 
-               
-               
-            int nW = WindowPick(alreadyUsedW);
-                
-            double positionOffsetX = positionOffsetPick(0, nW);
 
-            double positionOffsetY = positionOffsetPick(1, nW);
 
-            // velocity selection
-            std::random_device rd;
-            std::default_random_engine re(rd());
-            std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
-            double velocity = unif3(re);
+                int nW = WindowPick(alreadyUsedW);
 
-            // istanzio il proiettile
-            instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position+glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
-            this->bulletList.erase(this->bulletList.begin());
+                double positionOffsetX = positionOffsetPick(0, nW);
+
+                double positionOffsetY = positionOffsetPick(1, nW);
+
+                // velocity selection
+                std::random_device rd;
+                std::default_random_engine re(rd());
+                std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
+                double velocity = unif3(re);
+
+                // istanzio il proiettile
+                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position + glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
+                this->bulletList.erase(this->bulletList.begin());
+            }
+            else {
+                // PROIETTILI FINITI -> PROBLEMA?
+
+            }
         }
-        else {
-            // PROIETTILI FINITI -> PROBLEMA?
-
-        }
-    }
+    
+    
     numRefresh = 0;
 
 
@@ -240,7 +243,8 @@ void GameLevel::Draw(SpriteRenderer& renderer, float dt) {
 }
 
 void GameLevel::DestroyBullet(unsigned int i) {
-    this->numRefresh++;
+    //if(numRefresh < this->maxInstancedBullet)
+        this->numRefresh++;
     this->instancedBullets[i].destroy();
 }
 

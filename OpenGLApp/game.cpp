@@ -342,7 +342,7 @@ void Game::Render(float dt)
 
 //FUNZIONI HITBOX -------------------------------------------------------------------------------------------
 void Game::hitDragon(Bullet* b, int i) {
-    ShakeTime = 0.10f;
+    ShakeTime = 0.05f;
     Effects->Shake = true;
     // eliminare il bullet
     b->destroyed = true;
