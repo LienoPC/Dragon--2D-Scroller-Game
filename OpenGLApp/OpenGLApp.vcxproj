@@ -147,6 +147,7 @@
     <ClCompile Include="game_structures\game_level.cpp" />
     <ClCompile Include="game_structures\game_object.cpp" />
     <ClCompile Include="game_structures\hitbox.cpp" />
+    <ClCompile Include="game_structures\level_save.cpp" />
     <ClCompile Include="game_structures\particle_generators\hit_particle_generator.cpp" />
     <ClCompile Include="game_structures\particle_generators\particle.cpp" />
     <ClCompile Include="game_structures\particle_generators\continuous_particle_generator.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="game_structures\game_level.h" />
     <ClInclude Include="game_structures\game_object.h" />
     <ClInclude Include="game_structures\hitbox.h" />
+    <ClInclude Include="game_structures\level_save.h" />
     <ClInclude Include="game_structures\particle_generators\hit_particle_generator.h" />
     <ClInclude Include="game_structures\particle_generators\particle.h" />
     <ClInclude Include="game_structures\particle_generators\continuous_particle_generator.h" />
@@ -211,6 +213,9 @@
   <ItemGroup>
     <Image Include="..\..\..\..\Asset\level1.png" />
     <Image Include="textures\fireball.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="game_structures\save.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
