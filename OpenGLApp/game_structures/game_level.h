@@ -15,7 +15,6 @@
 #define PHASES 3
 #define SECONDS1 20
 #define SECONDS2 50
-#define SECONDS3 90
 #define VELINCREASE 150
 
 
@@ -36,8 +35,6 @@ public:
 	int windowNumber;
 	short numRefresh;
 
-	// dovremmo avere due file, uno che contiene il livello (con la lista di bullet da lanciare e le posizioni relative)
-	// un altro file che modellizza i bullet con tutti i parametri e ne definisce l'identificatore
 	Dragon player;
 
 	GameLevel();
@@ -48,8 +45,6 @@ public:
 
 
 	void instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart);
-	// sposta la posizione di un bullet dalla lista di quelli istanziati
-	//void MoveBullet(glm::vec2 move, int identificator);
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
 	void PlayLevel(float dt);

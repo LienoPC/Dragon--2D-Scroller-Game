@@ -74,18 +74,15 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 	static float deltaTime;
 	static int frame = 0;
 	static bool reversed = false;
-	static int frameStart;
 	deltaTime += dt;
+	
 	if (this->hit) {
 		float rColor = 0.5f + ((rand() % 100) / 100.0f);
 		this->color = glm::vec3(rColor, rColor, rColor);
 	}
+	
+	
 	renderer.DrawSprite(this->animationFrames.at(frame), this->position, this->size, this->rotation, this->color);
-	/*
-	if (this->hit && frameStart == 30) {
-		frameStart = frame;
-	}
-	*/
 
 	if (deltaTime >= FRAME_TIME) {
 		if (frame == 0) {

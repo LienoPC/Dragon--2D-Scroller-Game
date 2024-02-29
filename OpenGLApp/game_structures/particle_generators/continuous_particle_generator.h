@@ -5,9 +5,6 @@
 #include "particle.h"
 
 
-// ParticleGenerator acts as a container for rendering a large number of 
-// particles by repeatedly spawning and updating particles and killing 
-// them after a given amount of time.
 class ContinousParticleGenerator : public ParticleGenerator
 {
 public:

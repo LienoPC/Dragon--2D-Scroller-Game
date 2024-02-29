@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 
+short numRefresh = 0; // conto quanti proiettili sono stati distrutti per il refresh
 
 GameLevel::GameLevel()
     : bulletList(NULL), instancedBullets(NULL){}
@@ -73,18 +74,6 @@ glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
 
 void GameLevel::LoadLevel(int height, int width) {
 
-    /*
-    * Bullet b1(0.0f, 0.0f, ResourceManager::GetTexture("trozky"), glm::vec2(300.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(0.4f), glm::vec2(1.0f), hitboxType(AABB),0);
-    Bullet b2(0.0f, 0.0f, ResourceManager::GetTexture("lenin"), glm::vec2(100.0f, 0.0f), glm::vec2(70.0f, 80.0f), glm::vec3(0.3f), glm::vec2(1.0f), hitboxType(AABB), 1);
-    this->AddBulletType(b1);
-    this->AddBulletType(b2);
-
-    this->AddBullet(0);
-    this->AddBullet(0);
-    this->AddBullet(1);
-    this->AddBullet(0);
-    */
-
  
     // Set all Level attributes and constraints
     ResourceManager::LoadLevelF("levels/lev.txt", "LevelP");
@@ -109,7 +98,7 @@ void GameLevel::LoadLevel(int height, int width) {
     numRefresh = this->maxInstancedBullet;
 }
 
-static short numRefresh = 0; // conto quanti proiettili sono stati distrutti
+
 void GameLevel::PlayLevel(float dt) {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
@@ -190,6 +179,13 @@ void GameLevel::PlayLevel(float dt) {
         this->instancedBullets[i].move(dt);
     }
 
+    // verifico il passaggio di fase
+    if (Timer::getElapsedSeconds() > SECONDS1 && Timer::getElapsedSeconds() < SECONDS2) {
+        this->IncreasePhase();
+    }
+    if (Timer::getElapsedSeconds() > SECONDS2) {
+        this->IncreasePhase();
+    }
 
 }
 

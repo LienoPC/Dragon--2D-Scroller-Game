@@ -110,9 +110,3 @@ void HUD::CalculateFPBar(float FP) {
 	else
 		this->FPbarLenght = 0;
 }
-
-void HUD::Scale() {
-	
-	
-
-}

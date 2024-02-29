@@ -29,7 +29,6 @@ public:
     }
     // render all particles
     void  Draw();
-    void DrawSprite(SpriteRenderer& s);
     Shader getShader();
     Texture2D getTexture();
     float getSize();

@@ -1,13 +1,3 @@
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
-
-
 #include "./game_structures/dragon.h"
 #include "game.h"
 #include "game_structures/bullet.h"
@@ -74,7 +64,7 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/arrow_sprite.png", true, "arrow");
     ResourceManager::LoadTexture("textures/pietra.png", true, "rock");
 
-
+    // load menu textures
     ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
     ResourceManager::LoadTexture("textures/menu/level_selection_bg1.png", true, "levelSelBG");
     ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
@@ -96,10 +86,7 @@ void Game::Init(GLFWwindow* window)
     Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(150.0f, 150.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'b');
     //Bullet fb(50.0f, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
     
-    // per ogni bullet istanzio gli effetti particellari associati
-    //b1.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
-    //b2.particles.push_back(std::make_shared<ContinousParticleGenerator>(ContinousParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("stalin"), b1.ParticlesNumber, ParticleType(CONTINOUS))));
-
+    // creo i particles per ogni bullet
     b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
     b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
 
@@ -175,7 +162,6 @@ void Game::Update(float dt){
         level->PlayLevel(dt); // gestisce il lancio di nuovi proiettili e la cancellazione di quelli che escono dalla scena
 
         //Verifica delle hitbox per ogni proiettile/palle del drago
-        //Non so come sono gestite le palle per mo
 
         for (int i = 0; i < level->instancedBullets.size(); i++) {
         // Verifico per ogni proiettile istanziato se ci sono hit
@@ -329,11 +315,11 @@ void Game::ProcessInput(float dt){
                  level->movePlayer(move);
          }
          if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && !shoot) {
-             level->player.instanceFireball(level->player.position, 350.0f);
-             shoot = true;
-         }else if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && shoot) {
-             shoot = false;
-         }
+            level->player.instanceFireball(level->player.position, 350.0f);
+            shoot = true;
+        }else if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && shoot) {
+            shoot = false;
+        }
      }
 }
 
