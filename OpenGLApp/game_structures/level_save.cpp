@@ -32,10 +32,14 @@ void Level_save::starting_values() {
 
 void Level_save::update_state(int theme, int level) {
     if (theme == 0) {
-        this->theme0[level]++;
+        if (this->theme0[level]++ < 5) {
+            this->theme0[level]++;
+        }
     }
     else if (theme == 1) {
-        this->theme1[level]++;
+        if (this->theme1[level]++ < 5) {
+            this->theme1[level]++;
+        }
     }
 
     std::ofstream myfile;
