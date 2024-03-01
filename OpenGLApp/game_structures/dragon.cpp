@@ -110,11 +110,8 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 		deltaTime = 0;
 	}
 
-	for (int i = 0; i < this->instancedFireballs.size(); i++) {
-		this->instancedFireballs[i].move(dt);
-		instancedFireballs[i].Draw(renderer);
-	}
-	drawHitbox(renderer);
+	
+	//drawHitbox(renderer);
 	
 }
 
@@ -130,24 +127,54 @@ void Dragon::drawHitbox(SpriteRenderer& renderer) {
 }
 
 void Dragon::dealDamage(double damage) {
-	this->stats.HP = this->stats.HP - damage;
+	if (this->stats.HP - damage < 0) {
+		this->stats.HP = 0;
+	}
+	else {
+		this->stats.HP = this->stats.HP - damage;
+	}
+	
 	this->hit = true;
 }
 
-void Dragon::instanceFireball(glm::vec2 pos, double velocity) {
-	Bullet fb(50.0f, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
-	pos.x = pos.x + 167.0;
-	fb.position = pos;
-	fb.Direction = glm::vec2(0, -1);
-	fb.velApplied = velocity;
-	fb.destroyed = false;
-	this->instancedFireballs.push_back(fb);
+void Dragon::instanceFireball() {
+	if (FIREBALL_COST < this->stats.FP) {
+		Bullet fb(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(35.0f, 35.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+		glm::vec2 pos;
+		pos.x = this->position.x + XOFFSET;
+		pos.y = this->position.y + YOFFSET;
+		fb.position = pos;
+		fb.Direction = glm::vec2(0, -1);
+		fb.velApplied = FIREBALLVEL;
+		fb.destroyed = false;
+		this->instancedFireballs.push_back(fb);
+		this->stats.FP -= fb.Power;
+	}
+	
+}
+
+void Dragon::instancePowerup() {
+	float cost = 0;
+	for (int i = 0; i < this->stats.powerup.size(); i++) {
+		cost += this->stats.powerup[i].Power;
+	}
+	if (cost < this->stats.FP) {
+		for (int i = 0; i < this->stats.powerup.size(); i++) {
+			Bullet pow;
+			pow.copyBullet(this->stats.powerup[i]);
+			pow.position = glm::vec2(this->position.x + XOFFSET, this->position.y + YOFFSET);
+			this->instancedFireballs.push_back(pow);
+			this->stats.FP -= pow.Power;
+		}
+	}
+	
+	
 }
 
 void Dragon::checkFireballs() {
 	for (int i = 0; i < this->instancedFireballs.size(); i++) {
 		Bullet fb = this->instancedFireballs[i];
-		if ((fb.position.y > LEV_LIMITY) || ((fb.position.y > LEV_LIMITY / 2) && (fb.position.x + fb.size.x < 0 || fb.position.x > LEV_LIMITX))) {
+		if (fb.position.y < -100) {
 			// il bullet è uscito fuori dal livello
 			if (i != this->instancedFireballs.size() - 1)
 			{
@@ -162,6 +189,7 @@ void Dragon::checkFireballs() {
 			// rimuovo il proiettile
 			if (i != this->instancedFireballs.size() - 1) {
 				this->instancedFireballs[i] = std::move(this->instancedFireballs.back());
+
 			}
 			this->instancedFireballs.pop_back();
 		}

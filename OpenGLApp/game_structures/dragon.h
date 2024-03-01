@@ -9,6 +9,10 @@
 #include "../glm-master/glm/glm.hpp"
 #include <vector>
 
+#define XOFFSET 167
+#define YOFFSET 40
+#define FIREBALLVEL 500
+
 // Class that defines the dragon in the game.
 // The dragon is the main character controlled by the player.
 class Dragon : public GameObject {	
@@ -40,7 +44,8 @@ public:
 
 	void drawHitbox(SpriteRenderer& renderer); //hitbox drawing debug method
 
-	void instanceFireball(glm::vec2 pos, double velocity);
+	void instanceFireball();
+	void instancePowerup();
 	void checkFireballs();
 	//void isOutside();
 

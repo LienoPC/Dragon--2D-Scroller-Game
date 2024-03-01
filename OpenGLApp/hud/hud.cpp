@@ -76,22 +76,26 @@ void HUD::RenderHUD(SpriteRenderer& r, TextRenderer& t, FlatRenderer& f, Dragon 
 	
 	// Render della medaglia
 	Texture2D medal;
-	this->actualMedal = GOLD;
+	bool meda = false;
+	this->actualMedal = d.stats.medal;
 	switch (this->actualMedal) {
 
 	case BRONZE:
 		medal = ResourceManager::GetTexture("BronzeMedal");
+		meda = true;
 		break;
 	case SILVER:
 		medal = ResourceManager::GetTexture("SilverMedal");
+		meda = true;
 		break;
 
 	case GOLD:
-
 		medal = ResourceManager::GetTexture("GoldMedal");
+		meda = true;
 		break;
 	}
-	r.DrawSprite(medal, this->posMedal, glm::vec2(MEDALADVANCE*SCALE), 0.0f);
+	if(meda)
+		r.DrawSprite(medal, this->posMedal, glm::vec2(MEDALADVANCE*SCALE), 0.0f);
 
 	
 

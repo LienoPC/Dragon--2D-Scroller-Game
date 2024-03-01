@@ -11,3 +11,7 @@ void GameObject::Draw(SpriteRenderer &renderer)
 {
     renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
 }
+
+void GameObject::Move(glm::vec2 move) {
+
+}

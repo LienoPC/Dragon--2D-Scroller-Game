@@ -12,6 +12,7 @@
 #include "irrKlang/include/irrKlang.h"
 #include "shaders_textures/post_processor.h"
 
+#define PI 3.14
 
 // Game-related State data
 SpriteRenderer* Renderer;
@@ -55,14 +56,25 @@ void Game::Init(GLFWwindow* window)
     
     // set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
-    // load textures
+    // load textures: levels
     ResourceManager::LoadTexture("textures/hitbox.png", true, "hitbox");
     ResourceManager::LoadTexture("textures/levels/Background4LUNGO.png", true, "level1Grass");
     ResourceManager::LoadTexture("textures/levels/Level2.png", true, "level2Rock");
-    ResourceManager::LoadTexture("textures/fireball.png", true, "fireball");
+    ResourceManager::LoadTexture("textures/levels/Skin1Lev1.png", true, "Skin1Lev1");
+    ResourceManager::LoadTexture("textures/levels/Skin1Lev2.png", true, "Skin1Lev2");
+    ResourceManager::LoadTexture("textures/levels/Skin1Lev3.png", true, "Skin1Lev3");
+
+    // load textures: bullets and particles
     ResourceManager::LoadTexture("textures/particlePietra.png", true, "particle");
     ResourceManager::LoadTexture("textures/arrow_sprite.png", true, "arrow");
     ResourceManager::LoadTexture("textures/pietra.png", true, "rock");
+    // load textures: powerups
+    ResourceManager::LoadTexture("textures/SmallFireBall.png", true, "fireball");
+    ResourceManager::LoadTexture("textures/pietra.png", true, "bigFireball");
+    ResourceManager::LoadTexture("textures/a.png", true, "aPowerup");
+    ResourceManager::LoadTexture("textures/b.png", true, "bPowerup");
+
+
 
     // load menu textures
     ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
@@ -81,15 +93,13 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
     // create bulletTypes
-
-    Bullet b1(20.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
-    Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(150.0f, 150.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'b');
-    //Bullet fb(50.0f, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
-    
+    Bullet b1(15.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
+    Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'b');    
     // creo i particles per ogni bullet
     b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
     b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
 
+   
 
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
@@ -139,10 +149,11 @@ void Game::Init(GLFWwindow* window)
     this->HUD.init();
 
     // load levels
-    // Level 1
+    // Skin 1 Level 1
     GameLevel l1;
     l1.windowNumber = W_NUMBER_1;
     l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH);
+    l1.backgroundTexture = ResourceManager::GetTexture("Skin1Lev3");
     this->Levels.push_back(l1);
     this->Level = 0;
 
@@ -173,10 +184,26 @@ void Game::Update(float dt){
                     for (int j = 0; j < level->player.instancedFireballs.size(); j++) {
                         Bullet fb = level->player.instancedFireballs[j];
                         if (fb.destroyed == false) {
-                            std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
-                            if (verifyBulletCollisionCircleSquare(*s, *fbHitbox)) {
-                                hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                            switch (fb.hitboxT) {
+                            case SQUARE:
+                            {
+                                std::shared_ptr<Square> fbHitbox = std::dynamic_pointer_cast<Square>(fb.hitbox);
+                                if (checkCollisionSquareSquare(*s, *fbHitbox)) {
+                                    hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                                }
+                            }       
+                             break;
+                            case CIRCLE:
+                            {
+                                std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
+                                if (verifyBulletCollisionCircleSquare(*s, *fbHitbox)) {
+                                    hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                                }
                             }
+                            break;
+
+                            }
+                            
                         }
                     }
                 }
@@ -196,9 +223,24 @@ void Game::Update(float dt){
                     for (int j = 0; j < level->player.instancedFireballs.size(); j++) {
                         Bullet fb = level->player.instancedFireballs[j];
                         if (fb.destroyed == false) {
-                            std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
-                            if (verifyBulletCollisionCircleCircle(*c, *fbHitbox)) {
-                                hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                            switch (fb.hitboxT) {
+                            case SQUARE:
+                            {
+                                std::shared_ptr<Square> fbHitbox = std::dynamic_pointer_cast<Square>(fb.hitbox);
+                                if (checkCollisionSquareCircle(*fbHitbox, * c)) {
+                                    hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                                }
+                            }
+                            break;
+                            case CIRCLE:
+                            {
+                                std::shared_ptr<Circle> fbHitbox = std::dynamic_pointer_cast<Circle>(fb.hitbox);
+                                if (checkCollisionCircleCircle(*fbHitbox , *c)) {
+                                    hitBullet(&level->instancedBullets[i], &level->player.instancedFireballs[j], i, j);
+                                }
+                            }
+                            break;
+
                             }
                         }
                     }
@@ -215,11 +257,63 @@ void Game::Update(float dt){
             }
         }
 
+        //Verifica delle hitbox per ogni powerup eventualmente istanziato
+        for (int i = 0; i < level->powerups.size(); i++) {
+            Bullet pow = level->powerups[i];
+            switch (pow.hitboxT) {
+            case SQUARE:
+            {
+                std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(pow.hitbox);
+                if (verifyDragonCollisionSquare(*s)) {
+                    // il Dragòn ha raccolto il powerup
+                    powerupPick(pow);
+                    // rimuovo il powerup
+                    if (i != level->powerups.size() - 1) {
+                        level->powerups[i] = std::move(level->powerups.back());
+                    }
+                    level->powerups.pop_back();
+                }
+
+            }
+            break;
+            case CIRCLE:
+            {
+                std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(pow.hitbox);
+                if (verifyDragonCollisionCircle(*c)) {
+                    // il Dragòn ha raccolto il powerup
+                    powerupPick(pow);
+                    // rimuovo il powerup
+                    if (i != level->powerups.size() - 1) {
+                        level->powerups[i] = std::move(level->powerups.back());
+                    }
+                    level->powerups.pop_back();
+                }
+            }
+            break;
+            }
+        }
         if (ShakeTime > 0.0f){
             ShakeTime -= dt;
             if (ShakeTime <= 0.0f)
                 Effects->Shake = false;
         }
+        // verifico che il giocatore non sia morto
+        if (this->Levels[this->Level].player.stats.HP <= 0) {
+            // stato di morte
+            // schermata di game over
+            //this->State = GAME_OVER
+        }
+        // verifico se il livello è finito
+        if (this->Levels[this->Level].phase > PHASES) {
+            // livello finito
+
+            // schermata di vittoria
+            //this->State = WIN
+
+        }
+
+
+
     }
 }
 
@@ -260,6 +354,7 @@ void Game::ProcessInput(float dt){
                         this->currMenu = 0;
                         cursorOver = NULL;
                         this->State = GAME_ACTIVE;
+                        this->Levels[Level].startLevel(this->Width, this->Height);
                     }
                 }
             }
@@ -270,7 +365,7 @@ void Game::ProcessInput(float dt){
      if (Game::State == GAME_ACTIVE) {
          GameLevel* level = &this->Levels[this->Level];
          // Gestione della velocità (sprint, slowdown)
-         static bool sprint = false, slowdown = false;
+         static bool sprint = false, slowdown = false, shoot = false;
 
         if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
             level->player.setVelocityModifier(650.0f);
@@ -315,11 +410,17 @@ void Game::ProcessInput(float dt){
                  level->movePlayer(move);
          }
          if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && !shoot) {
-            level->player.instanceFireball(level->player.position, 350.0f);
+            level->player.instanceFireball();
             shoot = true;
-        }else if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && shoot) {
-            shoot = false;
-        }
+         }
+         else if (this->MouseButtons[GLFW_MOUSE_BUTTON_RIGHT] && !shoot) {
+             shoot = true;
+             // prelevo i powerup dagli stat del dragon e gli istanzio
+             level->player.instancePowerup();
+         }else if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && !this->MouseButtons[GLFW_MOUSE_BUTTON_RIGHT] && shoot) {
+             shoot = false;
+         }
+            
      }
 }
 
@@ -330,18 +431,66 @@ void Game::Render(float dt)
     }
     else if (Game::State == GAME_ACTIVE) {
         // prepare postProcesser
-        Effects->BeginRender();
+        //Effects->BeginRender();
         // draw background
-        Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(this->Width, this->Height*15), 0.0f, glm::vec3(1.0f), dt);
+        //Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), 0.0f, glm::vec3(1.0f), dt);
+
+        this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height*12));
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
         // end rendering to postprocessing framebuffer
-        Effects->EndRender();
+       // Effects->EndRender();
         // render postprocessing quad
-        Effects->Render(glfwGetTime());
+       // Effects->Render(glfwGetTime());
     } 
 }
+
+// Funzione che gestisce la raccolta dei powerup
+void Game::powerupPick(Bullet pow) {
+    // Creo il powerup
+    this->Levels[this->Level].player.stats.powerup.clear();
+    switch (pow.Type) {
+    case 100:
+    {
+        
+        Bullet fb1, fb2, fb3;
+        fb1 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+        fb2 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+        fb3 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+
+        // applico rotazione alle due palle laterali
+        fb1.Direction = glm::vec2(cos(PI * 135 / 180), sin(PI * -45 / 180));
+        fb2.Direction = glm::vec2(0, -1);
+        fb3.Direction = glm::vec2(cos(PI * 45 / 180), sin(PI * -45 / 180));
+        fb1.rotation = -45;
+        fb2.rotation = 0;
+        fb3.rotation = 45;
+        fb1.velApplied = 600;
+        fb2.velApplied = 600;
+        fb3.velApplied = 600;
+        // inserisco nella lista dei powerup del player
+        this->Levels[this->Level].player.stats.powerup.push_back(fb1);
+        this->Levels[this->Level].player.stats.powerup.push_back(fb2);
+        this->Levels[this->Level].player.stats.powerup.push_back(fb3);
+
+    }
+    break;
+        
+
+    case 101:
+    {
+        Bullet gFb = Bullet(pow.Power, 40, ResourceManager::GetTexture("bigFireball"), glm::vec2(200.0f, 200.0f), glm::vec2(100.0f,100.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
+        gFb.Direction = glm::vec2(0, -1);
+        gFb.velApplied = 200;
+        gFb.hitNumber = 3;
+        this->Levels[this->Level].player.stats.powerup.push_back(gFb);
+
+    }
+    break;
+    }
+}
+
 
 //FUNZIONI HITBOX -------------------------------------------------------------------------------------------
 void Game::hitDragon(Bullet* b, int i) {
@@ -353,16 +502,48 @@ void Game::hitDragon(Bullet* b, int i) {
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
     //sEngine->play2D("audio/Pain.wav");
+    if (this->Levels[this->Level].player.stats.HP <= 0) {
+        this->Levels[this->Level].Die();
+        // settare lo stato a "GAME_OVER" e mostrare il menù associato
+        this->State = GAME_MENU;
+    }
 }
 
 void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
     GameLevel* level = &this->Levels[this->Level];
-
-    b->destroyed = true;
-    this->Levels[this->Level].DestroyBullet(i);
-
-    fb->destroyed = true;
-    level->player.instancedFireballs[j].destroy();
+    // controllo se effettivamente devono essere distrutti o se devo solo diminuire il counter delle hit
+    
+    b->hitNumber--;
+    fb->hitNumber--;
+    if (b->hitNumber <= 0) {
+        b->destroyed = true;
+        this->Levels[this->Level].DestroyBullet(i);
+    }
+    
+    if (fb->hitNumber <= 0) {
+        fb->destroyed = true;
+        level->player.instancedFireballs[j].destroy();
+    }
+    
+    
+    /*
+    // oppure faccio il confronto con la potenza
+    float difference = b->Power - fb->Power;
+    if (difference > 0) {
+        b->Power -= fb->Power;
+        level->player.instancedFireballs[j].destroy();
+    }
+    else if (difference < 0) {
+        fb->Power -= b->Power;
+        this->Levels[this->Level].DestroyBullet(i);
+    }
+    else if (difference == 0) {
+        this->Levels[this->Level].DestroyBullet(i);
+        level->player.instancedFireballs[j].destroy();
+    }
+    */
+    
+    
 }
 
 bool Game::verifyDragonCollisionSquare(Square h) {
@@ -396,6 +577,7 @@ bool Game::verifyBulletCollisionCircleCircle(Circle c1, Circle c2) {
     }
     return false;
 }
+
 
 
 float Game::dotProduct(glm::vec2 a, glm::vec2 b) {

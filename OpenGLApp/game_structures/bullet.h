@@ -20,6 +20,7 @@ public:
 	std::shared_ptr<Hitbox> hitbox;
 	int	ParticlesNumber; 
 	std::vector<std::shared_ptr<ParticleGenerator>> particles;
+	int hitNumber;
 
 	int		Type;
 	Bullet();

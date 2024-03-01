@@ -54,8 +54,8 @@ public:
     void Render(float dt);
 
     // prende un bulletType dalla lista di definiti
-    static Bullet GetBullet(int type);
-
+    //static Bullet GetBullet(int type);
+    void powerupPick(Bullet pow);
 
     void hitDragon(Bullet* b, int i);
     void hitBullet(Bullet* b, Bullet* fb, int i, int j);
