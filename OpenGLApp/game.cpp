@@ -384,7 +384,7 @@ void Game::ProcessInput(float dt){
         }
     }   
 
-     if (Game::State == GAME_ACTIVE) {
+     else if (Game::State == GAME_ACTIVE) {
          GameLevel* level = &this->Levels[this->Level];
          // Gestione della velocità (sprint, slowdown)
          static bool sprint = false, slowdown = false, shoot = false;
