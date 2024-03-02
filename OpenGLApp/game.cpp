@@ -499,6 +499,13 @@ void Game::hitDragon(Bullet* b, int i) {
     // eliminare il bullet
     b->destroyed = true;
     
+    //Se il drago viene colpito, TODO:
+    //-Danno agli HP
+    //-Proiettile sparisce->Fatto
+    //-Effetto visivo per il fatto di essere stati colpiti:
+    // -Quello sul drago � gestito dalla classe Drag�n(?)
+    // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)->In realtà no
+    // -Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
     //sEngine->play2D("audio/Pain.wav");
@@ -608,7 +615,7 @@ bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitb
     float distanceX = hitboxC.center.x - closestX;
     float distanceY = hitboxC.center.y - closestY;
 
-    // Se la distanza è inferiore al raggio, c'è intersezione
+    // Se la distanza � inferiore al raggio, c'� intersezione
     if ((distanceX * distanceX + distanceY * distanceY) < (hitboxC.radius * hitboxC.radius)) {
         return true;
     }
