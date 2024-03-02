@@ -2,6 +2,7 @@
 #include "../resource_manager/resource_manager.h"
 #include "../timer/timerMy.h"
 #include "window_constraints.h"
+#include "level_save.h"
 #include <ctime>
 #include <random>
 #include <fstream>
@@ -112,7 +113,7 @@ void GameLevel::startLevel(int height, int width) {
 }
 
 
-void GameLevel::PlayLevel(float dt) {
+void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
 
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
 
@@ -239,18 +240,22 @@ void GameLevel::PlayLevel(float dt) {
     if (Timer::getElapsedSeconds() > SECONDS1 && Timer::getElapsedSeconds() < SECONDS2) {
         this->IncreasePhase();
         this->player.stats.medal = BRONZE;
+        Level_save::update_state(skin, level);
 
     }
     // silver medal
     if (Timer::getElapsedSeconds() > SECONDS2 && Timer::getElapsedSeconds() < END) {
         this->IncreasePhase();
         this->player.stats.medal = SILVER;
+        Level_save::update_state(skin, level);
         // inserire funzione che sblocca il livello successivo della stessa skin
+        Level_save::unlock_next(skin, level);
     }
     // golden medal
     if (Timer::getElapsedSeconds() > END) {
         this->IncreasePhase();
         this->player.stats.medal = GOLD;
+        Level_save::update_state(skin, level);
         // end level
     }
 
@@ -348,7 +353,7 @@ void GameLevel::IncreasePhase() {
 }
 
 void GameLevel::Die() {
-
+    // POTREBBE NON SERVIRE
 }
 
 // calcola randomicamente se spawnare i powerup in base a:
@@ -389,13 +394,13 @@ void GameLevel::SpawnPowerUps() {
         Bullet b;
         switch (availabePowerups[i]) {
         case 100:
-            b = Bullet(FIREBALL_COST, 0.0f, ResourceManager::GetTexture("aPowerup"), glm::vec2(ran, -100), glm::vec2(50.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 100);
+            b = Bullet(FIREBALL_COST, 0.0f, ResourceManager::GetTexture("aPowerup"), glm::vec2(ran, -100), glm::vec2(80.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(SQUARE), 100);
             b.velApplied = 400;
             b.Direction = moveAlong;
             powerups.push_back(b);
             break;
         case 101:
-            b = Bullet(150, 0.0f, ResourceManager::GetTexture("bPowerup"), glm::vec2(ran, -100), glm::vec2(50.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
+            b = Bullet(150, 0.0f, ResourceManager::GetTexture("bPowerup"), glm::vec2(ran, -100), glm::vec2(100.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
             b.velApplied = 400;
             b.Direction = moveAlong;
             powerups.push_back(b);

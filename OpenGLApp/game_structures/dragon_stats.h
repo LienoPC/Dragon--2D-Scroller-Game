@@ -3,7 +3,7 @@
 
 #define MAX_HP 700
 #define MAX_FP 400
-#define FIREBALL_COST 30
+#define FIREBALL_COST 40
 
 #include "bullet.h"
 

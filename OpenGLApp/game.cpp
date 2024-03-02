@@ -21,7 +21,6 @@ TextRenderer* Text;
 FlatRenderer* Flat;
 irrklang::ISoundEngine* sEngine;
 PostProcessor* Effects;
-Level_save* Save;
 
 float ShakeTime = 0.0f;
 
@@ -170,34 +169,30 @@ void Game::Init(GLFWwindow* window)
     l3.windowNumber = W_NUMBER_3;
     l3.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level3.txt");
 
-
-
-    
-    this->Levels.push_back(l1);
-    this->Levels.push_back(l2);
-    this->Levels.push_back(l3);
     // ESEMPIO PER AMICO DI CARICAMENTO DI UN LIVELLO
     this->Skin = 0;
     this->Level = 0;
-    l1.backgroundTexture = ResourceManager::GetTexture("Skin1Lev1"); // assegno la skin in base a level e skin
+    l1.backgroundTexture = ResourceManager::GetTexture("Skin1Lev3"); // assegno la skin in base a level e skin
     // load sound engine
     sEngine = irrklang::createIrrKlangDevice();
     // faccio partire la musica del menu
-    sEngine->play2D("audio/Megalovania.wav", true);
+    //sEngine->play2D("audio/Megalovania.wav", true);
         
     // configure postprocessing renderer
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
-    // initialize SaveGames
-    Save = new Level_save();
-    Save->load_state();
+    // initialize SaveGame
+    Level_save::load_state();
+    this->Levels.push_back(l1);
+    this->Levels.push_back(l2);
+    this->Levels.push_back(l3);
 }
 
 void Game::Update(float dt){
 
     if (this->State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
-        level->PlayLevel(dt); // gestisce il lancio di nuovi proiettili e la cancellazione di quelli che escono dalla scena
+        level->PlayLevel(dt, this->Skin, this->Level); // gestisce tutta la logica di livello
 
         //Verifica delle hitbox per ogni proiettile/palle del drago
 
@@ -333,7 +328,7 @@ void Game::Update(float dt){
         // verifico se il livello è finito
         if (this->Levels[this->Level].phase > PHASES) {
             // livello finito
-            Save->update_state(this->Skin, this->Level);
+            Level_save::update_state(this->Skin, this->Level);
             // schermata di vittoria
             //this->State = WIN
 
@@ -458,7 +453,7 @@ void Game::Render(float dt)
     }
     else if (Game::State == GAME_ACTIVE) {
         // prepare postProcesser
-        //Effects->BeginRender();
+        Effects->BeginRender();
         // draw background
         //Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), 0.0f, glm::vec3(1.0f), dt);
 
@@ -467,9 +462,11 @@ void Game::Render(float dt)
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
         // end rendering to postprocessing framebuffer
-       // Effects->EndRender();
+        Effects->EndRender();
         // render postprocessing quad
-       // Effects->Render(glfwGetTime());
+        Effects->Render(glfwGetTime());
+
+
     } 
 }
 

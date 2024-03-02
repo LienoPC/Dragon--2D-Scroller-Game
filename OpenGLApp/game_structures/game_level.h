@@ -51,7 +51,7 @@ public:
 	void instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart);
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
-	void PlayLevel(float dt);
+	void PlayLevel(float dt, unsigned int skin, unsigned int level);
 	void LoadLevel(int height, int width, const char* path);
 	void startLevel(int height, int width);
 
