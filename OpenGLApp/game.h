@@ -36,7 +36,8 @@ public:
     bool                    MouseButtons[8];
     unsigned int            Width, Height;
     std::vector<GameLevel>  Levels;
-    unsigned int            Level;
+    unsigned int            Level; 
+    unsigned int            Skin;
     std::vector<Menu>       Menus;
     unsigned int            currMenu;
     HUD                     HUD;

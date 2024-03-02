@@ -13,8 +13,8 @@
 
 
 #define PHASES 3
-#define SECONDS1 20
-#define SECONDS2 50
+#define SECONDS1 30
+#define SECONDS2 60
 #define END 120
 #define VELINCREASE 150
 
@@ -52,7 +52,7 @@ public:
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
 	void PlayLevel(float dt);
-	void LoadLevel(int height, int width);
+	void LoadLevel(int height, int width, const char* path);
 	void startLevel(int height, int width);
 
 	int WindowPick();

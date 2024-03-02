@@ -11,6 +11,7 @@
 #include "game_structures/particle_generators/continuous_particle_generator.h"
 #include "irrKlang/include/irrKlang.h"
 #include "shaders_textures/post_processor.h"
+#include "game_structures/level_save.h"
 
 #define PI 3.14
 
@@ -20,6 +21,7 @@ TextRenderer* Text;
 FlatRenderer* Flat;
 irrklang::ISoundEngine* sEngine;
 PostProcessor* Effects;
+Level_save* Save;
 
 float ShakeTime = 0.0f;
 
@@ -65,12 +67,16 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/levels/Skin1Lev3.png", true, "Skin1Lev3");
 
     // load textures: bullets and particles
-    ResourceManager::LoadTexture("textures/particlePietra.png", true, "particle");
     ResourceManager::LoadTexture("textures/arrow_sprite.png", true, "arrow");
-    ResourceManager::LoadTexture("textures/pietra.png", true, "rock");
+    ResourceManager::LoadTexture("textures/rock.png", true, "rock");
+    ResourceManager::LoadTexture("textures/lavaRock.png", true, "lavaRock");
+    ResourceManager::LoadTexture("textures/particleArrow.png", true, "particleArrow");
+    ResourceManager::LoadTexture("textures/particleRock.png", true, "particleRock");
+    ResourceManager::LoadTexture("textures/particleLava.png", true, "particleLava");
+
     // load textures: powerups
     ResourceManager::LoadTexture("textures/SmallFireBall.png", true, "fireball");
-    ResourceManager::LoadTexture("textures/pietra.png", true, "bigFireball");
+    ResourceManager::LoadTexture("textures/bigFireBall.png", true, "bigFireball");
     ResourceManager::LoadTexture("textures/a.png", true, "aPowerup");
     ResourceManager::LoadTexture("textures/b.png", true, "bPowerup");
 
@@ -95,14 +101,18 @@ void Game::Init(GLFWwindow* window)
     // create bulletTypes
     Bullet b1(15.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
     Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'b');    
+    Bullet b3(150.0f, 40, ResourceManager::GetTexture("lavaRock"), glm::vec2(100.0f, 0.0f), glm::vec2(130.0f, 130.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'c');
+    b3.hitNumber = 2;
     // creo i particles per ogni bullet
-    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
-    b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
+    b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleArrow"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
+    b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleRock"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
+    b3.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleLava"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
 
    
 
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
+    ResourceManager::SetBullet(b3);
     //ResourceManager::SetBullet(fb);
 
     // create all Throwing Windows
@@ -149,21 +159,38 @@ void Game::Init(GLFWwindow* window)
     this->HUD.init();
 
     // load levels
-    // Skin 1 Level 1
+    // Level 1
     GameLevel l1;
     l1.windowNumber = W_NUMBER_1;
-    l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH);
-    l1.backgroundTexture = ResourceManager::GetTexture("Skin1Lev3");
-    this->Levels.push_back(l1);
-    this->Level = 0;
+    l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level1.txt");
+    GameLevel l2;
+    l2.windowNumber = W_NUMBER_2;
+    l2.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level2.txt");
+    GameLevel l3;
+    l3.windowNumber = W_NUMBER_3;
+    l3.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level3.txt");
 
+
+
+    
+    this->Levels.push_back(l1);
+    this->Levels.push_back(l2);
+    this->Levels.push_back(l3);
+    // ESEMPIO PER AMICO DI CARICAMENTO DI UN LIVELLO
+    this->Skin = 0;
+    this->Level = 0;
+    l1.backgroundTexture = ResourceManager::GetTexture("Skin1Lev1"); // assegno la skin in base a level e skin
     // load sound engine
     sEngine = irrklang::createIrrKlangDevice();
+    // faccio partire la musica del menu
     sEngine->play2D("audio/Megalovania.wav", true);
         
     // configure postprocessing renderer
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
+    // initialize SaveGames
+    Save = new Level_save();
+    Save->load_state();
 }
 
 void Game::Update(float dt){
@@ -306,7 +333,7 @@ void Game::Update(float dt){
         // verifico se il livello è finito
         if (this->Levels[this->Level].phase > PHASES) {
             // livello finito
-
+            Save->update_state(this->Skin, this->Level);
             // schermata di vittoria
             //this->State = WIN
 
@@ -455,9 +482,9 @@ void Game::powerupPick(Bullet pow) {
     {
         
         Bullet fb1, fb2, fb3;
-        fb1 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
-        fb2 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
-        fb3 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 90.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+        fb1 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+        fb2 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
+        fb3 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
 
         // applico rotazione alle due palle laterali
         fb1.Direction = glm::vec2(cos(PI * 135 / 180), sin(PI * -45 / 180));
@@ -480,9 +507,9 @@ void Game::powerupPick(Bullet pow) {
 
     case 101:
     {
-        Bullet gFb = Bullet(pow.Power, 40, ResourceManager::GetTexture("bigFireball"), glm::vec2(200.0f, 200.0f), glm::vec2(100.0f,100.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
+        Bullet gFb = Bullet(pow.Power, 40, ResourceManager::GetTexture("bigFireball"), glm::vec2(200.0f, 200.0f), glm::vec2(150.0f,150.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
         gFb.Direction = glm::vec2(0, -1);
-        gFb.velApplied = 200;
+        gFb.velApplied = 400;
         gFb.hitNumber = 3;
         this->Levels[this->Level].player.stats.powerup.push_back(gFb);
 

@@ -81,11 +81,11 @@ glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
     return returned;
 }
 
-void GameLevel::LoadLevel(int height, int width) {
+void GameLevel::LoadLevel(int height, int width, const char* path) {
 
  
     // Set all Level attributes and constraints
-    ResourceManager::LoadLevelF("levels/lev.txt", "LevelP");
+    ResourceManager::LoadLevelF(path, "LevelP");
     this->maxInstancedBullet = ResourceManager::GetLevel("LevelP").maxInstancedBullet;
     this->minVel = ResourceManager::GetLevel("LevelP").minVel;
     this->maxVel = ResourceManager::GetLevel("LevelP").maxVel;
@@ -200,7 +200,15 @@ void GameLevel::PlayLevel(float dt) {
     }
     // muovo tutti i proiettili del drago lanciati
     for (int i = 0; i < this->player.instancedFireballs.size(); i++) {
-        this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 400;
+        switch (this->player.instancedFireballs[i].Type) {
+
+        case 99:
+            this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 600;
+            break;
+        case 101:
+            this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 70;
+            break;
+        }
         this->player.instancedFireballs[i].move(dt);
     }
     
@@ -325,6 +333,8 @@ void GameLevel::IncreasePhase() {
             break;
         case 2:
             availabePowerups.push_back(101);
+            // aggiungo una finestra di lancio
+            instanceWindow(this->actualWindows.size());
             break;
         }
 
@@ -380,13 +390,13 @@ void GameLevel::SpawnPowerUps() {
         switch (availabePowerups[i]) {
         case 100:
             b = Bullet(FIREBALL_COST, 0.0f, ResourceManager::GetTexture("aPowerup"), glm::vec2(ran, -100), glm::vec2(50.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 100);
-            b.velApplied = 300;
+            b.velApplied = 400;
             b.Direction = moveAlong;
             powerups.push_back(b);
             break;
         case 101:
             b = Bullet(150, 0.0f, ResourceManager::GetTexture("bPowerup"), glm::vec2(ran, -100), glm::vec2(50.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
-            b.velApplied = 300;
+            b.velApplied = 400;
             b.Direction = moveAlong;
             powerups.push_back(b);
             break;

@@ -4,6 +4,10 @@
 #include <cstdlib>
 #include "level_save.h"
 
+Level_save::Level_save() {
+
+}
+
 void Level_save::starting_values() {
     std::ofstream myfile;
 
@@ -70,14 +74,35 @@ void Level_save::load_state() {
         std::cerr << "Error opening file" << std::endl;
         exit(1);
     }
+    if (myfile.good()) {
+        // il file esiste
+        if (!is_empty(myfile)) {
+            for (int i = 0; i < 3; ++i) {
+                myfile >> single_digit;
+                this->theme0[i] = single_digit - '0';
+            }
+            for (int i = 0; i < 3; ++i) {
+                myfile >> single_digit;
+                this->theme1[i] = single_digit - '0';
 
-    for (int i = 0; i < 3; ++i) {
-        myfile >> single_digit;
-        this->theme0[i] = single_digit - '0';
+                myfile.close();
+            }
+        }
+        else {
+            // il file è vuoto
+            this->starting_values();
+        }
+        
     }
-    for (int i = 0; i < 3; ++i) {
-        myfile >> single_digit;
-        this->theme1[i] = single_digit - '0';
+    else {
+        // il file non esiste
+        this->starting_values();
+    }
 
-        myfile.close();
+    
+}
+
+bool is_empty(std::ifstream& pFile)
+{
+    return pFile.peek() == std::ifstream::traits_type::eof();
 }
