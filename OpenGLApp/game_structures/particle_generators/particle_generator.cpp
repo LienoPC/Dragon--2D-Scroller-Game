@@ -45,7 +45,7 @@ void ParticleGenerator::init()
 // render all particles
 void ParticleGenerator::Draw()
 {
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     this->shader.Use();
     for (Particle &particle : this->particles)
     {
@@ -67,7 +67,7 @@ void ParticleGenerator::Draw()
             glBindVertexArray(0);
         }
     }
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 

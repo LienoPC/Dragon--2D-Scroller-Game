@@ -7,15 +7,18 @@
 #include "bullet.h"
 #include "../sprite_renderer/sprite_renderer.h"
 #include "../game_structures/window.h"
+#include "../glm-master/glm/glm.hpp"
 
 #include <vector>
 #include <map>
 
 
 #define PHASES 3
-#define SECONDS1 20
-#define SECONDS2 50
+#define SECONDS1 45
+#define SECONDS2 70
+#define END 120
 #define VELINCREASE 150
+#define STARTSECONDS 3
 
 
 class GameLevel {
@@ -24,7 +27,8 @@ public:
 	std::vector<int> bulletList;
 	std::vector<Bullet> instancedBullets;
 	// ogni tipo di proiettile è identificato da un valore intero associato ad un carattere ASCII
-	
+	std::vector<Bullet> powerups;
+
 	int phase;
 
 	// attributi del livello
@@ -34,7 +38,7 @@ public:
 	double maxVel;
 	int windowNumber;
 	short numRefresh;
-
+	Texture2D backgroundTexture;
 	Dragon player;
 
 	GameLevel();
@@ -43,14 +47,16 @@ public:
 	void movePlayer(glm::vec2 move);
 	bool isPlayerOutOfBounds(glm::vec2 pos, int height, int width);
 
+	void DrawBackground(SpriteRenderer& Renderer, float dt, glm::vec2 resolution);
 
 	void instanceBullet(int bullet, glm::vec2 pos, double velocity, DirectionStart directionStart);
 
 	// esegue la logica di livello usando la lista di bullet, la phase e il Timer
-	void PlayLevel(float dt);
-	void LoadLevel(int height, int width);
+	void PlayLevel(float dt, unsigned int skin, unsigned int level);
+	void LoadLevel(int height, int width, const char* path);
+	void startLevel(int height, int width);
 
-	int WindowPick(std::map<int, bool> alreadyUsedW);
+	int WindowPick();
 
 	double positionOffsetPick(int sel, int nW);
 
@@ -63,6 +69,10 @@ public:
 	void instanceWindow(int identificator);
 
 	glm::vec2 calculateNormalizedDirection(glm::vec2 bPosition);
+
+	void Die();
+
+	void SpawnPowerUps();
 };
 
 #endif

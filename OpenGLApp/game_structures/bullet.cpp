@@ -17,6 +17,7 @@ Bullet::Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec
 	this->ParticlesNumber = partNum;
 	this->hitboxT = hitboxT;
 	this->destroyed = false;
+	this->hitNumber = 1;
 	std::shared_ptr<Square> s;
 	std::shared_ptr<Circle> c;
 	// Hitbox creation
@@ -50,11 +51,16 @@ Bullet::Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec
 	this->position = b.position;
 	this->size = b.size;
 	this->velocity = b.velocity;
+	this->rotation = b.rotation;
 	this->color = b.color;
 	this->sprite = b.sprite;
 	this->Power = b.Power;
 	this->ParticlesNumber = b.ParticlesNumber;
 	this->hitboxT = b.hitboxT;
+	this->Type = b.Type;
+	this->velApplied = b.velApplied;
+	this->Direction = b.Direction;
+	this->hitNumber = b.hitNumber;
 	std::shared_ptr<Square> s;
 	std::shared_ptr<Circle> c;
 	// Hitbox creation
@@ -128,41 +134,47 @@ void Bullet::updateHitbox() {
 
 	case SQUARE:
 	{
-		std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(this->hitbox);
+		try
+		{
+			std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(this->hitbox);
+
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(this->position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
+
+			model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // move origin of rotation to center of quad
+			model = glm::rotate(model, glm::radians(this->rotation + 180), glm::vec3(0.0f, 0.0f, 1.0f)); // then rotate
+			model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // move origin back
+			model = glm::translate(model, glm::vec3(-this->position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
+			
+			s->left_up = this->position;
+			s->left_down = glm::vec2(this->position.x, this->position.y + this->size.y);
+			s->right_down = this->position + this->size;
+			s->right_up = glm::vec2(this->position.x + this->size.x, this->position.y);
+
+			//ruoto i punti
+			pos = model * glm::vec4(s->left_up, 0.0, 1.0);
+			s->left_up.x = pos.x;
+			s->left_up.y = pos.y;
+
+			pos = model * glm::vec4(s->left_down, 0.0, 1.0);
+			s->left_down.x = pos.x;
+			s->left_down.y = pos.y;
+
+			pos = model * glm::vec4(s->right_down, 0.0, 1.0);
+			s->right_down.x = pos.x;
+			s->right_down.y = pos.y;
+
+			pos = model * glm::vec4(s->right_up, 0.0, 1.0);
+			s->right_up.x = pos.x;
+			s->right_up.y = pos.y;
+		}
+		catch (const std::exception& e)
+		{
+			std::shared_ptr<Square> s = std::make_shared<Square>(Square(this->position, glm::vec2(this->position.x, this->position.y + this->size.y), glm::vec2(this->position.x + this->size.x, this->position.y), this->position + this->size));
+			this->hitbox = s;
+		}
 		
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(this->position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
 
-		model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // move origin of rotation to center of quad
-		model = glm::rotate(model, glm::radians(this->rotation+180), glm::vec3(0.0f, 0.0f, 1.0f)); // then rotate
-		model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // move origin back
-		model = glm::translate(model, glm::vec3(-this->position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
-
-
-		s->left_up = this->position;
-		s->left_down = glm::vec2(this->position.x, this->position.y + this->size.y);
-		s->right_down = this->position + this->size;
-		s->right_up = glm::vec2(this->position.x + this->size.x, this->position.y);
-
-		//ruoto i punti
-		pos = model * glm::vec4(s->left_up, 0.0, 1.0);
-		s->left_up.x = pos.x;
-		s->left_up.y = pos.y;
-
-		pos = model * glm::vec4(s->left_down, 0.0, 1.0);
-		s->left_down.x = pos.x;
-		s->left_down.y = pos.y;
-		
-		pos = model * glm::vec4(s->right_down, 0.0, 1.0);
-		s->right_down.x = pos.x;
-		s->right_down.y = pos.y;
-
-		pos = model * glm::vec4(s->right_up, 0.0, 1.0);
-		s->right_up.x = pos.x;
-		s->right_up.y = pos.y;
-		
-		
-		
 		
 	}
 
@@ -170,8 +182,15 @@ void Bullet::updateHitbox() {
 
 	case CIRCLE:
 	{
-		std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(this->hitbox);
-		c->center = this->position + (glm::vec2(this->size.x / 2, this->size.y / 2));
+		try
+		{
+			std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(this->hitbox);
+			c->center = this->position + (glm::vec2(this->size.x / 2, this->size.y / 2));
+		}catch (const std::exception& e)
+		{
+			std::shared_ptr<Circle> c = std::make_shared<Circle>(Circle((float)std::max(this->size.x, this->size.y), this->position + (glm::vec2(this->size.x / 2, this->size.y / 2))));
+			this->hitbox = c;
+		}
 	}
 	break;
 	}

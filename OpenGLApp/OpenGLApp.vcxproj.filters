@@ -213,4 +213,21 @@
   <ItemGroup>
     <Text Include="game_structures\save.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="audio\Critical_Hit.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="audio\Fireball.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="audio\Lost_Odissey.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="audio\Power_Up.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="audio\Zelda.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+  </ItemGroup>
 </Project>

@@ -1,9 +1,11 @@
 #include "button.h"
 
 Button::Button()
-	:selected(false) {}
+	:selected(false), skin(-1), level(-1) {}
 Button::Button(glm::vec2 position, glm::vec2 size, buttonType type, Texture2D spriteBase, Texture2D spriteSelected)
 	:position(position), size(size), type(type), subMenuId(-1), selected(false), spriteBase(spriteBase), spriteSelected(spriteSelected) {}
+Button::Button(glm::vec2 position, glm::vec2 size, buttonType type, Texture2D spriteBase, Texture2D spriteSelected, int skin, int level)
+	:position(position), size(size), type(type), subMenuId(-1), selected(false), spriteBase(spriteBase), spriteSelected(spriteSelected), skin(skin), level(level) {}
 Button::Button(glm::vec2 position, glm::vec2 size, buttonType type, int subMenuId, Texture2D spriteBase, Texture2D spriteSelected)
 	:position(position), size(size), type(type), subMenuId(subMenuId), selected(false), spriteBase(spriteBase), spriteSelected(spriteSelected) {}
 

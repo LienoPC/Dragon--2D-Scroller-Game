@@ -3,7 +3,7 @@
 #include <iostream>
 
 PostProcessor::PostProcessor(Shader shader, unsigned int width, unsigned int height)
-    : PostProcessingShader(shader), Texture(), Width(width), Height(height), Shake(false)
+    : PostProcessingShader(shader), Texture(), Width(width), Height(height), Shake(false), Dim(false)
 {
     // initialize renderbuffer/framebuffer object
     glGenFramebuffers(1, &this->MSFBO);
@@ -68,6 +68,7 @@ void PostProcessor::Render(float time)
     this->PostProcessingShader.Use();
     this->PostProcessingShader.SetFloat("time", time);
     this->PostProcessingShader.SetBoolean("shake", this->Shake);
+    this->PostProcessingShader.SetBoolean("dim", this->Dim);
     // render textured quad
     glActiveTexture(GL_TEXTURE0);
     this->Texture.Bind();

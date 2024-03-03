@@ -16,7 +16,7 @@
 #define FPBARLENGHT 300
 #define FONT 26
 
-enum Medal{BRONZE, SILVER, GOLD};
+
 
 class HUD {
 

@@ -7,7 +7,12 @@
 #include "bullet.h"
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
+#include "../irrKlang/include/irrKlang.h"
 #include <vector>
+
+#define XOFFSET 167
+#define YOFFSET 40
+#define FIREBALLVEL 500
 
 // Class that defines the dragon in the game.
 // The dragon is the main character controlled by the player.
@@ -23,10 +28,14 @@ public:
 	float velocityModifier;
 	// dragon animation frames
 	std::vector<Texture2D> animationFrames;
+	bool playAnimation;
 	bool hit;
 
 	//numero fireball sparate
 	int fbnum = 0;
+
+	//suono fireball
+	irrklang::ISoundEngine* sEngine;
 
 	// constructors
 	Dragon();
@@ -40,7 +49,8 @@ public:
 
 	void drawHitbox(SpriteRenderer& renderer); //hitbox drawing debug method
 
-	void instanceFireball(glm::vec2 pos, double velocity);
+	void instanceFireball();
+	void instancePowerup();
 	void checkFireballs();
 	//void isOutside();
 

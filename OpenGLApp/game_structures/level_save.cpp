@@ -4,15 +4,19 @@
 #include <cstdlib>
 #include "level_save.h"
 
-void Level_save::starting_values() {
-    std::ofstream myfile;
+glm::vec3 Level_save::theme0;
+glm::vec3 Level_save::theme1;
 
-    this->theme0[0] = 1;
-    this->theme0[1] = 0;
-    this->theme0[2] = 0;
-    this->theme1[0] = 1;
-    this->theme1[1] = 0;
-    this->theme1[2] = 0;
+
+void Level_save::starting_values() {
+    std::ofstream myfile("save.txt");
+
+    theme0[0] = 1;
+    theme0[1] = 0;
+    theme0[2] = 0;
+    theme1[0] = 1;
+    theme1[1] = 0;
+    theme1[2] = 0;
 
     myfile.open("save.txt");
     if (!myfile) {
@@ -30,15 +34,16 @@ void Level_save::starting_values() {
     myfile.close();
 }
 
-void Level_save::update_state(int theme, int level) {
+void Level_save::update_state(int theme, int level, int phase) {
+    //std::cout << "InizioUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     if (theme == 0) {
-        if (this->theme0[level]++ < 5) {
-            this->theme0[level]++;
+        if (theme0[level] < phase && phase < 5 && theme0[level]+1 < 5) {
+            theme0[level]++;
         }
     }
     else if (theme == 1) {
-        if (this->theme1[level]++ < 5) {
-            this->theme1[level]++;
+        if (theme1[level] < phase && phase < 5 && theme1[level]+1 < 5) {
+            theme1[level]++;
         }
     }
 
@@ -51,13 +56,29 @@ void Level_save::update_state(int theme, int level) {
     }
 
     for (int i = 0; i < 3; i++) {
-        myfile << this->theme0[i];
+        myfile << theme0[i];
     }
     for (int i = 0; i < 3; i++) {
-        myfile << this->theme1[i];
+        myfile << theme1[i];
     }
 
+    //std::cout << "FineUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     myfile.close();
+}
+
+void Level_save::unlock_next(int theme, int level) {
+    //std::cout << "InizioUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    if (theme == 0) {
+        if (level < 2 && theme0[level + 1] == 0) {
+            theme0[level+1] = 1;
+        }
+    }
+    else if (theme == 1) {
+        if (level < 2 && theme1[level + 1] == 0) {
+            theme1[level+1] = 1;
+        }
+    }
+    //std::cout << "FineUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
 }
 
 
@@ -67,18 +88,27 @@ void Level_save::load_state() {
 
     myfile.open("save.txt");
     if (!myfile) {
-        std::cerr << "Error opening file" << std::endl;
-        exit(1);
+        starting_values();
     }
-
-    for (int i = 0; i < 3; ++i) {
-        myfile >> single_digit;
-        this->theme0[i] = single_digit - '0';
-    }
-    for (int i = 0; i < 3; ++i) {
-        myfile >> single_digit;
-        this->theme1[i] = single_digit - '0';
-    }
+    else {
+        // il file esiste
+        if (!is_empty(myfile)) {
+            for (int i = 0; i < 3; i++) {
+                myfile >> single_digit;
+                theme0[i] = single_digit - '0';
+            }
+            for (int i = 0; i < 3; i++) {
+                myfile >> single_digit;
+                theme1[i] = single_digit - '0';              
+            }
+            myfile.close();
+        }
+    }      
+}
     
-    myfile.close();
+
+
+bool Level_save::is_empty(std::ifstream& pFile)
+{
+    return pFile.peek() == std::ifstream::traits_type::eof();
 }

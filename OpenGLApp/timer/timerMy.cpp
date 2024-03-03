@@ -21,5 +21,7 @@ double Timer::getElapsedSeconds() {
 		return elapsed;
 }
 
-
+void Timer::forceChrono(double startTime) {
+	Timer::start_time = startTime;
+}
 

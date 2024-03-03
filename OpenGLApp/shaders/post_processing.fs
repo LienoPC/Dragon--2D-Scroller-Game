@@ -2,6 +2,7 @@
 in  vec2  TexCoords;
 out vec4  color;
 uniform bool shake;
+uniform bool dim;
 uniform sampler2D scene;
 uniform vec2      offsets[9];
 uniform float     blur_kernel[9];
@@ -29,7 +30,11 @@ void main()
         frag.a = 1.0f;
         color = frag;
 
-    }else{
+    }
+    if(dim == true) {
+        color = vec4(texture(scene, TexCoords).rgb, 0.5);
+    }    
+    else{
         color = texture(scene, TexCoords);
     }
     
