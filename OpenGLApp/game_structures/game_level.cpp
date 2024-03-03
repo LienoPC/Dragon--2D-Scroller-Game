@@ -196,7 +196,7 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
 
        // muove tutti i proiettili istanziati nella scena
        for (int i = 0; i < this->instancedBullets.size(); i++) {
-           if (this->instancedBullets[i].Type == 'b') {
+           if (this->instancedBullets[i].Type == 'b' || this->instancedBullets[i].Type == 'c') {
                this->instancedBullets[i].rotation += this->instancedBullets[i].velApplied / 600;
            }
            this->instancedBullets[i].move(dt);
@@ -380,17 +380,17 @@ void GameLevel::SpawnPowerUps() {
         prob += 0;
         break;
     case 1:
-        prob += 0.08;
+        prob += 0.1;
         break;
     case 2:
-        prob += 0.2;
+        prob += 0.3;
         break;
     }
     std::random_device rd;
     std::default_random_engine re(rd());
     std::uniform_real_distribution<double> unif3(0.3, 1);
     if (phase != 0 && this->player.stats.HP != 0) {
-        prob += 0.2 / this->player.stats.HP;
+        prob += 0.4 / this->player.stats.HP;
     }
     else {
         prob = 0;

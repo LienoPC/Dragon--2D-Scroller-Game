@@ -13,8 +13,8 @@
 
 
 #define PHASES 3
-#define SECONDS1 5
-#define SECONDS2 10
+#define SECONDS1 45
+#define SECONDS2 70
 #define END 120
 #define VELINCREASE 150
 #define STARTSECONDS 3
