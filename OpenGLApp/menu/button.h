@@ -7,7 +7,7 @@
 #include "../sprite_renderer/sprite_renderer.h"
 #include <vector>
 
-typedef enum buttonType {action, link, play};
+typedef enum buttonType { close, link, play };
 
 class Button {
 public:

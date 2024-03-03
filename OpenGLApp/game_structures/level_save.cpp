@@ -35,7 +35,7 @@ void Level_save::starting_values() {
 }
 
 void Level_save::update_state(int theme, int level, int phase) {
-    std::cout << "InizioUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    //std::cout << "InizioUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     if (theme == 0) {
         if (theme0[level] < phase && phase < 5 && theme0[level]+1 < 5) {
             theme0[level]++;
@@ -62,12 +62,12 @@ void Level_save::update_state(int theme, int level, int phase) {
         myfile << theme1[i];
     }
 
-    std::cout << "FineUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    //std::cout << "FineUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     myfile.close();
 }
 
 void Level_save::unlock_next(int theme, int level) {
-    std::cout << "InizioUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    //std::cout << "InizioUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     if (theme == 0) {
         if (level < 2 && theme0[level + 1] == 0) {
             theme0[level+1] = 1;
@@ -78,7 +78,7 @@ void Level_save::unlock_next(int theme, int level) {
             theme1[level+1] = 1;
         }
     }
-    std::cout << "FineUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    //std::cout << "FineUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
 }
 
 
