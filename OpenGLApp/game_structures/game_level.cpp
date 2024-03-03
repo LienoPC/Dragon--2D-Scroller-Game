@@ -117,7 +117,7 @@ void GameLevel::startLevel(int height, int width) {
 
 
 void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
-
+   
     // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
 
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)

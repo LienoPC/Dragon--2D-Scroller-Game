@@ -23,6 +23,7 @@ SpriteRenderer* Renderer;
 TextRenderer* Text;
 FlatRenderer* Flat;
 irrklang::ISoundEngine* sEngine;
+irrklang::ISound* menu_sound;
 PostProcessor* Effects;
 
 float ShakeTime = 0.0f;
@@ -176,7 +177,7 @@ void Game::Init(GLFWwindow* window)
     // load sound engine
     sEngine = irrklang::createIrrKlangDevice();
     // faccio partire la musica del menu
-    //sEngine->play2D("audio/Megalovania.wav", true);
+    menu_sound=sEngine->play2D("audio/Zelda.wav", true);
 
     // configure postprocessing renderer
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
@@ -266,7 +267,6 @@ void Game::Init(GLFWwindow* window)
 }
 
 void Game::Update(float dt){
-
     if (this->State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
         level->PlayLevel(dt, this->Skin, this->Level); // gestisce tutta la logica di livello
@@ -366,6 +366,7 @@ void Game::Update(float dt){
                 if (verifyDragonCollisionSquare(*s)) {
                     // il Dragòn ha raccolto il powerup
                     powerupPick(pow);
+                    sEngine->play2D("audio/Power_Up.wav");
                     // rimuovo il powerup
                     if (i != level->powerups.size() - 1) {
                         level->powerups[i] = std::move(level->powerups.back());
@@ -399,12 +400,16 @@ void Game::Update(float dt){
         // verifico che il giocatore non sia morto
         if (this->Levels[this->Level].player.stats.HP <= 0) {
             // stato di morte
+            sEngine->stopAllSounds();
+            sEngine->play2D("audio/Zelda.wav", true);
             this->currMenu = 4;
             this->State = GAME_PAUSE;
         }
         // verifico se il livello è finito
         if (this->Levels[this->Level].phase == PHASES) {
             // livello finito
+            sEngine->stopAllSounds();
+            sEngine->play2D("audio/Zelda.wav", true);
             Level_save::update_state(this->Skin, this->Level, this->Levels[this->Level].phase+1);
             this->currMenu = 5;
             this->State = GAME_PAUSE;
@@ -462,6 +467,8 @@ void Game::ProcessInput(float dt){
                             this->Level = clicked->level;
                             this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 2) + "Lev" + std::to_string(this->Level + 1));
                             this->State = GAME_ACTIVE;
+                            sEngine->stopAllSounds();
+                            sEngine->play2D("audio/Lost_Odissey.wav", true);
                             this->Levels[this->Level].startLevel(this->Width, this->Height);
                         }
                         else if (this->State == GAME_PAUSE) {
@@ -670,7 +677,7 @@ void Game::hitDragon(Bullet* b, int i) {
     // -Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
-    //sEngine->play2D("audio/Pain.wav");
+    sEngine->play2D("audio/Critical_Hit.wav");
     if (this->Levels[this->Level].player.stats.HP <= 0) {
         this->Levels[this->Level].Die();
         // settare lo stato a "GAME_OVER" e mostrare il menù associato

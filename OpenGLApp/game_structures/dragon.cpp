@@ -137,6 +137,7 @@ void Dragon::dealDamage(double damage) {
 }
 
 void Dragon::instanceFireball() {
+	sEngine = irrklang::createIrrKlangDevice();
 	if (FIREBALL_COST < this->stats.FP) {
 		Bullet fb(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(35.0f, 35.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
 		glm::vec2 pos;
@@ -148,11 +149,13 @@ void Dragon::instanceFireball() {
 		fb.destroyed = false;
 		this->instancedFireballs.push_back(fb);
 		this->stats.FP -= fb.Power;
+		sEngine->play2D("audio/Fireball.wav");
 	}
 	
 }
 
 void Dragon::instancePowerup() {
+	sEngine = irrklang::createIrrKlangDevice();
 	float cost = 0;
 	for (int i = 0; i < this->stats.powerup.size(); i++) {
 		cost += this->stats.powerup[i].Power;
@@ -165,6 +168,7 @@ void Dragon::instancePowerup() {
 			this->instancedFireballs.push_back(pow);
 			this->stats.FP -= pow.Power;
 		}
+		sEngine->play2D("audio/Fireball.wav");
 	}
 	
 	

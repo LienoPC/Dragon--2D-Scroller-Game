@@ -7,6 +7,7 @@
 #include "bullet.h"
 #include "../sprite_renderer/sprite_renderer.h"
 #include "../game_structures/window.h"
+#include "../glm-master/glm/glm.hpp"
 
 #include <vector>
 #include <map>
@@ -38,7 +39,6 @@ public:
 	int windowNumber;
 	short numRefresh;
 	Texture2D backgroundTexture;
-
 	Dragon player;
 
 	GameLevel();
