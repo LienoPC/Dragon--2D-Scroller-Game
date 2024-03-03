@@ -78,6 +78,7 @@ void Level_save::load_state() {
     for (int i = 0; i < 3; ++i) {
         myfile >> single_digit;
         this->theme1[i] = single_digit - '0';
-
-        myfile.close();
+    }
+    
+    myfile.close();
 }
