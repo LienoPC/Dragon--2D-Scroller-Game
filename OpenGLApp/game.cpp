@@ -567,7 +567,7 @@ void Game::Render(float dt)
         // draw background
         //Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), 0.0f, glm::vec3(1.0f), dt);
 
-        this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height*12));
+        this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height*15));
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);

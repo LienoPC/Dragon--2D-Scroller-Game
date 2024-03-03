@@ -125,7 +125,7 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
 
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
-        if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY / 2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX))) {
+        if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY / 2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX)) || (b.position.x < -300 || b.position.x > LEV_LIMITX + 300)) {
             // il bullet è uscito fuori dal livello
             if (i != this->instancedBullets.size() - 1)
             {
@@ -380,17 +380,19 @@ void GameLevel::SpawnPowerUps() {
         prob += 0;
         break;
     case 1:
-        prob += 0.1;
+        prob += 0.002;
         break;
     case 2:
-        prob += 0.3;
+        prob += 0.005;
         break;
     }
     std::random_device rd;
-    std::default_random_engine re(rd());
-    std::uniform_real_distribution<double> unif3(0.3, 1);
+    std::seed_seq seed2{ rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd() };
+    std::default_random_engine re(seed2);
+    //std::mt19937 generator(seed2);
+    std::uniform_real_distribution<double> unif3(0, 1);
     if (phase != 0 && this->player.stats.HP != 0) {
-        prob += 0.4 / this->player.stats.HP;
+        prob += 0.5 / this->player.stats.HP;
     }
     else {
         prob = 0;
