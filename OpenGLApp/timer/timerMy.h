@@ -9,6 +9,8 @@ class Timer {
 		static double start_time;
 		static int FPS;
 		static double actual_time;
+		static double coolDownStart;
+		static double coolDownActual;
 
 
 
@@ -22,6 +24,8 @@ class Timer {
 		static void setChrono();
 		static void resetChrono();
 		static void forceChrono(double startTime);
+		static double getCoolDown();
+		static void setCoolDown();
 };
 
 
