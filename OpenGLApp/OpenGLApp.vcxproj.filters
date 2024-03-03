@@ -229,5 +229,8 @@
     <Media Include="audio\Zelda.wav">
       <Filter>File di risorse</Filter>
     </Media>
+    <Media Include="audio\Crashing.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
   </ItemGroup>
 </Project>

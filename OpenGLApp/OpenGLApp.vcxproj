@@ -218,6 +218,7 @@
     <Text Include="game_structures\save.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="audio\Crashing.wav" />
     <Media Include="audio\Critical_Hit.wav" />
     <Media Include="audio\Fireball.wav" />
     <Media Include="audio\Lost_Odissey.wav" />

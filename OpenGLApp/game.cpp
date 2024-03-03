@@ -25,6 +25,7 @@ FlatRenderer* Flat;
 irrklang::ISoundEngine* sEngine;
 irrklang::ISound* hitSound;
 irrklang::ISound* levelSound;
+irrklang::ISound* crashingSound;
 PostProcessor* Effects;
 
 float ShakeTime = 0.0f;
@@ -536,7 +537,8 @@ void Game::ProcessInput(float dt){
                             this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 2) + "Lev" + std::to_string(this->Level + 1));
                             this->State = GAME_ACTIVE;
                             sEngine->stopAllSounds();
-                            sEngine->play2D("audio/Lost_Odissey.wav", true);
+                            levelSound=sEngine->play2D("audio/Lost_Odissey.wav", true, false, true);
+                            levelSound->setVolume(0.5f);
                             this->Levels[this->Level].startLevel(this->Width, this->Height);
                         }
                         else if (this->State == GAME_PAUSE) {
@@ -771,7 +773,8 @@ void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
         level->player.instancedFireballs[j].destroy();
     }
     
-    
+    crashingSound = sEngine->play2D("audio/Crashing.wav", false, false, true);
+    crashingSound->setVolume(1.0f);
     /*
     // oppure faccio il confronto con la potenza
     float difference = b->Power - fb->Power;
