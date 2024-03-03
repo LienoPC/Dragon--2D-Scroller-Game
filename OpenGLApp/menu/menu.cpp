@@ -48,3 +48,18 @@ void Menu::drawMenu(SpriteRenderer& renderer) {
 		b.drawButton(renderer);
 	}
 }
+
+void Menu::updateBackground(int theme, int level) {
+	if (theme == 0) {
+		if (level < 2 && Level_save::theme0[level + 1] == 1) {
+			this->background = ResourceManager::GetTexture("Forest" + std::to_string(level + 2));
+			this->addButton(Button({ 164.0f + 362 * (level + 1), 760.0f }, { 200.0f, 72.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"), 0, (level + 1)));
+		}
+	}
+	else if (theme == 1) {
+		if (level < 2 && Level_save::theme1[level + 1] == 1) {
+			this->background = ResourceManager::GetTexture("Mountain" + std::to_string(level + 2));
+			this->addButton(Button({ 164.0f + 362 * (level + 1), 760.0f }, { 200.0f, 72.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"), 0, (level + 1)));
+		}
+	}
+}

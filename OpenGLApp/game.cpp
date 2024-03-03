@@ -91,12 +91,14 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/menu/theme_selection.png", true, "themeSelBG");
     ResourceManager::LoadTexture("textures/menu/level_selection.png", true, "levelSelBG");
     ResourceManager::LoadTexture("textures/menu/game_over.png", true, "gameOver");
+    ResourceManager::LoadTexture("textures/menu/pause.png", true, "pause");
     ResourceManager::LoadTexture("textures/menu/level_complete.png", true, "levelComplete");
     ResourceManager::LoadTexture("textures/menu/main_button_gioca.png", true, "mainPlayButton");
     ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
     ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
     ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
     ResourceManager::LoadTexture("textures/menu/button_esci.png", true, "exitButton");
+    ResourceManager::LoadTexture("textures/menu/button_riprendi.png", true, "resumeButton");
     ResourceManager::LoadTexture("textures/menu/Forest1.png", true, "Forest1");
     ResourceManager::LoadTexture("textures/menu/Forest2.png", true, "Forest2");
     ResourceManager::LoadTexture("textures/menu/Forest3.png", true, "Forest3");
@@ -226,10 +228,18 @@ void Game::Init(GLFWwindow* window)
     levelSelMountain.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 1, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
 
     Menu gameOver(4, ResourceManager::GetTexture("gameOver"));
+    // Pulsante "Esci"
     gameOver.addButton(Button({ 1280.0f/2 - 375.0f/2, 960.0f/2 - 100.0f/2 }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
 
     Menu levelComplete(5, ResourceManager::GetTexture("levelComplete"));
+    // Pulsante "Esci"
     levelComplete.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 - 100.0f / 2 }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
+
+    Menu pause(6, ResourceManager::GetTexture("pause"));
+    // Pulsante "Riprendi"
+    pause.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 - 115.0f }, { 375.0f, 100.0f }, buttonType::play, ResourceManager::GetTexture("resumeButton"), ResourceManager::GetTexture("resumeButton")));
+    // Pulsante "Esci"
+    pause.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 + 115.0f }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
 
     this->Menus.push_back(mainMenu);
     this->Menus.push_back(themeSel);
@@ -237,6 +247,7 @@ void Game::Init(GLFWwindow* window)
     this->Menus.push_back(levelSelMountain);
     this->Menus.push_back(gameOver);
     this->Menus.push_back(levelComplete);
+    this->Menus.push_back(pause);
     this->currMenu = 0;
 }
 
@@ -375,14 +386,14 @@ void Game::Update(float dt){
         if (this->Levels[this->Level].player.stats.HP <= 0) {
             // stato di morte
             this->currMenu = 4;
-            this->State = GAME_END;
+            this->State = GAME_PAUSE;
         }
         // verifico se il livello è finito
         if (this->Levels[this->Level].phase == PHASES) {
             // livello finito
             Level_save::update_state(this->Skin, this->Level, this->Levels[this->Level].phase+1);
             this->currMenu = 5;
-            this->State = GAME_END;
+            this->State = GAME_PAUSE;
 
         }
     }
@@ -390,7 +401,7 @@ void Game::Update(float dt){
 
 
 void Game::ProcessInput(float dt){  
-    if (Game::State == GAME_MENU || Game::State == GAME_END) {
+    if (Game::State == GAME_MENU || Game::State == GAME_PAUSE) {
         static Button* cursorOver = NULL, * clicked = NULL;
         double cursorX, cursorY;
         glfwGetCursorPos(this->window, &cursorX, &cursorY);
@@ -400,7 +411,7 @@ void Game::ProcessInput(float dt){
                 cursorOver->selected = false;
                 cursorOver = NULL;
             }
-            for (Button& b : this->Menus[currMenu].buttons) {
+            for (Button& b : this->Menus[this->currMenu].buttons) {
                 if (isCursorOnButton(cursorX, cursorY, &b)) {
                     cursorOver = &b;
                     b.selected = true;
@@ -418,20 +429,30 @@ void Game::ProcessInput(float dt){
             if (clicked != NULL) {
                 if (cursorOver != NULL && cursorOver == clicked) {
                     if (clicked->type == buttonType::link) {
-                        if(this->State == GAME_END)
+                        if (this->State == GAME_PAUSE) {
+                            // Aggiornamento del menù di selezione dei livelli in caso di sblocco di un nuovo livello
+                            if(this->Skin == 0)
+                                this->Menus[2].updateBackground(this->Skin, this->Level);
+                            else
+                                this->Menus[3].updateBackground(this->Skin, this->Level);
                             this->State = GAME_MENU;
+                        }
                         this->currMenu = clicked->subMenuId;
                         cursorOver = NULL;
                     }
                     else if (clicked->type == buttonType::play) {
                         this->currMenu = 0;  
                         cursorOver = NULL;
-                        if (clicked->skin > -1 && clicked->level > -1) {
+                        if (this->State == GAME_MENU && clicked->skin > -1 && clicked->level > -1) {
                             this->Skin = clicked->skin;
                             this->Level = clicked->level;
                             this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 2) + "Lev" + std::to_string(this->Level + 1));
                             this->State = GAME_ACTIVE;
                             this->Levels[this->Level].startLevel(this->Width, this->Height);
+                        }
+                        else if (this->State == GAME_PAUSE) {
+                            this->Levels[Level].player.playAnimation = true;
+                            this->State = GAME_ACTIVE;
                         }
                         else {
                             std::cerr << "Tentativo di lancio di un livello con valore di skin e/o livello errati (< 0)" << std::endl;
@@ -444,10 +465,16 @@ void Game::ProcessInput(float dt){
     }   
 
      else if (Game::State == GAME_ACTIVE) {
-         GameLevel* level = &this->Levels[this->Level];
-         // Gestione della velocità (sprint, slowdown)
-         static bool sprint = false, slowdown = false, shoot = false;
+        GameLevel* level = &this->Levels[this->Level];
+        // Gestione della velocità (sprint, slowdown)
+        static bool sprint = false, slowdown = false, shoot = false;
 
+        // Menù di pausa
+        if (this->Keys[GLFW_KEY_ESCAPE]) {
+            this->currMenu = 6;
+            this->State = GAME_PAUSE;
+        }
+        
         if (this->Keys[GLFW_KEY_LEFT_SHIFT] && !sprint) {
             level->player.setVelocityModifier(650.0f);
             sprint = true;       
@@ -507,10 +534,17 @@ void Game::ProcessInput(float dt){
 
 void Game::Render(float dt)
 {   
+    static bool timePaused = false;
+    static float prevTime = glfwGetTime(), currTime = 0, deltaTime = 0;
+
     if (Game::State == GAME_MENU) {
+        if (timePaused)
+            timePaused = false;
         this->Menus[this->currMenu].drawMenu(*Renderer);
     }
     else if (Game::State == GAME_ACTIVE) {
+        if (timePaused)
+            timePaused = false;
         // prepare postProcesser
         Effects->BeginRender();
         // draw background
@@ -525,8 +559,11 @@ void Game::Render(float dt)
         // render postprocessing quad
         Effects->Render(glfwGetTime());
     } 
-    else if (Game::State == GAME_END) {
-        static float prevTime = glfwGetTime(), currTime = 0, deltaTime = 0;
+    else if (Game::State == GAME_PAUSE) {
+        if (!timePaused) {     
+            prevTime = glfwGetTime();
+            timePaused = true;
+        }
 
         // Pausa al timer su schermo
         currTime = glfwGetTime();
@@ -534,6 +571,7 @@ void Game::Render(float dt)
         Timer::forceChrono(Timer::start_time + deltaTime);
         prevTime = currTime;
 
+        Effects->BeginRender();
         // Ferma animazione drago
         this->Levels[this->Level].player.playAnimation = false;
 
@@ -544,6 +582,9 @@ void Game::Render(float dt)
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
+        Effects->EndRender();
+        // render postprocessing quad
+        Effects->Render(glfwGetTime());
 
         // Renderizza il menù in sovrimpressione
         this->Menus[this->currMenu].drawMenu(*Renderer);

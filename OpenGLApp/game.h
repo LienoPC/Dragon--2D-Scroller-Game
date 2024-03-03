@@ -20,7 +20,7 @@ const unsigned int SCREEN_HEIGHT = 960;
 enum GameState {
     GAME_ACTIVE,
     GAME_MENU,
-    GAME_END
+    GAME_PAUSE
 };
 
 // Game holds all game-related state and functionality.
