@@ -101,6 +101,7 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/menu/main_button_gioca.png", true, "mainPlayButton");
     ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
     ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
+    ResourceManager::LoadTexture("textures/menu/button_riprendi.png", true, "resumeButton");
     ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
     ResourceManager::LoadTexture("textures/menu/button_esci.png", true, "exitButton");
     ResourceManager::LoadTexture("textures/menu/button_desktop.png", true, "desktopButton");
@@ -451,6 +452,7 @@ void Game::ProcessInput(float dt){
                                 this->Menus[2].updateBackground(this->Skin, this->Level);
                             else 
                                 this->Menus[3].updateBackground(this->Skin, this->Level);
+                            //canzone nuova
                             this->State = GAME_MENU;
                         }
                         this->currMenu = clicked->subMenuId;
@@ -462,7 +464,7 @@ void Game::ProcessInput(float dt){
                         if (this->State == GAME_MENU && clicked->skin > -1 && clicked->level > -1) {
                             this->Skin = clicked->skin;
                             this->Level = clicked->level;
-                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 2) + "Lev" + std::to_string(this->Level + 1));
+                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 1) + "Lev" + std::to_string(this->Level + 1));
                             this->State = GAME_ACTIVE;
                             sEngine->stopAllSounds();
                             levelSound=sEngine->play2D("audio/Lost_Odissey.wav", true, false, true);
@@ -641,7 +643,7 @@ void Game::Render(float dt)
         // draw background
         //Renderer->DrawScrollingBackground(ResourceManager::GetTexture("level1Grass"), glm::vec2(0.0f, 0.0f), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), 0.0f, glm::vec3(1.0f), dt);
 
-        this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height*12));
+        this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height*15));
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
