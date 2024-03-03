@@ -67,6 +67,8 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/levels/Skin1Lev1.png", true, "Skin1Lev1");
     ResourceManager::LoadTexture("textures/levels/Skin1Lev2.png", true, "Skin1Lev2");
     ResourceManager::LoadTexture("textures/levels/Skin1Lev3.png", true, "Skin1Lev3");
+    ResourceManager::LoadTexture("textures/levels/Skin2Lev1.png", true, "Skin2Lev1");
+
 
     // load textures: bullets and particles
     ResourceManager::LoadTexture("textures/arrow_sprite.png", true, "arrow");
@@ -163,10 +165,7 @@ void Game::Init(GLFWwindow* window)
     l3.windowNumber = W_NUMBER_3;
     l3.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level3.txt");
 
-    // ESEMPIO PER AMICO DI CARICAMENTO DI UN LIVELLO
-    this->Skin = 0;
-    this->Level = 0;
-    l1.backgroundTexture = ResourceManager::GetTexture("Skin1Lev3"); // assegno la skin in base a level e skin
+
     // load sound engine
     sEngine = irrklang::createIrrKlangDevice();
     // faccio partire la musica del menu
@@ -430,7 +429,7 @@ void Game::ProcessInput(float dt){
                         if (clicked->skin > -1 && clicked->level > -1) {
                             this->Skin = clicked->skin;
                             this->Level = clicked->level;
-                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 1) + "Lev" + std::to_string(this->Level + 1));
+                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 2) + "Lev" + std::to_string(this->Level + 1));
                             this->State = GAME_ACTIVE;
                             this->Levels[this->Level].startLevel(this->Width, this->Height);
                         }
@@ -539,6 +538,9 @@ void Game::Render(float dt)
         this->Levels[this->Level].player.playAnimation = false;
 
         this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height * 12));
+        Renderer->DrawSprite(this->Levels[this->Level].backgroundTexture, glm::vec2(0.0), glm::vec2(this->Width, this->Height * 12), 0);
+        //this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height * 12));
+
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
         this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);

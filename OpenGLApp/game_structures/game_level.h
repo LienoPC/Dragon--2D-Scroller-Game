@@ -17,6 +17,7 @@
 #define SECONDS2 60
 #define END 120
 #define VELINCREASE 150
+#define STARTSECONDS 3
 
 
 class GameLevel {

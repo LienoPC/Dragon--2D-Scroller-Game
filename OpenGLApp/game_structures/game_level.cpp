@@ -14,6 +14,7 @@ std::vector<int> availabePowerups;
 std::map<int, bool> alreadyUsedW;
 const glm::vec2 moveAlong(0, 1);
 int numDestroyed = 0;
+bool start = false;
 
 GameLevel::GameLevel()
     : bulletList(NULL), instancedBullets(NULL){}
@@ -111,6 +112,7 @@ void GameLevel::startLevel(int height, int width) {
     glm::vec2 playerSize = { 375.0f, 375.0f };
     Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width / 2, height/3), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, HitboxType(SQUARE));
     this->setPlayer(player);
+    start = false;
 }
 
 
@@ -159,78 +161,86 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
     }
     
     // istanzio i proiettili che mi servono
-   
-        for (int i = 0; i < numRefresh; i++) {
-            if (this->bulletList.size() > 0) {
+   if(start){
 
-                int nW = WindowPick();
+       for (int i = 0; i < numRefresh; i++) {
+           if (this->bulletList.size() > 0) {
 
-                double positionOffsetX = positionOffsetPick(0, nW);
+               int nW = WindowPick();
 
-                double positionOffsetY = positionOffsetPick(1, nW);
+               double positionOffsetX = positionOffsetPick(0, nW);
 
-                // velocity selection
-                std::random_device rd;
-                std::default_random_engine re(rd());
-                std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
-                double velocity = unif3(re);
+               double positionOffsetY = positionOffsetPick(1, nW);
 
-                // istanzio il proiettile
-                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position + glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
-                this->bulletList.erase(this->bulletList.begin());
-            }
-            else {
-           
+               // velocity selection
+               std::random_device rd;
+               std::default_random_engine re(rd());
+               std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
+               double velocity = unif3(re);
 
-            }
-        }
-    
-    
-    numRefresh = 0;
-
-    this->SpawnPowerUps();
+               // istanzio il proiettile
+               instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position + glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
+               this->bulletList.erase(this->bulletList.begin());
+           }
+           else {
 
 
-    // muove tutti i proiettili istanziati nella scena
-    for (int i = 0; i < this->instancedBullets.size(); i++) {
-        if (this->instancedBullets[i].Type == 'b') {
-            this->instancedBullets[i].rotation+= this->instancedBullets[i].velApplied/600;
-        }
-        this->instancedBullets[i].move(dt);
-        if (this->instancedBullets[i].destroyed) {
-            numDestroyed++;
-        }
-    }
-    // muovo tutti i proiettili del drago lanciati
-    for (int i = 0; i < this->player.instancedFireballs.size(); i++) {
-        switch (this->player.instancedFireballs[i].Type) {
+           }
+       }
 
-        case 99:
-            this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 600;
-            break;
-        case 101:
-            this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 70;
-            break;
-        }
-        this->player.instancedFireballs[i].move(dt);
-    }
-    
-    // muovo tutti i powerup
-    for(int i = 0; i < this->powerups.size(); i++){
-        // verifico se il powerup è ancora nello schermo
-        if (this->powerups[i].position.y < LEV_LIMITY) {
-            this->powerups[i].move(dt);
-        }
-        else {
-            // rimuovo il powerup
-            if (i != this->powerups.size() - 1) {
-                this->powerups[i] = std::move(this->powerups.back());
-            }
-            this->powerups.pop_back();
-        }
-        
-    }
 
+       numRefresh = 0;
+
+       this->SpawnPowerUps();
+
+
+       // muove tutti i proiettili istanziati nella scena
+       for (int i = 0; i < this->instancedBullets.size(); i++) {
+           if (this->instancedBullets[i].Type == 'b') {
+               this->instancedBullets[i].rotation += this->instancedBullets[i].velApplied / 600;
+           }
+           this->instancedBullets[i].move(dt);
+           if (this->instancedBullets[i].destroyed) {
+               numDestroyed++;
+           }
+       }
+       
+
+       // muovo tutti i powerup
+       for (int i = 0; i < this->powerups.size(); i++) {
+           // verifico se il powerup è ancora nello schermo
+           if (this->powerups[i].position.y < LEV_LIMITY) {
+               this->powerups[i].move(dt);
+           }
+           else {
+               // rimuovo il powerup
+               if (i != this->powerups.size() - 1) {
+                   this->powerups[i] = std::move(this->powerups.back());
+               }
+               this->powerups.pop_back();
+           }
+
+       }
+   }
+   else {
+       if (Timer::getElapsedSeconds() > STARTSECONDS) {
+           start = true;
+       }
+   }
+
+   // muovo tutti i proiettili del drago lanciati
+   for (int i = 0; i < this->player.instancedFireballs.size(); i++) {
+       switch (this->player.instancedFireballs[i].Type) {
+
+       case 99:
+           this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 600;
+           break;
+       case 101:
+           this->player.instancedFireballs[i].rotation += this->player.instancedFireballs[i].velApplied / 70;
+           break;
+       }
+       this->player.instancedFireballs[i].move(dt);
+   }
 
     // ricarico il mana del giocatore
     if (this->player.stats.FP < MAX_FP) {
@@ -370,17 +380,17 @@ void GameLevel::SpawnPowerUps() {
         prob += 0;
         break;
     case 1:
-        prob += 0.08;
+        prob += 0.007;
         break;
     case 2:
-        prob += 0.12;
+        prob += 0.01;
         break;
     }
     std::random_device rd;
     std::default_random_engine re(rd());
-    std::uniform_real_distribution<double> unif3(0, 1);
+    std::uniform_real_distribution<double> unif3(0.3, 1);
     if (phase != 0 && this->player.stats.HP != 0) {
-        prob += 0.3 / this->player.stats.HP;
+        prob += 0.2 / this->player.stats.HP;
     }
     else {
         prob = 0;
