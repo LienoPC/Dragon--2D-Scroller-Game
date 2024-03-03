@@ -389,12 +389,11 @@ void GameLevel::SpawnPowerUps() {
         break;
     }
     std::random_device rd;
-    std::seed_seq seed2{ rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd() };
-    std::default_random_engine re(seed2);
+    std::default_random_engine re(rd());
     //std::mt19937 generator(seed2);
     std::uniform_real_distribution<double> unif3(0, 1);
     if (phase != 0 && this->player.stats.HP != 0) {
-        prob += 0.5 / this->player.stats.HP;
+        prob += 0.3 / this->player.stats.HP;
     }
     else {
         prob = 0;
@@ -402,25 +401,31 @@ void GameLevel::SpawnPowerUps() {
     ran = unif3(re);
     if (ran < prob) {
         // spawno il powerup
-        std::uniform_int_distribution<int> unif(0, availabePowerups.size() - 1);
-        int i = unif(re);
-        std::uniform_real_distribution<double> unif3(20, LEV_LIMITX-20);
-        ran = unif3(re); // x value arbitraria di spawn del powerup
-        Bullet b;
-        switch (availabePowerups[i]) {
-        case 100:
-            b = Bullet(FIREBALL_COST, 0.0f, ResourceManager::GetTexture("aPowerup"), glm::vec2(ran, -100), glm::vec2(80.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(SQUARE), 100);
-            b.velApplied = 400;
-            b.Direction = moveAlong;
-            powerups.push_back(b);
-            break;
-        case 101:
-            b = Bullet(150, 0.0f, ResourceManager::GetTexture("bPowerup"), glm::vec2(ran, -100), glm::vec2(100.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
-            b.velApplied = 400;
-            b.Direction = moveAlong;
-            powerups.push_back(b);
-            break;
+        // verifico se ci sono anche altri powerup
+        if (this->powerups.size() < 3 && Timer::getCoolDown() > 15) {
+            // setto il cooldown
+            Timer::setCoolDown();
+            std::uniform_int_distribution<int> unif(0, availabePowerups.size() - 1);
+            int i = unif(re);
+            std::uniform_real_distribution<double> unif3(20, LEV_LIMITX - 20);
+            ran = unif3(re); // x value arbitraria di spawn del powerup
+            Bullet b;
+            switch (availabePowerups[i]) {
+            case 100:
+                b = Bullet(FIREBALL_COST, 0.0f, ResourceManager::GetTexture("aPowerup"), glm::vec2(ran, -100), glm::vec2(80.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(SQUARE), 100);
+                b.velApplied = 400;
+                b.Direction = moveAlong;
+                powerups.push_back(b);
+                break;
+            case 101:
+                b = Bullet(150, 0.0f, ResourceManager::GetTexture("bPowerup"), glm::vec2(ran, -100), glm::vec2(100.0f), glm::vec3(1.0f), glm::vec2(1.0f), HitboxType(CIRCLE), 101);
+                b.velApplied = 400;
+                b.Direction = moveAlong;
+                powerups.push_back(b);
+                break;
+            }
         }
+        
         
     }
 
