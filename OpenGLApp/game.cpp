@@ -98,7 +98,9 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
     ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
     ResourceManager::LoadTexture("textures/menu/button_esci.png", true, "exitButton");
-    ResourceManager::LoadTexture("textures/menu/button_riprendi.png", true, "resumeButton");
+    ResourceManager::LoadTexture("textures/menu/button_desktop.png", true, "desktopButton");
+    ResourceManager::LoadTexture("textures/menu/button_comandi.png", true, "controlsButton");
+    ResourceManager::LoadTexture("textures/menu/controls.png", true, "controlsBG");
     ResourceManager::LoadTexture("textures/menu/Forest1.png", true, "Forest1");
     ResourceManager::LoadTexture("textures/menu/Forest2.png", true, "Forest2");
     ResourceManager::LoadTexture("textures/menu/Forest3.png", true, "Forest3");
@@ -183,10 +185,14 @@ void Game::Init(GLFWwindow* window)
     this->Levels.push_back(l3);
 
     // Creazione di menù e pulsanti  
-    std::cout << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    //std::cout << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     Menu mainMenu(0, ResourceManager::GetTexture("mainMenuBG"));
     // Pulsante "Gioca"
     mainMenu.addButton(Button({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, 1, ResourceManager::GetTexture("mainPlayButton"), ResourceManager::GetTexture("mainPlayButton")));
+    // Pulsante "Comandi"
+    mainMenu.addButton(Button({ 70.0f, 365.0f }, { 375.0f, 100.0f }, buttonType::link, 7, ResourceManager::GetTexture("controlsButton"), ResourceManager::GetTexture("controlsButton")));
+    // Pulsante "Desktop"
+    mainMenu.addButton(Button({ 70.0f, 480.0f }, { 375.0f, 100.0f }, buttonType::close, ResourceManager::GetTexture("desktopButton"), ResourceManager::GetTexture("desktopButton")));
 
     Menu themeSel(1, ResourceManager::GetTexture("themeSelBG"));
     // Pulsante di selezione del tema Foresta
@@ -241,6 +247,10 @@ void Game::Init(GLFWwindow* window)
     // Pulsante "Esci"
     pause.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 + 115.0f }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
 
+    Menu controls(7, ResourceManager::GetTexture("controlsBG"));
+    // Pulsante "back"
+    controls.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
+
     this->Menus.push_back(mainMenu);
     this->Menus.push_back(themeSel);
     this->Menus.push_back(levelSelForest);
@@ -248,6 +258,7 @@ void Game::Init(GLFWwindow* window)
     this->Menus.push_back(gameOver);
     this->Menus.push_back(levelComplete);
     this->Menus.push_back(pause);
+    this->Menus.push_back(controls);
     this->currMenu = 0;
 }
 
@@ -457,6 +468,9 @@ void Game::ProcessInput(float dt){
                         else {
                             std::cerr << "Tentativo di lancio di un livello con valore di skin e/o livello errati (< 0)" << std::endl;
                         }
+                    }
+                    else if (clicked->type == buttonType::close) {
+                        glfwSetWindowShouldClose(this->window, true);
                     }
                 }
             }
