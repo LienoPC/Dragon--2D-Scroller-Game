@@ -7,6 +7,7 @@
 #include "bullet.h"
 #include "../glad/include/glad/glad.h"
 #include "../glm-master/glm/glm.hpp"
+#include "../irrKlang/include/irrKlang.h"
 #include <vector>
 
 #define XOFFSET 167
@@ -32,6 +33,9 @@ public:
 
 	//numero fireball sparate
 	int fbnum = 0;
+
+	//suono fireball
+	irrklang::ISoundEngine* sEngine;
 
 	// constructors
 	Dragon();
