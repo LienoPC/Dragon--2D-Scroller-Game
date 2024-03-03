@@ -380,10 +380,10 @@ void GameLevel::SpawnPowerUps() {
         prob += 0;
         break;
     case 1:
-        prob += 0.007;
+        prob += 0.08;
         break;
     case 2:
-        prob += 0.01;
+        prob += 0.2;
         break;
     }
     std::random_device rd;

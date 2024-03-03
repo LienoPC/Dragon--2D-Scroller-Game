@@ -446,7 +446,7 @@ void Game::ProcessInput(float dt){
                         if (this->State == GAME_MENU && clicked->skin > -1 && clicked->level > -1) {
                             this->Skin = clicked->skin;
                             this->Level = clicked->level;
-                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 2) + "Lev" + std::to_string(this->Level + 1));
+                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 1) + "Lev" + std::to_string(this->Level + 1));
                             this->State = GAME_ACTIVE;
                             this->Levels[this->Level].startLevel(this->Width, this->Height);
                         }
