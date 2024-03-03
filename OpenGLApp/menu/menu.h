@@ -22,5 +22,6 @@ public:
 	// methods
 	void addButton(Button b);
 	void drawMenu(SpriteRenderer& renderer);
+	void updateBackground(int theme, int level);
 };
 #endif
