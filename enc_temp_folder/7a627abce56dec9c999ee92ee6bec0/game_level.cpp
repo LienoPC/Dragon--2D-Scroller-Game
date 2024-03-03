@@ -97,8 +97,12 @@ void GameLevel::LoadLevel(int height, int width, const char* path) {
     for (int i = 0; i < this->windowNumber; i++) {
         instanceWindow(i);
     }
+   
+    // Definisco la phase e assegno le finestre
+    numRefresh = this->maxInstancedBullet;
     
-    
+    // Inizializzo la fase
+    this->phase = 0;
 }
 
 void GameLevel::startLevel(int height, int width) {
@@ -111,9 +115,6 @@ void GameLevel::startLevel(int height, int width) {
     start = false;
     this->powerups.clear();
     this->instancedBullets.clear();
-    numRefresh = this->maxInstancedBullet;
-    // Inizializzo la fase
-    this->phase = 0;
 }
 
 
