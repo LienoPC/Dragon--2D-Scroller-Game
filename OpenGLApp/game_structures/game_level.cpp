@@ -107,6 +107,7 @@ void GameLevel::LoadLevel(int height, int width, const char* path) {
 void GameLevel::startLevel(int height, int width) {
     // Set initial time for the level
     Timer::setChrono();
+    this->player.playAnimation = true;
     glm::vec2 playerSize = { 375.0f, 375.0f };
     Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width / 2, height/3), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, HitboxType(SQUARE));
     this->setPlayer(player);
@@ -119,6 +120,7 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
 
     // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
     // oppure se è stato distrutto
+
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
         if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY / 2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX))) {
@@ -237,25 +239,24 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
 
     // verifico il passaggio di fase
     // bronze medal
-    if (Timer::getElapsedSeconds() > SECONDS1 && Timer::getElapsedSeconds() < SECONDS2) {
+    if (Timer::getElapsedSeconds() > SECONDS1 && Timer::getElapsedSeconds() < SECONDS2 && this->player.stats.medal == NONE) {
         this->IncreasePhase();
         this->player.stats.medal = BRONZE;
-        Level_save::update_state(skin, level);
+        Level_save::update_state(skin, level, phase+1);
 
     }
     // silver medal
-    if (Timer::getElapsedSeconds() > SECONDS2 && Timer::getElapsedSeconds() < END) {
+    if (Timer::getElapsedSeconds() > SECONDS2 && Timer::getElapsedSeconds() < END && this->player.stats.medal == BRONZE) {
         this->IncreasePhase();
-        this->player.stats.medal = SILVER;
-        Level_save::update_state(skin, level);
-        // inserire funzione che sblocca il livello successivo della stessa skin
+        this->player.stats.medal = SILVER;      
         Level_save::unlock_next(skin, level);
+        Level_save::update_state(skin, level, phase + 1);
     }
     // golden medal
-    if (Timer::getElapsedSeconds() > END) {
+    if (Timer::getElapsedSeconds() > END && this->player.stats.medal == SILVER) {
         this->IncreasePhase();
         this->player.stats.medal = GOLD;
-        Level_save::update_state(skin, level);
+        Level_save::update_state(skin, level, phase+1);
         // end level
     }
 
@@ -328,7 +329,7 @@ void GameLevel::DestroyBullet(unsigned int i) {
 }
 
 void GameLevel::IncreasePhase() {
-    if (phase + 1 <= PHASES) {
+    if (phase + 1 < PHASES) {
         phase++;
         this->minVel += VELINCREASE;
         this->maxVel += VELINCREASE;

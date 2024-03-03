@@ -4,17 +4,17 @@
 #include "window_constraints.h"
 
 Dragon::Dragon()
-	:velocityModifier(0.0f), instancedFireballs(NULL){};
+	:velocityModifier(0.0f), instancedFireballs(NULL), playAnimation(true) {};
 
 Dragon::Dragon(Texture2D sprite, glm::vec2 pos, glm::vec2 size, glm::vec3 color, glm::vec2 velocity, float mvSpeed, HitboxType hitboxT)
-: velocityModifier(mvSpeed), animationFrames(NULL){
+: velocityModifier(mvSpeed), animationFrames(NULL), playAnimation(true) {
 	this->position = pos;
 	this->size = size;
 	this->velocity = velocity;
 	this->color = color;
 	this->sprite = sprite;
 	this->hitboxT = hitboxT;
-	this->stats = DragonStats(); //Inzializzo il dragòn a full vita
+	this->stats = DragonStats(); //Inzializzo il drago con vita massima
 	this->sprite = ResourceManager::GetTexture("dragon_f0");
 	// Save dragon animation frames
 	this->animationFrames.push_back(ResourceManager::GetTexture("dragon_f0"));
@@ -79,12 +79,11 @@ void Dragon::Draw(SpriteRenderer& renderer, float dt) {
 	if (this->hit) {
 		float rColor = 0.5f + ((rand() % 100) / 100.0f);
 		this->color = glm::vec3(rColor, rColor, rColor);
-	}
-	
+	}	
 	
 	renderer.DrawSprite(this->animationFrames.at(frame), this->position, this->size, this->rotation, this->color);
 
-	if (deltaTime >= FRAME_TIME) {
+	if (deltaTime >= FRAME_TIME && this->playAnimation) {
 		if (frame == 0) {
 			frame++;
 			if(reversed)

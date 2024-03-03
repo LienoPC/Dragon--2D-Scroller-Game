@@ -34,14 +34,15 @@ void Level_save::starting_values() {
     myfile.close();
 }
 
-void Level_save::update_state(int theme, int level) {
+void Level_save::update_state(int theme, int level, int phase) {
+    std::cout << "InizioUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     if (theme == 0) {
-        if (theme0[level]++ < 5) {
+        if (theme0[level] < phase && phase < 5 && theme0[level]+1 < 5) {
             theme0[level]++;
         }
     }
     else if (theme == 1) {
-        if (theme1[level]++ < 5) {
+        if (theme1[level] < phase && phase < 5 && theme1[level]+1 < 5) {
             theme1[level]++;
         }
     }
@@ -61,20 +62,23 @@ void Level_save::update_state(int theme, int level) {
         myfile << theme1[i];
     }
 
+    std::cout << "FineUpdate: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     myfile.close();
 }
 
 void Level_save::unlock_next(int theme, int level) {
+    std::cout << "InizioUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     if (theme == 0) {
-        if (level < 2) {
-            theme0[level++] = 1;
+        if (level < 2 && theme0[level + 1] == 0) {
+            theme0[level+1] = 1;
         }
     }
     else if (theme == 1) {
-        if (level < 2) {
-            theme1[level++] = 1;
+        if (level < 2 && theme1[level + 1] == 0) {
+            theme1[level+1] = 1;
         }
     }
+    std::cout << "FineUnlock: " << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
 }
 
 
@@ -89,21 +93,17 @@ void Level_save::load_state() {
     else {
         // il file esiste
         if (!is_empty(myfile)) {
-            for (int i = 0; i < 3; ++i) {
+            for (int i = 0; i < 3; i++) {
                 myfile >> single_digit;
                 theme0[i] = single_digit - '0';
             }
-            for (int i = 0; i < 3; ++i) {
+            for (int i = 0; i < 3; i++) {
                 myfile >> single_digit;
-                theme1[i] = single_digit - '0';
-
-                myfile.close();
+                theme1[i] = single_digit - '0';              
             }
+            myfile.close();
         }
-            
-
-    }
-       
+    }      
 }
     
 

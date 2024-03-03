@@ -18,10 +18,13 @@ public:
 	bool selected;
 	Texture2D spriteBase;
 	Texture2D spriteSelected;
+	int skin;
+	int level;
 
 	// constructors
 	Button();
 	Button(glm::vec2 position, glm::vec2 size, buttonType type, Texture2D spriteBase, Texture2D spriteSelected);
+	Button(glm::vec2 position, glm::vec2 size, buttonType type, Texture2D spriteBase, Texture2D spriteSelected, int skin, int level);
 	Button(glm::vec2 position, glm::vec2 size, buttonType type, int subMenuId, Texture2D spriteBase, Texture2D spriteSelected);
 
 	void drawButton(SpriteRenderer& renderer);

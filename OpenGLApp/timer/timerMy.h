@@ -21,6 +21,7 @@ class Timer {
 
 		static void setChrono();
 		static void resetChrono();
+		static void forceChrono(double startTime);
 };
 
 

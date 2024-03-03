@@ -27,6 +27,7 @@ public:
 	float velocityModifier;
 	// dragon animation frames
 	std::vector<Texture2D> animationFrames;
+	bool playAnimation;
 	bool hit;
 
 	//numero fireball sparate

@@ -12,6 +12,9 @@
 #include "irrKlang/include/irrKlang.h"
 #include "shaders_textures/post_processor.h"
 #include "game_structures/level_save.h"
+#include "timer/timerMy.h"
+
+#include <iostream>
 
 #define PI 3.14
 
@@ -82,11 +85,22 @@ void Game::Init(GLFWwindow* window)
 
 
     // load menu textures
-    ResourceManager::LoadTexture("textures/menu/main_menu_bg2.png", true, "mainMenuBG");
-    ResourceManager::LoadTexture("textures/menu/level_selection_bg1.png", true, "levelSelBG");
+    ResourceManager::LoadTexture("textures/menu/main_menu_bg.png", true, "mainMenuBG");
+    ResourceManager::LoadTexture("textures/menu/theme_selection.png", true, "themeSelBG");
+    ResourceManager::LoadTexture("textures/menu/level_selection.png", true, "levelSelBG");
+    ResourceManager::LoadTexture("textures/menu/game_over.png", true, "gameOver");
+    ResourceManager::LoadTexture("textures/menu/level_complete.png", true, "levelComplete");
+    ResourceManager::LoadTexture("textures/menu/main_button_gioca.png", true, "mainPlayButton");
     ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
     ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
     ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
+    ResourceManager::LoadTexture("textures/menu/button_esci.png", true, "exitButton");
+    ResourceManager::LoadTexture("textures/menu/Forest1.png", true, "Forest1");
+    ResourceManager::LoadTexture("textures/menu/Forest2.png", true, "Forest2");
+    ResourceManager::LoadTexture("textures/menu/Forest3.png", true, "Forest3");
+    ResourceManager::LoadTexture("textures/menu/Mountain1.png", true, "Mountain1");
+    ResourceManager::LoadTexture("textures/menu/Mountain2.png", true, "Mountain2");
+    ResourceManager::LoadTexture("textures/menu/Mountain3.png", true, "Mountain3");
     // load dragon animation frames
     ResourceManager::LoadTexture("textures/dragon_frame0.png", true, "dragon_f0");
     ResourceManager::LoadTexture("textures/dragon_frame1.png", true, "dragon_f1");
@@ -106,8 +120,6 @@ void Game::Init(GLFWwindow* window)
     b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleArrow"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
     b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleRock"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
     b3.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleLava"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
-
-   
 
     ResourceManager::SetBullet(b1);
     ResourceManager::SetBullet(b2);
@@ -130,23 +142,6 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::SetWindow(topLeft);
     ResourceManager::SetWindow(topRight);
 
-    //create Menus and Buttons
-    int id = 0;  
-    Menu mainMenu(id++, ResourceManager::GetTexture("mainMenuBG"));
-    Button button1({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, id, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton"));
-
-    Menu subMenu(id++, ResourceManager::GetTexture("levelSelBG"));
-    Button button2({ 220.0f, 790.0f }, { 220.0f, 80.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"));
-    Button button3({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton"));
-    //Aggiungere bottoni sotto agli altri livelli (oltre Foresta)
-
-    mainMenu.addButton(button1);
-    subMenu.addButton(button2);
-    subMenu.addButton(button3);
-    this->Menus.push_back(mainMenu);
-    this->Menus.push_back(subMenu);
-    this->currMenu = 0;
-
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
     Text->Load("fonts/aAbsoluteEmpire.ttf", FONT);
@@ -157,8 +152,7 @@ void Game::Init(GLFWwindow* window)
     //HUD initialization
     this->HUD.init();
 
-    // load levels
-    // Level 1
+    // Carica livelli
     GameLevel l1;
     l1.windowNumber = W_NUMBER_1;
     l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level1.txt");
@@ -177,15 +171,74 @@ void Game::Init(GLFWwindow* window)
     sEngine = irrklang::createIrrKlangDevice();
     // faccio partire la musica del menu
     //sEngine->play2D("audio/Megalovania.wav", true);
-        
+
     // configure postprocessing renderer
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
-    // initialize SaveGame
+    // inizializza SaveGame
     Level_save::load_state();
     this->Levels.push_back(l1);
     this->Levels.push_back(l2);
     this->Levels.push_back(l3);
+
+    // Creazione di menù e pulsanti  
+    std::cout << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
+    Menu mainMenu(0, ResourceManager::GetTexture("mainMenuBG"));
+    // Pulsante "Gioca"
+    mainMenu.addButton(Button({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, 1, ResourceManager::GetTexture("mainPlayButton"), ResourceManager::GetTexture("mainPlayButton")));
+
+    Menu themeSel(1, ResourceManager::GetTexture("themeSelBG"));
+    // Pulsante di selezione del tema Foresta
+    themeSel.addButton(Button({ 215.0f, 780.0f }, { 220.0f, 80.0f }, buttonType::link, 2, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton")));
+    // Pulsante di selezione del tema Montagna
+    themeSel.addButton(Button({ 820.0f, 780.0f }, { 220.0f, 80.0f }, buttonType::link, 3, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton")));
+    // Pulsante per tornare al menù precedente
+    themeSel.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
+
+    Menu levelSelForest;    // id = 2
+    Menu levelSelMountain;  // id = 3
+
+    // Individuazione del massimo livello raggiunto precedentemente e settaggio appropriato dei menù di selezione dei livelli
+    int recordForest = 2, recordMountain = 2;
+    while (recordForest >= 0) {
+        if (Level_save::theme0[recordForest]) {
+            levelSelForest = Menu(2, ResourceManager::GetTexture("Forest" + std::to_string(recordForest+1)));
+            break;
+        }
+        recordForest--;
+    }
+    for (int i = 0; i <= recordForest; i++)
+        // Setup dei pulsanti nel menù di selezione del livello (tema Foresta)
+        levelSelForest.addButton(Button({ 164.0f + 362 * i, 760.0f }, { 200.0f, 72.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"), 0, i));
+    // Pulsante "back" nel menù di selezione del livello (Foresta)
+    levelSelForest.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 1, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
+
+    while (recordMountain >= 0) {
+        if (Level_save::theme1[recordMountain]) {
+            levelSelMountain = Menu(3, ResourceManager::GetTexture("Mountain" + std::to_string(recordMountain+1)));
+            break;
+        }
+        recordMountain--;
+    }
+    for (int i = 0; i <= recordMountain; i++) 
+        // Setup dei pulsanti nel menù di selezione del livello (tema Montagna)
+        levelSelMountain.addButton(Button({ 164.0f + 362 * i, 760.0f }, { 200.0f, 72.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"), 1, i));
+    // Pulsante "back" nel menù di selezione del livello (Montagna)
+    levelSelMountain.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 1, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
+
+    Menu gameOver(4, ResourceManager::GetTexture("gameOver"));
+    gameOver.addButton(Button({ 1280.0f/2 - 375.0f/2, 960.0f/2 - 100.0f/2 }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
+
+    Menu levelComplete(5, ResourceManager::GetTexture("levelComplete"));
+    levelComplete.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 - 100.0f / 2 }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
+
+    this->Menus.push_back(mainMenu);
+    this->Menus.push_back(themeSel);
+    this->Menus.push_back(levelSelForest);
+    this->Menus.push_back(levelSelMountain);
+    this->Menus.push_back(gameOver);
+    this->Menus.push_back(levelComplete);
+    this->currMenu = 0;
 }
 
 void Game::Update(float dt){
@@ -322,26 +375,23 @@ void Game::Update(float dt){
         // verifico che il giocatore non sia morto
         if (this->Levels[this->Level].player.stats.HP <= 0) {
             // stato di morte
-            // schermata di game over
-            //this->State = GAME_OVER
+            this->currMenu = 4;
+            this->State = GAME_END;
         }
         // verifico se il livello è finito
-        if (this->Levels[this->Level].phase > PHASES) {
+        if (this->Levels[this->Level].phase == PHASES) {
             // livello finito
-            Level_save::update_state(this->Skin, this->Level);
-            // schermata di vittoria
-            //this->State = WIN
+            Level_save::update_state(this->Skin, this->Level, this->Levels[this->Level].phase+1);
+            this->currMenu = 5;
+            this->State = GAME_END;
 
         }
-
-
-
     }
 }
 
 
 void Game::ProcessInput(float dt){  
-    if (Game::State == GAME_MENU) {
+    if (Game::State == GAME_MENU || Game::State == GAME_END) {
         static Button* cursorOver = NULL, * clicked = NULL;
         double cursorX, cursorY;
         glfwGetCursorPos(this->window, &cursorX, &cursorY);
@@ -369,14 +419,24 @@ void Game::ProcessInput(float dt){
             if (clicked != NULL) {
                 if (cursorOver != NULL && cursorOver == clicked) {
                     if (clicked->type == buttonType::link) {
+                        if(this->State == GAME_END)
+                            this->State = GAME_MENU;
                         this->currMenu = clicked->subMenuId;
                         cursorOver = NULL;
                     }
                     else if (clicked->type == buttonType::play) {
-                        this->currMenu = 0;
+                        this->currMenu = 0;  
                         cursorOver = NULL;
-                        this->State = GAME_ACTIVE;
-                        this->Levels[Level].startLevel(this->Width, this->Height);
+                        if (clicked->skin > -1 && clicked->level > -1) {
+                            this->Skin = clicked->skin;
+                            this->Level = clicked->level;
+                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 1) + "Lev" + std::to_string(this->Level + 1));
+                            this->State = GAME_ACTIVE;
+                            this->Levels[this->Level].startLevel(this->Width, this->Height);
+                        }
+                        else {
+                            std::cerr << "Tentativo di lancio di un livello con valore di skin e/o livello errati (< 0)" << std::endl;
+                        }
                     }
                 }
             }
@@ -465,9 +525,27 @@ void Game::Render(float dt)
         Effects->EndRender();
         // render postprocessing quad
         Effects->Render(glfwGetTime());
-
-
     } 
+    else if (Game::State == GAME_END) {
+        static float prevTime = glfwGetTime(), currTime = 0, deltaTime = 0;
+
+        // Pausa al timer su schermo
+        currTime = glfwGetTime();
+        deltaTime = currTime - prevTime;
+        Timer::forceChrono(Timer::start_time + deltaTime);
+        prevTime = currTime;
+
+        // Ferma animazione drago
+        this->Levels[this->Level].player.playAnimation = false;
+
+        this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height * 12));
+        // draw level with a bullet in
+        this->Levels[this->Level].Draw(*Renderer, dt);
+        this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
+
+        // Renderizza il menù in sovrimpressione
+        this->Menus[this->currMenu].drawMenu(*Renderer);
+    }
 }
 
 // Funzione che gestisce la raccolta dei powerup

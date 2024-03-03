@@ -18,6 +18,7 @@ public:
     unsigned int Width, Height;
     // options
     bool Shake;
+    bool Dim;
     // constructor
     PostProcessor(Shader shader, unsigned int width, unsigned int height);
     // prepares the postprocessor's framebuffer operations before rendering the game
