@@ -113,6 +113,8 @@ void GameLevel::startLevel(int height, int width) {
     Dragon player(ResourceManager::GetTexture("dragon"), glm::vec2(width / 2, height/3), playerSize, glm::vec3(1.0f), glm::vec2(1.0f), 400.0f, HitboxType(SQUARE));
     this->setPlayer(player);
     start = false;
+    this->powerups.clear();
+    this->instancedBullets.clear();
 }
 
 
