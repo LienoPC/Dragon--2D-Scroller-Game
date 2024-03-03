@@ -23,7 +23,8 @@ SpriteRenderer* Renderer;
 TextRenderer* Text;
 FlatRenderer* Flat;
 irrklang::ISoundEngine* sEngine;
-irrklang::ISound* menu_sound;
+irrklang::ISound* hitSound;
+irrklang::ISound* levelSound;
 PostProcessor* Effects;
 
 float ShakeTime = 0.0f;
@@ -100,6 +101,7 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/menu/main_button_gioca.png", true, "mainPlayButton");
     ResourceManager::LoadTexture("textures/menu/button_gioca.png", true, "playButton");
     ResourceManager::LoadTexture("textures/menu/button_inizia.png", true, "startButton");
+    ResourceManager::LoadTexture("textures/menu/button_riprendi.png", true, "resumeButton");
     ResourceManager::LoadTexture("textures/menu/button_back.png", true, "backButton");
     ResourceManager::LoadTexture("textures/menu/button_esci.png", true, "exitButton");
     ResourceManager::LoadTexture("textures/menu/button_desktop.png", true, "desktopButton");
@@ -177,7 +179,7 @@ void Game::Init(GLFWwindow* window)
     // load sound engine
     sEngine = irrklang::createIrrKlangDevice();
     // faccio partire la musica del menu
-    menu_sound=sEngine->play2D("audio/Zelda.wav", true);
+    sEngine->play2D("audio/Zelda.wav", true);
 
     // configure postprocessing renderer
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
@@ -400,16 +402,12 @@ void Game::Update(float dt){
         // verifico che il giocatore non sia morto
         if (this->Levels[this->Level].player.stats.HP <= 0) {
             // stato di morte
-            sEngine->stopAllSounds();
-            sEngine->play2D("audio/Zelda.wav", true);
             this->currMenu = 4;
             this->State = GAME_PAUSE;
         }
         // verifico se il livello è finito
         if (this->Levels[this->Level].phase == PHASES) {
             // livello finito
-            sEngine->stopAllSounds();
-            sEngine->play2D("audio/Zelda.wav", true);
             Level_save::update_state(this->Skin, this->Level, this->Levels[this->Level].phase+1);
             this->currMenu = 5;
             this->State = GAME_PAUSE;
@@ -420,7 +418,7 @@ void Game::Update(float dt){
 
 
 void Game::ProcessInput(float dt){  
-    if (Game::State == GAME_MENU || Game::State == GAME_PAUSE) {
+    if (Game::State == GAME_MENU) {
         static Button* cursorOver = NULL, * clicked = NULL;
         double cursorX, cursorY;
         glfwGetCursorPos(this->window, &cursorX, &cursorY);
@@ -450,10 +448,11 @@ void Game::ProcessInput(float dt){
                     if (clicked->type == buttonType::link) {
                         if (this->State == GAME_PAUSE) {
                             // Aggiornamento del menù di selezione dei livelli in caso di sblocco di un nuovo livello
-                            if(this->Skin == 0)
+                            if (this->Skin == 0) 
                                 this->Menus[2].updateBackground(this->Skin, this->Level);
-                            else
+                            else 
                                 this->Menus[3].updateBackground(this->Skin, this->Level);
+                            //canzone nuova
                             this->State = GAME_MENU;
                         }
                         this->currMenu = clicked->subMenuId;
@@ -461,6 +460,75 @@ void Game::ProcessInput(float dt){
                     }
                     else if (clicked->type == buttonType::play) {
                         this->currMenu = 0;  
+                        cursorOver = NULL;
+                        if (this->State == GAME_MENU && clicked->skin > -1 && clicked->level > -1) {
+                            this->Skin = clicked->skin;
+                            this->Level = clicked->level;
+                            this->Levels[this->Level].backgroundTexture = ResourceManager::GetTexture("Skin" + std::to_string(this->Skin + 1) + "Lev" + std::to_string(this->Level + 1));
+                            this->State = GAME_ACTIVE;
+                            sEngine->stopAllSounds();
+                            levelSound=sEngine->play2D("audio/Lost_Odissey.wav", true, false, true);
+                            levelSound->setVolume(0.5f);
+                            this->Levels[this->Level].startLevel(this->Width, this->Height);
+                        }
+                        else if (this->State == GAME_PAUSE) {
+                            this->Levels[Level].player.playAnimation = true;
+                            this->State = GAME_ACTIVE;
+                        }
+                        else {
+                            std::cerr << "Tentativo di lancio di un livello con valore di skin e/o livello errati (< 0)" << std::endl;
+                        }
+                    }
+                    else if (clicked->type == buttonType::close) {
+                        glfwSetWindowShouldClose(this->window, true);
+                    }
+                }
+            }
+            clicked = NULL;
+        }
+    } else if (Game::State == GAME_PAUSE) {
+        static Button* cursorOver = NULL, * clicked = NULL;
+        double cursorX, cursorY;
+        glfwGetCursorPos(this->window, &cursorX, &cursorY);
+
+        if (!isCursorOnButton(cursorX, cursorY, cursorOver)) {
+            if (cursorOver != NULL) {
+                cursorOver->selected = false;
+                cursorOver = NULL;
+            }
+            for (Button& b : this->Menus[this->currMenu].buttons) {
+                if (isCursorOnButton(cursorX, cursorY, &b)) {
+                    cursorOver = &b;
+                    b.selected = true;
+                    break;
+                }
+            }
+        }
+
+        if (this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
+            if (cursorOver != NULL) {
+                clicked = cursorOver;
+            }
+        }
+        else {
+            if (clicked != NULL) {
+                if (cursorOver != NULL && cursorOver == clicked) {
+                    if (clicked->type == buttonType::link) {
+                        if (this->State == GAME_PAUSE) {
+                            // Aggiornamento del menù di selezione dei livelli in caso di sblocco di un nuovo livello
+                            if (this->Skin == 0)
+                                this->Menus[2].updateBackground(this->Skin, this->Level);
+                            else
+                                this->Menus[3].updateBackground(this->Skin, this->Level);
+                            this->State = GAME_MENU;
+                        }
+                        sEngine->stopAllSounds();
+                        sEngine->play2D("audio/Zelda.wav", true);
+                        this->currMenu = clicked->subMenuId;
+                        cursorOver = NULL;
+                    }
+                    else if (clicked->type == buttonType::play) {
+                        this->currMenu = 0;
                         cursorOver = NULL;
                         if (this->State == GAME_MENU && clicked->skin > -1 && clicked->level > -1) {
                             this->Skin = clicked->skin;
@@ -486,7 +554,7 @@ void Game::ProcessInput(float dt){
             }
             clicked = NULL;
         }
-    }   
+    }
 
      else if (Game::State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
@@ -562,6 +630,7 @@ void Game::Render(float dt)
     static float prevTime = glfwGetTime(), currTime = 0, deltaTime = 0;
 
     if (Game::State == GAME_MENU) {
+
         if (timePaused)
             timePaused = false;
         this->Menus[this->currMenu].drawMenu(*Renderer);
@@ -677,7 +746,8 @@ void Game::hitDragon(Bullet* b, int i) {
     // -Orchideo ci stiamo dimenticando completamente i suoni
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
-    sEngine->play2D("audio/Critical_Hit.wav");
+    hitSound=sEngine->play2D("audio/Critical_Hit.wav", false, false, true);
+    hitSound->setVolume(0.3f);
     if (this->Levels[this->Level].player.stats.HP <= 0) {
         this->Levels[this->Level].Die();
         // settare lo stato a "GAME_OVER" e mostrare il menù associato
