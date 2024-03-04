@@ -155,6 +155,7 @@ void Dragon::instanceFireball() {
 }
 
 void Dragon::instancePowerup() {
+	int entered = 0;
 	sEngine = irrklang::createIrrKlangDevice();
 	float cost = 0;
 	for (int i = 0; i < this->stats.powerup.size(); i++) {
@@ -162,14 +163,18 @@ void Dragon::instancePowerup() {
 	}
 	if (cost < this->stats.FP) {
 		for (int i = 0; i < this->stats.powerup.size(); i++) {
+			entered = 1;
 			Bullet pow;
 			pow.copyBullet(this->stats.powerup[i]);
 			pow.position = glm::vec2(this->position.x + XOFFSET, this->position.y + YOFFSET);
 			this->instancedFireballs.push_back(pow);
 			this->stats.FP -= pow.Power;
 		}
-		sEngine->play2D("audio/Fireball.wav");
+		if (entered == 1) {
+			sEngine->play2D("audio/Fireball.wav");
+		}
 	}
+	entered = 0;
 	
 	
 }

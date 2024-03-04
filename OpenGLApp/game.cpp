@@ -774,7 +774,7 @@ void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
     }
     
     crashingSound = sEngine->play2D("audio/Crashing.wav", false, false, true);
-    crashingSound->setVolume(1.0f);
+    crashingSound->setVolume(0.7f);
     /*
     // oppure faccio il confronto con la potenza
     float difference = b->Power - fb->Power;
