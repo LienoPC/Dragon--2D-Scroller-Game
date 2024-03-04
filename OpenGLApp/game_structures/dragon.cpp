@@ -150,6 +150,7 @@ void Dragon::instanceFireball() {
 		this->instancedFireballs.push_back(fb);
 		this->stats.FP -= fb.Power;
 		sEngine->play2D("audio/Fireball.wav");
+
 	}
 	
 }

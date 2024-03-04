@@ -749,7 +749,7 @@ void Game::hitDragon(Bullet* b, int i) {
     this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
     this->Levels[this->Level].DestroyBullet(i);
     hitSound=sEngine->play2D("audio/Critical_Hit.wav", false, false, true);
-    hitSound->setVolume(0.3f);
+    hitSound->setVolume(0.2f);
     if (this->Levels[this->Level].player.stats.HP <= 0) {
         this->Levels[this->Level].Die();
         // settare lo stato a "GAME_OVER" e mostrare il menù associato
@@ -773,24 +773,9 @@ void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
         level->player.instancedFireballs[j].destroy();
     }
     
-    crashingSound = sEngine->play2D("audio/Crashing.wav", false, false, true);
-    crashingSound->setVolume(1.0f);
-    /*
-    // oppure faccio il confronto con la potenza
-    float difference = b->Power - fb->Power;
-    if (difference > 0) {
-        b->Power -= fb->Power;
-        level->player.instancedFireballs[j].destroy();
-    }
-    else if (difference < 0) {
-        fb->Power -= b->Power;
-        this->Levels[this->Level].DestroyBullet(i);
-    }
-    else if (difference == 0) {
-        this->Levels[this->Level].DestroyBullet(i);
-        level->player.instancedFireballs[j].destroy();
-    }
-    */
+    //crashingSound = sEngine->play2D("audio/Crashing.wav", false, false, true);
+    //crashingSound->setVolume(1.0f);
+   
     
     
 }
