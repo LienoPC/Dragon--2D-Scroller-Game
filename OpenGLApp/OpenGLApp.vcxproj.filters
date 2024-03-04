@@ -66,9 +66,6 @@
     <ClCompile Include="hud\hud.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="flat_renderer\flat_renderer.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="game_structures\particle_generators\particle.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
@@ -152,9 +149,6 @@
     <ClInclude Include="hud\hud.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="flat_renderer\flat_renderer.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="game_structures\particle_generators\particle.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
@@ -195,8 +189,6 @@
     </None>
     <None Include="shaders\text_2d.fs" />
     <None Include="shaders\text_2d.vs" />
-    <None Include="shaders\flat.fs" />
-    <None Include="shaders\flat.vs" />
     <None Include="shaders\particle.fs" />
     <None Include="shaders\particle.vs" />
     <None Include="shaders\post_processing.vs" />

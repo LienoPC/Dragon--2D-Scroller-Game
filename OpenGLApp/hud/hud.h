@@ -6,7 +6,6 @@
 #include "../resource_manager/resource_manager.h"
 #include "../text_renderer.h"
 #include "../game_structures/dragon.h"
-#include "../flat_renderer/flat_renderer.h"
 
 #define HPTextY 800
 #define HPBarY 820
@@ -43,7 +42,7 @@ public:
 	HUD();
 
 	void init();
-	void RenderHUD(SpriteRenderer& r, TextRenderer& t, FlatRenderer& f, Dragon d);
+	void RenderHUD(SpriteRenderer& r, TextRenderer& t, Dragon d);
 
 private:
 

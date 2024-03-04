@@ -139,7 +139,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="flat_renderer\flat_renderer.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game_structures\bullet.cpp" />
     <ClCompile Include="game_structures\dragon.cpp" />
@@ -168,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="flat_renderer\flat_renderer.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="game_structures\bullet.h" />
     <ClInclude Include="game_structures\dragon.h" />
@@ -197,8 +195,6 @@
     <ClInclude Include="timer\timerMy.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\flat.fs" />
-    <None Include="shaders\flat.vs" />
     <None Include="shaders\particle.fs" />
     <None Include="shaders\particle.vs" />
     <None Include="shaders\post_processing.fs" />

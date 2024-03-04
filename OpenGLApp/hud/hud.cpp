@@ -18,7 +18,7 @@ void HUD::init() {
 	ResourceManager::LoadTexture("textures/SilverMedal.png", 1, "SilverMedal");
 }
 
-void HUD::RenderHUD(SpriteRenderer& r, TextRenderer& t, FlatRenderer& f, Dragon d) {
+void HUD::RenderHUD(SpriteRenderer& r, TextRenderer& t, Dragon d) {
 
 	this->HPText = "HP: " + std::to_string((int)d.stats.HP);
 	CalculateHPBar(d.stats.HP);

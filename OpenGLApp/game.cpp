@@ -5,7 +5,6 @@
 #include "sprite_renderer/sprite_renderer.h"
 #include "game_structures/window_constraints.h"
 #include "text_renderer.h"
-#include "flat_renderer/flat_renderer.h"
 #include "game_structures/particle_generators/particle_generator.h"
 #include "game_structures/particle_generators/hit_particle_generator.h"
 #include "game_structures/particle_generators/continuous_particle_generator.h"
@@ -21,7 +20,6 @@
 // Game-related State data
 SpriteRenderer* Renderer;
 TextRenderer* Text;
-FlatRenderer* Flat;
 irrklang::ISoundEngine* sEngine;
 irrklang::ISound* hitSound;
 irrklang::ISound* levelSound;
@@ -38,7 +36,6 @@ Game::~Game()
 {
     delete Renderer;
     delete Text;
-    delete Flat;
     delete sEngine;
     delete Effects;
 }
@@ -158,9 +155,6 @@ void Game::Init(GLFWwindow* window)
     //Initialization of the text renderer
     Text = new TextRenderer(this->Width, this->Height);
     Text->Load("fonts/aAbsoluteEmpire.ttf", FONT);
-
-    //Initialization of the flat renderer
-    Flat = new FlatRenderer(ResourceManager::GetShader("flat"));
 
     //HUD initialization
     this->HUD.init();
@@ -648,7 +642,7 @@ void Game::Render(float dt)
         this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height*15));
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
-        this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
+        this->HUD.RenderHUD(*Renderer, *Text, this->Levels[this->Level].player);
         // end rendering to postprocessing framebuffer
         Effects->EndRender();
         // render postprocessing quad
@@ -676,7 +670,7 @@ void Game::Render(float dt)
 
         // draw level with a bullet in
         this->Levels[this->Level].Draw(*Renderer, dt);
-        this->HUD.RenderHUD(*Renderer, *Text, *Flat, this->Levels[this->Level].player);
+        this->HUD.RenderHUD(*Renderer, *Text, this->Levels[this->Level].player);
         Effects->EndRender();
         // render postprocessing quad
         Effects->Render(glfwGetTime());
