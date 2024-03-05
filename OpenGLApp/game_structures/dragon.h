@@ -31,10 +31,10 @@ public:
 	bool playAnimation;
 	bool hit;
 
-	//numero fireball sparate
+	//num fireball shooted
 	int fbnum = 0;
 
-	//suono fireball
+	//fireball sound
 	irrklang::ISoundEngine* sEngine;
 
 	// constructors

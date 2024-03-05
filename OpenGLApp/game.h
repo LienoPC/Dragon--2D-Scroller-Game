@@ -67,7 +67,6 @@ public:
     bool verifyBulletCollisionCircleCircle(Circle c1, Circle c2);
 
     //funzioni controllo collisioni
-    float dotProduct(glm::vec2 a, glm::vec2 b);
     bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2); //virtual per funzione del padre che può essere chiamata dal figlio
     bool checkCollisionSquareCircle(Square hitboxS, Circle hitboxC);
     bool checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2);

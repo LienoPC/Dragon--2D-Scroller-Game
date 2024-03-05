@@ -121,12 +121,12 @@ void Game::Init(GLFWwindow* window)
     ResourceManager::LoadTexture("textures/dragon_frame6.png", true, "dragon_f6");
     ResourceManager::LoadTexture("textures/dragon_frame7.png", true, "dragon_f7");
 
-    // create bulletTypes
+    // bullet types
     Bullet b1(15.0f, 40, ResourceManager::GetTexture("arrow"), glm::vec2(300.0f, 0.0f), glm::vec2(15.0f, 87.0f), glm::vec3(1.0f), glm::vec2(0.8f), HitboxType(SQUARE), (int)'a');
     Bullet b2(60.0f, 25, ResourceManager::GetTexture("rock"), glm::vec2(100.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'b');    
     Bullet b3(150.0f, 40, ResourceManager::GetTexture("lavaRock"), glm::vec2(100.0f, 0.0f), glm::vec2(130.0f, 130.0f), glm::vec3(1.0f), glm::vec2(0.5f), HitboxType(CIRCLE), (int)'c');
     b3.hitNumber = 2;
-    // creo i particles per ogni bullet
+    // bullet particles
     b1.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleArrow"), b1.ParticlesNumber, ParticleType(HIT), 1.0f)));
     b2.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleRock"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
     b3.particles.push_back(std::make_shared<HitParticleGenerator>(HitParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particleLava"), b1.ParticlesNumber, ParticleType(HIT), 3.0f)));
@@ -159,7 +159,7 @@ void Game::Init(GLFWwindow* window)
     //HUD initialization
     this->HUD.init();
 
-    // Carica livelli
+    //load levels
     GameLevel l1;
     l1.windowNumber = W_NUMBER_1;
     l1.LoadLevel(SCREEN_HEIGHT, SCREEN_WIDTH, "levels/Level1.txt");
@@ -173,40 +173,40 @@ void Game::Init(GLFWwindow* window)
 
     // load sound engine
     sEngine = irrklang::createIrrKlangDevice();
-    // faccio partire la musica del menu
+    //menu (starting) music
     sEngine->play2D("audio/Zelda.wav", true);
 
     // configure postprocessing renderer
     Effects = new PostProcessor(ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
 
-    // inizializza SaveGame
+    // initialize SaveGame
     Level_save::load_state();
     this->Levels.push_back(l1);
     this->Levels.push_back(l2);
     this->Levels.push_back(l3);
 
-    // Creazione di menù e pulsanti  
+    //menu and button creations
     //std::cout << Level_save::theme0[0] << " " << Level_save::theme0[1] << " " << Level_save::theme0[2] << " | " << Level_save::theme1[0] << " " << Level_save::theme1[1] << " " << Level_save::theme1[2] << std::endl;
     Menu mainMenu(0, ResourceManager::GetTexture("mainMenuBG"));
-    // Pulsante "Gioca"
+    // button "Gioca"
     mainMenu.addButton(Button({ 70.0f, 245.0f }, { 375.0f, 100.0f }, buttonType::link, 1, ResourceManager::GetTexture("mainPlayButton"), ResourceManager::GetTexture("mainPlayButton")));
-    // Pulsante "Comandi"
+    // button "Comandi"
     mainMenu.addButton(Button({ 70.0f, 365.0f }, { 375.0f, 100.0f }, buttonType::link, 7, ResourceManager::GetTexture("controlsButton"), ResourceManager::GetTexture("controlsButton")));
-    // Pulsante "Desktop"
+    // button "Desktop"
     mainMenu.addButton(Button({ 70.0f, 480.0f }, { 375.0f, 100.0f }, buttonType::close, ResourceManager::GetTexture("desktopButton"), ResourceManager::GetTexture("desktopButton")));
 
     Menu themeSel(1, ResourceManager::GetTexture("themeSelBG"));
-    // Pulsante di selezione del tema Foresta
+    // button for "Foresta"
     themeSel.addButton(Button({ 215.0f, 780.0f }, { 220.0f, 80.0f }, buttonType::link, 2, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton")));
-    // Pulsante di selezione del tema Montagna
+    // button for "Montagna"
     themeSel.addButton(Button({ 820.0f, 780.0f }, { 220.0f, 80.0f }, buttonType::link, 3, ResourceManager::GetTexture("playButton"), ResourceManager::GetTexture("playButton")));
-    // Pulsante per tornare al menù precedente
+    // button for going back
     themeSel.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
 
     Menu levelSelForest;    // id = 2
     Menu levelSelMountain;  // id = 3
 
-    // Individuazione del massimo livello raggiunto precedentemente e settaggio appropriato dei menù di selezione dei livelli
+    // finding the highest level reached before e setting up menu
     int recordForest = 2, recordMountain = 2;
     while (recordForest >= 0) {
         if (Level_save::theme0[recordForest]) {
@@ -216,9 +216,9 @@ void Game::Init(GLFWwindow* window)
         recordForest--;
     }
     for (int i = 0; i <= recordForest; i++)
-        // Setup dei pulsanti nel menù di selezione del livello (tema Foresta)
+        // Setup buttons "Foresta"
         levelSelForest.addButton(Button({ 164.0f + 362 * i, 760.0f }, { 200.0f, 72.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"), 0, i));
-    // Pulsante "back" nel menù di selezione del livello (Foresta)
+    // button "back"
     levelSelForest.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 1, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
 
     while (recordMountain >= 0) {
@@ -229,27 +229,27 @@ void Game::Init(GLFWwindow* window)
         recordMountain--;
     }
     for (int i = 0; i <= recordMountain; i++) 
-        // Setup dei pulsanti nel menù di selezione del livello (tema Montagna)
+        // Setup buttons "Montagna"
         levelSelMountain.addButton(Button({ 164.0f + 362 * i, 760.0f }, { 200.0f, 72.0f }, buttonType::play, ResourceManager::GetTexture("startButton"), ResourceManager::GetTexture("startButton"), 1, i));
-    // Pulsante "back" nel menù di selezione del livello (Montagna)
+    // button "back"
     levelSelMountain.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 1, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
 
     Menu gameOver(4, ResourceManager::GetTexture("gameOver"));
-    // Pulsante "Esci"
+    // button "Esci"
     gameOver.addButton(Button({ 1280.0f/2 - 375.0f/2, 960.0f/2 - 100.0f/2 }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
 
     Menu levelComplete(5, ResourceManager::GetTexture("levelComplete"));
-    // Pulsante "Esci"
+    // button "Esci"
     levelComplete.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 - 100.0f / 2 }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
 
     Menu pause(6, ResourceManager::GetTexture("pause"));
-    // Pulsante "Riprendi"
+    // button "Riprendi"
     pause.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 - 115.0f }, { 375.0f, 100.0f }, buttonType::play, ResourceManager::GetTexture("resumeButton"), ResourceManager::GetTexture("resumeButton")));
-    // Pulsante "Esci"
+    // button "Esci"
     pause.addButton(Button({ 1280.0f / 2 - 375.0f / 2, 960.0f / 2 + 115.0f }, { 375.0f, 100.0f }, buttonType::link, 0, ResourceManager::GetTexture("exitButton"), ResourceManager::GetTexture("exitButton")));
 
     Menu controls(7, ResourceManager::GetTexture("controlsBG"));
-    // Pulsante "back"
+    // button "back"
     controls.addButton(Button({ 60.0f, 90.0f }, { 40.0f, 40.0f }, buttonType::link, 0, ResourceManager::GetTexture("backButton"), ResourceManager::GetTexture("backButton")));
 
     this->Menus.push_back(mainMenu);
@@ -266,12 +266,11 @@ void Game::Init(GLFWwindow* window)
 void Game::Update(float dt){
     if (this->State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
-        level->PlayLevel(dt, this->Skin, this->Level); // gestisce tutta la logica di livello
+        level->PlayLevel(dt, this->Skin, this->Level); // manages level logic
 
-        //Verifica delle hitbox per ogni proiettile/palle del drago
-
+        //check hitbox (bullet and dragon)
         for (int i = 0; i < level->instancedBullets.size(); i++) {
-        // Verifico per ogni proiettile istanziato se ci sono hit
+        // check for collision
         Bullet b = level->instancedBullets[i];
             switch(b.hitboxT) {
             case SQUARE: {
@@ -306,7 +305,7 @@ void Game::Update(float dt){
 
                 if (b.destroyed == false) {
                     if (verifyDragonCollisionSquare(*s)) {
-                        // il bullet i ha colpito il dragòn
+                        // dragon is hit
                         hitDragon(&level->instancedBullets[i], i);
                     }
                 }
@@ -344,7 +343,7 @@ void Game::Update(float dt){
 
                 if (b.destroyed == false) {
                     if (verifyDragonCollisionCircle(*c)) {
-                        // il bullet i ha colpito il dragòn
+                        // dragon is hit
                         hitDragon(&level->instancedBullets[i], i);
                     }
                 }
@@ -353,7 +352,7 @@ void Game::Update(float dt){
             }
         }
 
-        //Verifica delle hitbox per ogni powerup eventualmente istanziato
+        //check hitbox (powerup)
         for (int i = 0; i < level->powerups.size(); i++) {
             Bullet pow = level->powerups[i];
             switch (pow.hitboxT) {
@@ -361,10 +360,10 @@ void Game::Update(float dt){
             {
                 std::shared_ptr<Square> s = std::dynamic_pointer_cast<Square>(pow.hitbox);
                 if (verifyDragonCollisionSquare(*s)) {
-                    // il Dragòn ha raccolto il powerup
+                    // dragon picked up the powerup
                     powerupPick(pow);
                     sEngine->play2D("audio/Power_Up.wav");
-                    // rimuovo il powerup
+                    // remove powerup
                     if (i != level->powerups.size() - 1) {
                         level->powerups[i] = std::move(level->powerups.back());
                     }
@@ -377,9 +376,9 @@ void Game::Update(float dt){
             {
                 std::shared_ptr<Circle> c = std::dynamic_pointer_cast<Circle>(pow.hitbox);
                 if (verifyDragonCollisionCircle(*c)) {
-                    // il Dragòn ha raccolto il powerup
+                    // dragon picked up the powerup
                     powerupPick(pow);
-                    // rimuovo il powerup
+                    // remove powerup
                     if (i != level->powerups.size() - 1) {
                         level->powerups[i] = std::move(level->powerups.back());
                     }
@@ -394,15 +393,15 @@ void Game::Update(float dt){
             if (ShakeTime <= 0.0f)
                 Effects->Shake = false;
         }
-        // verifico che il giocatore non sia morto
+        // check if the player is alive
         if (this->Levels[this->Level].player.stats.HP <= 0) {
-            // stato di morte
+            // the player is dead
             this->currMenu = 4;
             this->State = GAME_PAUSE;
         }
-        // verifico se il livello è finito
+        // check if level is over
         if (this->Levels[this->Level].phase == PHASES) {
-            // livello finito
+            // level is over
             Level_save::update_state(this->Skin, this->Level, this->Levels[this->Level].phase+1);
             this->currMenu = 5;
             this->State = GAME_PAUSE;
@@ -654,14 +653,14 @@ void Game::Render(float dt)
             timePaused = true;
         }
 
-        // Pausa al timer su schermo
+        // Pause at timer on screen
         currTime = glfwGetTime();
         deltaTime = currTime - prevTime;
         Timer::forceChrono(Timer::start_time + deltaTime);
         prevTime = currTime;
 
         Effects->BeginRender();
-        // Ferma animazione drago
+        // stop dragon animation
         this->Levels[this->Level].player.playAnimation = false;
 
         this->Levels[this->Level].DrawBackground(*Renderer, dt, glm::vec2(this->Width, this->Height * 12));
@@ -675,14 +674,14 @@ void Game::Render(float dt)
         // render postprocessing quad
         Effects->Render(glfwGetTime());
 
-        // Renderizza il menù in sovrimpressione
+        // Render menu in overlay
         this->Menus[this->currMenu].drawMenu(*Renderer);
     }
 }
 
-// Funzione che gestisce la raccolta dei powerup
+//powerup function
 void Game::powerupPick(Bullet pow) {
-    // Creo il powerup
+    // powerup creation
     this->Levels[this->Level].player.stats.powerup.clear();
     switch (pow.Type) {
     case 100:
@@ -693,7 +692,7 @@ void Game::powerupPick(Bullet pow) {
         fb2 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
         fb3 = Bullet(FIREBALL_COST, 40, ResourceManager::GetTexture("fireball"), glm::vec2(200.0f, 200.0f), glm::vec2(50.0f, 50.0f), glm::vec3(1.0f), glm::vec2(0.6f), HitboxType(CIRCLE), (int)'c');
 
-        // applico rotazione alle due palle laterali
+        // apply rotation to side bullets
         fb1.Direction = glm::vec2(cos(PI * 135 / 180), sin(PI * -45 / 180));
         fb2.Direction = glm::vec2(0, -1);
         fb3.Direction = glm::vec2(cos(PI * 45 / 180), sin(PI * -45 / 180));
@@ -703,7 +702,7 @@ void Game::powerupPick(Bullet pow) {
         fb1.velApplied = 600;
         fb2.velApplied = 600;
         fb3.velApplied = 600;
-        // inserisco nella lista dei powerup del player
+        // insert in the list of powerup
         this->Levels[this->Level].player.stats.powerup.push_back(fb1);
         this->Levels[this->Level].player.stats.powerup.push_back(fb2);
         this->Levels[this->Level].player.stats.powerup.push_back(fb3);
@@ -726,34 +725,31 @@ void Game::powerupPick(Bullet pow) {
 }
 
 
-//FUNZIONI HITBOX -------------------------------------------------------------------------------------------
+//hitbox functions
 void Game::hitDragon(Bullet* b, int i) {
     ShakeTime = 0.05f;
     Effects->Shake = true;
-    // eliminare il bullet
+    // delete bullet
     b->destroyed = true;
     
-    //Se il drago viene colpito, TODO:
-    //-Danno agli HP
-    //-Proiettile sparisce->Fatto
-    //-Effetto visivo per il fatto di essere stati colpiti:
-    // -Quello sul drago � gestito dalla classe Drag�n(?)
-    // -Quello sul proiettile è gestito direttamente da qua(per evitare overhead del gameLoop)->In realtà no
-    // -Orchideo ci stiamo dimenticando completamente i suoni
-    this->Levels[this->Level].player.dealDamage(b->Power); //Quando si verifica il deal damage faccio partire l'effetto associato al drago
+    //if the dragon is hit:
+    //- HP damage
+    //- bullet disappears
+    //- hit effect
+    this->Levels[this->Level].player.dealDamage(b->Power); //deal damage + dragon hit effect
     this->Levels[this->Level].DestroyBullet(i);
     hitSound=sEngine->play2D("audio/Critical_Hit.wav", false, false, true);
     hitSound->setVolume(0.2f);
     if (this->Levels[this->Level].player.stats.HP <= 0) {
         this->Levels[this->Level].Die();
-        // settare lo stato a "GAME_OVER" e mostrare il menù associato
+        // set state "GAME_OVER" and associated menu
         this->State = GAME_MENU;
     }
 }
 
 void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
     GameLevel* level = &this->Levels[this->Level];
-    // controllo se effettivamente devono essere distrutti o se devo solo diminuire il counter delle hit
+    // check if it has to be destroyed or decrease the hit counter
     
     b->hitNumber--;
     fb->hitNumber--;
@@ -765,15 +761,10 @@ void Game::hitBullet(Bullet *b, Bullet* fb, int i, int j) {
     if (fb->hitNumber <= 0) {
         fb->destroyed = true;
         level->player.instancedFireballs[j].destroy();
-    }
-    
-    //crashingSound = sEngine->play2D("audio/Crashing.wav", false, false, true);
-    //crashingSound->setVolume(1.0f);
-   
-    
-    
+    }   
 }
 
+//dragon collision functions
 bool Game::verifyDragonCollisionSquare(Square h) {
     for (int i = 0; i < this->Levels[this->Level].player.hitboxes.size(); i++) {
         if (checkCollisionSquareSquare(this->Levels[this->Level].player.hitboxes[i], h)) {
@@ -792,6 +783,7 @@ bool Game::verifyDragonCollisionCircle(Circle h) {
     return false;
 }
 
+//bullet collsion functions
 bool Game::verifyBulletCollisionCircleSquare(Square s, Circle c) {
     if (checkCollisionSquareCircle(s, c)) {
         return true;
@@ -806,37 +798,34 @@ bool Game::verifyBulletCollisionCircleCircle(Circle c1, Circle c2) {
     return false;
 }
 
-
-
-float Game::dotProduct(glm::vec2 a, glm::vec2 b) {
-    return a.x * b.x + a.y * b.y;
-}
-
+//collision functions
 bool Game::checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {
-       // Calcolare le proiezioni dei rettangoli sugli assi x e y
+       // horizontal and vertical projection of the hitbox 1
        float left1 = std::min(hitbox1.left_up.x, std::min(hitbox1.left_down.x, std::min(hitbox1.right_up.x, hitbox1.right_down.x)));
        float right1 = std::max(hitbox1.left_up.x, std::max(hitbox1.left_down.x, std::max(hitbox1.right_up.x, hitbox1.right_down.x)));
        float top1 = std::min(hitbox1.left_up.y, std::min(hitbox1.left_down.y, std::min(hitbox1.right_up.y, hitbox1.right_down.y)));
        float bottom1 = std::max(hitbox1.left_up.y, std::max(hitbox1.left_down.y, std::max(hitbox1.right_up.y, hitbox1.right_down.y)));
 
+       // horizontal and vertical projection of the hitbox 2
        float left2 = std::min(hitbox2.left_up.x, std::min(hitbox2.left_down.x, std::min(hitbox2.right_up.x, hitbox2.right_down.x)));
        float right2 = std::max(hitbox2.left_up.x, std::max(hitbox2.left_down.x, std::max(hitbox2.right_up.x, hitbox2.right_down.x)));
        float top2 = std::min(hitbox2.left_up.y, std::min(hitbox2.left_down.y, std::min(hitbox2.right_up.y, hitbox2.right_down.y)));
        float bottom2 = std::max(hitbox2.left_up.y, std::max(hitbox2.left_down.y, std::max(hitbox2.right_up.y, hitbox2.right_down.y)));
 
-       // Controllare se le proiezioni si sovrappongono sugli assi x e y
+       //check for intersection of projections
        return !(right1 < left2 || right2 < left1 || bottom1 < top2 || bottom2 < top1);
 }
 
-bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitboxS: drago //hitboxC:bullet
+bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {  
+    //closest point of the square to the circle
     float closestX = std::max(hitboxS.left_up.x, std::min(hitboxC.center.x, hitboxS.right_down.x));
     float closestY = std::max(hitboxS.left_up.y, std::min(hitboxC.center.y, hitboxS.right_down.y));
 
-    // Calcola la distanza tra il punto pi� vicino e il centro del cerchio
+    //distance between closest point and center
     float distanceX = hitboxC.center.x - closestX;
     float distanceY = hitboxC.center.y - closestY;
 
-    // Se la distanza � inferiore al raggio, c'� intersezione
+    //if distance<radius --> collisioin
     if ((distanceX * distanceX + distanceY * distanceY) < (hitboxC.radius * hitboxC.radius)) {
         return true;
     }
@@ -844,16 +833,16 @@ bool Game::checkCollisionSquareCircle(Square hitboxS, Circle hitboxC) {   //hitb
 }
 
 bool Game::checkCollisionCircleCircle(Circle hitbox1, Circle hitbox2) {
-    // Calcola la distanza tra i centri dei due cerchi
-    float distance = std::sqrt(std::pow(hitbox2.center.x - hitbox1.center.x, 2) +   //pow usato per calcolare il quadrato
+    //distance between two center
+    float distance = std::sqrt(std::pow(hitbox2.center.x - hitbox1.center.x, 2) +   //pow==power
         std::pow(hitbox2.center.y - hitbox1.center.y, 2));
 
     if (distance <= (hitbox1.radius + hitbox2.radius)) {
-        return true;
+        return true;//collision
     }
     return false;
 }
-//-------------------------------------------------------------------------------------------------------------------
+
 
 bool Game::isCursorOnButton(double xpos, double ypos, Button *b) {
     if (b == NULL)
