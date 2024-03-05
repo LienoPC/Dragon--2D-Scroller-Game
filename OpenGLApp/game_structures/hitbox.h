@@ -11,8 +11,8 @@ public:
     HitboxType type;
 
     Hitbox();
-    Hitbox(HitboxType type); //costruttore
-    //funzione astratta
+    Hitbox(HitboxType type); //constructor
+    //abstract function
     virtual void verify();
     
 };
@@ -39,13 +39,5 @@ public:
     void verify();
 };
 
-/*bool checkCollisionSquareSquare(Square hitbox1, Square hitbox2) {   //hitbox1: drago //hitbox2:bullet
-    if (hitbox2.right_up.X >= hitbox1.left_up.X && hitbox2.left_up.X <= hitbox1.right_up.X) {   //controllo orizzontale
-        if (hitbox2.left_down.Y <= hitbox1.left_up.Y && hitbox2.left_up.Y <= hitbox1.left_down.Y) { //controllo verticale
-            return true;
-        }
-    }
-    return false;
-}*/
 
 #endif

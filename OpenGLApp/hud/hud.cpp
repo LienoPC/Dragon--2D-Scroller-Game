@@ -26,24 +26,23 @@ void HUD::RenderHUD(SpriteRenderer& r, TextRenderer& t, Dragon d) {
 
 	std::string s = this->HPText + "/" + std::to_string(MAX_HP);
 
-	// Render del valore attuale della vita
+	// Render life value
 	t.RenderText(s, this->posHPText.x, this->posHPText.y, 1.0f, glm::vec3(1.0f)); //HP attuali
-	// Render della barra della vita
+	// Render life bar
 	r.DrawSprite(ResourceManager::GetTexture("HUDlifeFrame"), this->posHPBar, glm::vec2(HPBARLENGHT*SCALE, BARHEIGHT*SCALE), 0.0f, glm::vec3(1.0));
 	r.DrawSprite(ResourceManager::GetTexture("HUDlifeFill"), this->posHPBar, glm::vec2(this->HPbarLenght, BARHEIGHT*SCALE), 0.0f, this->HPcolor);
 	//f.DrawFlatRectangle(glm::vec2(this->posHPBar.x, this->posHPBar.y), glm::vec2(this->HPbarLenght, BARHEIGHT), 0.0f, this->HPcolor);
 
-	// Render della barra del mana
+	// Render mana bar
 	r.DrawSprite(ResourceManager::GetTexture("HUDlifeFrame"), this->posFPBar, glm::vec2(FPBARLENGHT*SCALE, BARHEIGHT*SCALE), 0.0f, glm::vec3(1.0));
 	r.DrawSprite(ResourceManager::GetTexture("HUDFPFill"), this->posFPBar, glm::vec2(this->FPbarLenght, BARHEIGHT*SCALE), 0.0f, this->FPcolor);
 
-	// Render del tempo
-	// Estraggo i secondi interi e i millisecondi
+	// Render time
 	float integer;
-	// Text dei millisecondi
+	// Text dei millise
 	float fraction = std::modf(Timer::getElapsedSeconds(), &integer) * 100;
 	this->millisTimeText = ":" + std::to_string((int)fraction);
-	// Verifico se ho superato il minuto
+	// check time over threshold
 	if (integer >= 60) {
 		if ((int)integer / 60 < 10) {
 			this->minuteTimeText = "TIME: 0" + std::to_string((int)integer / 60);
@@ -74,7 +73,7 @@ void HUD::RenderHUD(SpriteRenderer& r, TextRenderer& t, Dragon d) {
 
 	}
 	
-	// Render della medaglia
+	// Render medal
 	Texture2D medal;
 	bool meda = false;
 	this->actualMedal = d.stats.medal;

@@ -21,7 +21,7 @@ class HUD {
 
 public:
 
-	// posizione di ogni elemento nell'HUD
+	// HUD element position
 	const glm::vec2 posHPText;
 	const glm::vec2 posHPBar;
 	const glm::vec2 posFPBar;
@@ -30,7 +30,7 @@ public:
 	const glm::vec3 HPcolor;
 	const glm::vec3 FPcolor;
 
-	// valore di ogni elemento nell'HUD
+	// HUD element value
 	std::string HPText;
 	float HPbarLenght;
 	float FPbarLenght;

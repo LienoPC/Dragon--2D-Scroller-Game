@@ -24,7 +24,7 @@ HitParticleGenerator::HitParticleGenerator(Shader shader, Texture2D texture, uns
 
 
 void HitParticleGenerator::Update(float dt, GameObject& object) {
-	// muovo i particles e aggiorno la loro vita
+	//move particles and update life
 	for (int i = 0; i < this->particles.size(); i++) {
 		Particle& p = this->particles[i];
 		p.Life -= dt; // reduce life
@@ -35,7 +35,7 @@ void HitParticleGenerator::Update(float dt, GameObject& object) {
 		}
 		else {
 			this->particleEnded = true;
-			// il particle deve essere killato
+			//particle stopped
 			if (i != this->particles.size() - 1)
 			{
 				this->particles[i] = std::move(this->particles.back());

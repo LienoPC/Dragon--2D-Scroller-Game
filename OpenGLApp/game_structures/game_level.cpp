@@ -8,7 +8,7 @@
 #include <fstream>
 #include <sstream>
 
-short numRefresh = 0; // conto quanti proiettili sono stati distrutti per il refresh
+short numRefresh = 0; // count how many bullets are destroyed for refresh
 
 std::vector<int> availabePowerups;
 std::map<int, bool> alreadyUsedW;
@@ -76,7 +76,7 @@ void GameLevel::instanceWindow(int identificator) {
 glm::vec2 GameLevel::calculateNormalizedDirection(glm::vec2 bPosition) {
     double a = (this->player.position.x+this->player.size.x/2) - bPosition.x;
     double b = (this->player.position.y+this->player.size.y/2) - bPosition.y;
-    double c = std::sqrt(std::pow(a, 2) + std::powf(b, 2)); // ipotenusa
+    double c = std::sqrt(std::pow(a, 2) + std::powf(b, 2)); // hypotenuse
     double cosA = a / c;
     double cosB = b / c;
     glm::vec2 returned(cosA, cosB);
@@ -118,16 +118,14 @@ void GameLevel::startLevel(int height, int width) {
 
 
 void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
-   
-    // inserire la logica di gioco letta dal file che gestisce il movimento dei bullet
+  
 
-    // verifico che quelli istanziati siano ancora validi (VALUTANDO L'USCITA DAL BASSO)
-    // oppure se è stato distrutto
+    //check if bullets are still valid
 
     for (int i = 0; i < this->instancedBullets.size(); i++) {
         Bullet b = this->instancedBullets[i];
         if ((b.position.y > LEV_LIMITY) || ((b.position.y > LEV_LIMITY / 2) && (b.position.x + b.size.x < 0 || b.position.x > LEV_LIMITX)) || (b.position.x < -300 || b.position.x > LEV_LIMITX + 300)) {
-            // il bullet è uscito fuori dal livello
+            // bullet out of level
             if (i != this->instancedBullets.size() - 1)
             {
                 this->instancedBullets[i] = std::move(this->instancedBullets.back());
@@ -135,16 +133,16 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
             this->instancedBullets.pop_back();
             numRefresh++;
         }
-        // valuto se il bullet è stato distrutto
+        // check bullet destroyed
         if (b.destroyed == true) {
             bool a = false;
-            // verifico che tutti gli effetti siano terminati
+            // check bullet effects terminated
             for (int i = 0; i < b.particles.size(); i++) {
                 if (b.particles[i]->particleEnded)
                     a = true;
             }
             if (a == true) {
-                // rimuovo il proiettile
+                // remove bullet
                 if (i != this->instancedBullets.size() - 1){
                     this->instancedBullets[i] = std::move(this->instancedBullets.back());
                 }
@@ -156,12 +154,12 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
 
     player.checkFireballs();
     alreadyUsedW.clear();
-    // tengo conto delle finestre già usate in un singolo lancio
+    // consider already used windows
     for (int i = 0; i < this->actualWindows.size(); i++) {
         alreadyUsedW[actualWindows[i].identificator] = true;
     }
     
-    // istanzio i proiettili che mi servono
+    // instance needed bullets
    if(start){
 
        for (int i = 0; i < numRefresh; i++) {
@@ -179,7 +177,7 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
                std::uniform_real_distribution<double> unif3(this->minVel, this->maxVel);
                double velocity = unif3(re);
 
-               // istanzio il proiettile
+               // istance bullet
                instanceBullet(*this->bulletList.begin(), this->actualWindows[nW].Position + glm::vec2(positionOffsetX, positionOffsetY), velocity, this->actualWindows[nW].directionStart);
                this->bulletList.erase(this->bulletList.begin());
            }
@@ -195,7 +193,7 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
        this->SpawnPowerUps();
 
 
-       // muove tutti i proiettili istanziati nella scena
+       // move bullet in the scene
        for (int i = 0; i < this->instancedBullets.size(); i++) {
            if (this->instancedBullets[i].Type == 'b' || this->instancedBullets[i].Type == 'c') {
                this->instancedBullets[i].rotation += this->instancedBullets[i].velApplied / 600;
@@ -207,14 +205,14 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
        }
        
 
-       // muovo tutti i powerup
+       // move powerup
        for (int i = 0; i < this->powerups.size(); i++) {
-           // verifico se il powerup è ancora nello schermo
+           //chec if powerup in the screen
            if (this->powerups[i].position.y < LEV_LIMITY) {
                this->powerups[i].move(dt);
            }
            else {
-               // rimuovo il powerup
+               // remove powerup
                if (i != this->powerups.size() - 1) {
                    this->powerups[i] = std::move(this->powerups.back());
                }
@@ -229,7 +227,7 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
        }
    }
 
-   // muovo tutti i proiettili del drago lanciati
+   // move dragon bullets
    for (int i = 0; i < this->player.instancedFireballs.size(); i++) {
        switch (this->player.instancedFireballs[i].Type) {
 
@@ -243,12 +241,12 @@ void GameLevel::PlayLevel(float dt, unsigned int skin, unsigned int level) {
        this->player.instancedFireballs[i].move(dt);
    }
 
-    // ricarico il mana del giocatore
+    // recharge mana
     if (this->player.stats.FP < MAX_FP) {
         this->player.stats.FP++;
     }
 
-    // verifico il passaggio di fase
+    // check phase passage
     // bronze medal
     if (Timer::getElapsedSeconds() > SECONDS1 && Timer::getElapsedSeconds() < SECONDS2 && this->player.stats.medal == NONE) {
         this->IncreasePhase();
@@ -350,7 +348,7 @@ void GameLevel::IncreasePhase() {
             break;
         case 2:
             availabePowerups.push_back(101);
-            // aggiungo una finestra di lancio
+            // add bullet window
             instanceWindow(this->actualWindows.size());
             break;
         }
@@ -365,17 +363,16 @@ void GameLevel::IncreasePhase() {
 }
 
 void GameLevel::Die() {
-    // POTREBBE NON SERVIRE
 }
 
-// calcola randomicamente se spawnare i powerup in base a:
+// compute randomically if spawn powerup based on:
 // -phase
-// -vita
+// -life
 void GameLevel::SpawnPowerUps() {
 
     float prob = 0;
     float ran = 0;
-    // calcolo la probabilità
+    // probability
     switch (this->phase) {
     case 0:
         prob += 0;
@@ -399,15 +396,15 @@ void GameLevel::SpawnPowerUps() {
     }
     ran = unif3(re);
     if (ran < prob) {
-        // spawno il powerup
-        // verifico se ci sono anche altri powerup
+        // spawn powerup
+        // check for other powerup
         if (this->powerups.size() < 3 && Timer::getCoolDown() > 15) {
-            // setto il cooldown
+            // set cooldown
             Timer::setCoolDown();
             std::uniform_int_distribution<int> unif(0, availabePowerups.size() - 1);
             int i = unif(re);
             std::uniform_real_distribution<double> unif3(20, LEV_LIMITX - 20);
-            ran = unif3(re); // x value arbitraria di spawn del powerup
+            ran = unif3(re); // x random value spawn powerup
             Bullet b;
             switch (availabePowerups[i]) {
             case 100:

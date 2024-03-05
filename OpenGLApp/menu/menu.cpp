@@ -12,10 +12,10 @@ void Menu::addButton(Button b) {
 }
 
 void Menu::drawMenu(SpriteRenderer& renderer) {
-	// Render del background
+	// Render background
 	renderer.DrawSprite(this->background, { 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT }, 0.0f, glm::vec3(1.0f));
 
-	// Render delle medaglie
+	// Render medals
 	for (int i = 0; i < 3; i++) {
 		if(this->id == 2)
 			switch (static_cast<int>(Level_save::theme0[i])) {
@@ -43,7 +43,7 @@ void Menu::drawMenu(SpriteRenderer& renderer) {
 			}
 		}
 	}
-	// Render dei pulsanti
+	// Render buttons
 	for (Button b : this->buttons) {
 		b.drawButton(renderer);
 	}

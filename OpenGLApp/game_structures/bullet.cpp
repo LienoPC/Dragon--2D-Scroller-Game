@@ -101,7 +101,7 @@ Bullet::Bullet(float pow, int partNum, Texture2D sprite, glm::vec2 pos, glm::vec
 
 void Bullet::move(glm::vec2 move) {
 	this->position += move*this->velocity*this->velApplied;
-	// aggiorna la hitbox
+	// update hitbox
 	updateHitbox();
 }
 
@@ -109,7 +109,7 @@ void Bullet::move(float dt) {
 	if (this->destroyed == false) {
 		this->position += this->velocity * this->Direction * this->velApplied * dt;
 		this->position.y += SCROLLING_SPEED * dt; // Sync the scrolling level with bullets
-		// aggiorna la hitbox
+		// update hitbox
 		updateHitbox();
 	}
 	else {
@@ -123,7 +123,7 @@ void Bullet::syncRotation() {
 	float cosA = this->Direction.x;
 	float degrees = std::acos(cosA) * (180.0 / 3.141592653589793238463);
 	this->rotation = degrees+90;
-	// aggiorna la hitbox
+	// update hitbox
 	updateHitbox();
 }
 
@@ -151,7 +151,7 @@ void Bullet::updateHitbox() {
 			s->right_down = this->position + this->size;
 			s->right_up = glm::vec2(this->position.x + this->size.x, this->position.y);
 
-			//ruoto i punti
+			//rotate point
 			pos = model * glm::vec4(s->left_up, 0.0, 1.0);
 			s->left_up.x = pos.x;
 			s->left_up.y = pos.y;
@@ -200,14 +200,14 @@ void Bullet::updateHitbox() {
 void Bullet::Draw(SpriteRenderer& renderer) {
 
 	if (this->destroyed == true) {
-		// renderizzo i particellari
+		// render particles
 		this->DrawParticles(renderer);
 	}
 	else {
 		renderer.DrawSprite(this->sprite, this->position, this->size, this->rotation, this->color);
 	}
 
-	// Render delle hitbox
+	// Render hitbox
 	/*
 	switch (this->hitboxT) {
 
@@ -238,7 +238,7 @@ void Bullet::Draw(SpriteRenderer& renderer) {
 void Bullet::destroy() {
 
 	this->destroyed = true;
-	// attivo l'effetto particellare
+	// start particle effect
 	for (int i = 0; i < this->particles.size(); i++) {
 		ParticleType t = this->particles[i]->type;
 		switch (t) {

@@ -3,11 +3,11 @@
 
 #include "../glm-master/glm/glm.hpp"
 
-//0: non sbloccato
-//1: sbloccato
-//2: bronzo
-//3: argento
-//4: oro
+//0: locked
+//1: unlocked
+//2: bronze
+//3: silver
+//4: gold
 
 class Level_save {
 public:
