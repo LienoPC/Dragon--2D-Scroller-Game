@@ -441,12 +441,12 @@ void Game::ProcessInput(float dt){
                 if (cursorOver != NULL && cursorOver == clicked) {
                     if (clicked->type == buttonType::link) {
                         if (this->State == GAME_PAUSE) {
-                            // Aggiornamento del menù di selezione dei livelli in caso di sblocco di un nuovo livello
+                            // update menu selection of levels if new level unlocked
                             if (this->Skin == 0) 
                                 this->Menus[2].updateBackground(this->Skin, this->Level);
                             else 
                                 this->Menus[3].updateBackground(this->Skin, this->Level);
-                            //canzone nuova
+                         
                             this->State = GAME_MENU;
                         }
                         this->currMenu = clicked->subMenuId;
@@ -509,7 +509,7 @@ void Game::ProcessInput(float dt){
                 if (cursorOver != NULL && cursorOver == clicked) {
                     if (clicked->type == buttonType::link) {
                         if (this->State == GAME_PAUSE) {
-                            // Aggiornamento del menù di selezione dei livelli in caso di sblocco di un nuovo livello
+                            // update menu selection of levels if new level unlocked
                             if (this->Skin == 0)
                                 this->Menus[2].updateBackground(this->Skin, this->Level);
                             else
@@ -553,10 +553,10 @@ void Game::ProcessInput(float dt){
 
      else if (Game::State == GAME_ACTIVE) {
         GameLevel* level = &this->Levels[this->Level];
-        // Gestione della velocità (sprint, slowdown)
+        // speed management (sprint, slowdown)
         static bool sprint = false, slowdown = false, shoot = false;
 
-        // Menù di pausa
+        // Menu pause
         if (this->Keys[GLFW_KEY_ESCAPE]) {
             this->currMenu = 6;
             this->State = GAME_PAUSE;
@@ -580,7 +580,7 @@ void Game::ProcessInput(float dt){
              slowdown = false;
         }
 
-         // Movimento del drago
+         // dragon movements
          float velocity = dt * level->player.velocityModifier;
          glm::vec2 move, playerPos = level->player.position;
 
@@ -610,7 +610,7 @@ void Game::ProcessInput(float dt){
          }
          else if (this->MouseButtons[GLFW_MOUSE_BUTTON_RIGHT] && !shoot) {
              shoot = true;
-             // prelevo i powerup dagli stat del dragon e gli istanzio
+             // instance powerups
              level->player.instancePowerup();
          }else if (!this->MouseButtons[GLFW_MOUSE_BUTTON_LEFT] && !this->MouseButtons[GLFW_MOUSE_BUTTON_RIGHT] && shoot) {
              shoot = false;
