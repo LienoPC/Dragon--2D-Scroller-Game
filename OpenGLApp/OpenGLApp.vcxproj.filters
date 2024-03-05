@@ -203,9 +203,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="game_structures\save.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Media Include="audio\Critical_Hit.wav">
       <Filter>File di risorse</Filter>
     </Media>
@@ -224,5 +221,8 @@
     <Media Include="audio\Crashing.wav">
       <Filter>File di risorse</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="game_structures\save.txt" />
   </ItemGroup>
 </Project>

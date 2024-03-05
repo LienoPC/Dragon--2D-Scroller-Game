@@ -211,15 +211,15 @@
     <Image Include="textures\fireball.png" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="game_structures\save.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Media Include="audio\Crashing.wav" />
     <Media Include="audio\Critical_Hit.wav" />
     <Media Include="audio\Fireball.wav" />
     <Media Include="audio\Lost_Odissey.wav" />
     <Media Include="audio\Power_Up.wav" />
     <Media Include="audio\Zelda.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="game_structures\save.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
