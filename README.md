@@ -14,8 +14,14 @@ In this project, we created a game using OpenGL, where players control a dragon 
 
 ---
 
-## Credits
+## Team
 This game was created by:
 - Alberto Cagnazzo
 - Giulio Arecco
 - Erika Astegiano
+
+## License
+The original code in this repository is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+
+**Third-Party Code:** 
+This repository includes third-party libraries and code. These files remain licensed under their respective original terms and retain their original copyright notices.
